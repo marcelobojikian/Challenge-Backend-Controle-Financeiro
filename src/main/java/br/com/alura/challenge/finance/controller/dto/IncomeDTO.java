@@ -1,37 +1,31 @@
-package br.com.alura.challenge.finance.model;
+package br.com.alura.challenge.finance.controller.dto;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
-@Entity
-public class Income implements Serializable {
+import com.fasterxml.jackson.annotation.JsonFormat;
 
-	private static final long serialVersionUID = 1L;
+public class IncomeDTO {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column
+	@NotEmpty
 	private String descricao;
 
-	@Column
+	@NotNull
 	private BigDecimal valor;
 
-	@Column
+	@NotNull
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
 	private LocalDate data;
 
-	public Income() {
+	public IncomeDTO() {
 	}
 
-	public Income(Long id, String descricao, BigDecimal valor, LocalDate data) {
+	public IncomeDTO(Long id, String descricao, BigDecimal valor, LocalDate data) {
 		this.id = id;
 		this.descricao = descricao;
 		this.valor = valor;
