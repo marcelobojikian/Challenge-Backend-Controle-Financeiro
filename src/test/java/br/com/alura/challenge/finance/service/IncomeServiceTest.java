@@ -13,6 +13,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.DisplayName;
@@ -36,6 +37,38 @@ class IncomeServiceTest {
 
 	@Mock
 	IncomeRepository repository;
+
+	@Nested
+	@DisplayName("Find All Income ")
+	class FindAllIncoming {
+
+		@Test
+		@DisplayName("Should find all")
+		public void shouldFindIncome() {
+
+			Income expected = new Income(1l, "Test", BigDecimal.valueOf(23), toDate("03/08/2022"));
+			Income secondExpected = new Income(2l, "Test 2", BigDecimal.valueOf(44), toDate("11/07/2022"));
+
+			given(repository.findAll()).willReturn(Arrays.asList(expected, secondExpected));
+
+			List<Income> result = incomeService.findAll();
+
+			assertThat(result).contains(expected, secondExpected);
+
+		}
+
+		@Test
+		@DisplayName("Should find empty list")
+		public void shouldNotFindIncome() {
+
+			given(repository.findAll()).willReturn(Arrays.asList());
+			List<Income> result = incomeService.findAll();
+
+			assertThat(result).isEmpty();
+
+		}
+
+	}
 
 	@Nested
 	@DisplayName("Find Income by ID")

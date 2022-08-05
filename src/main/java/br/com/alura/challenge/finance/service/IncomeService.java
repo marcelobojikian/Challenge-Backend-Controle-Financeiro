@@ -22,6 +22,14 @@ public class IncomeService {
 		this.repository = repository;
 	}
 
+	public List<Income> findAll() {
+		return repository.findAll();
+	}
+
+	public Income findById(Long id) {
+		return repository.findById(id).orElseThrow(() -> new EntityNotFoundException("Entity not found"));
+	}
+
 	public Income save(Income income) {
 
 		String descricao = income.getDescricao();
@@ -36,10 +44,6 @@ public class IncomeService {
 		}
 
 		return repository.save(income);
-	}
-
-	public Income findById(Long id) {
-		return repository.findById(id).orElseThrow(() -> new EntityNotFoundException("Entity not found"));
 	}
 
 	public Income update(Long id, Income entity) {

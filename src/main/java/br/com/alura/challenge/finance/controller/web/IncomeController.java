@@ -1,8 +1,11 @@
 package br.com.alura.challenge.finance.controller.web;
 
+import java.util.List;
+
 import javax.validation.Valid;
 
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -32,6 +35,13 @@ public class IncomeController {
 	public IncomeController(IncomeService service, ModelMapper modelMapper) {
 		this.service = service;
 		this.modelMapper = modelMapper;
+	}
+
+	@GetMapping
+	public List<IncomeDTO> findAll() {
+		List<Income> entities = service.findAll();
+		return modelMapper.map(entities, new TypeToken<List<IncomeDTO>>() {
+		}.getType());
 	}
 
 	@GetMapping("/{id}")
