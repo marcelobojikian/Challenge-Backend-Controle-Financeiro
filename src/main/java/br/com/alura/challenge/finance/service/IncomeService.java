@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import br.com.alura.challenge.finance.exception.BusinessException;
+import br.com.alura.challenge.finance.exception.EntityNotFoundException;
 import br.com.alura.challenge.finance.model.Income;
 import br.com.alura.challenge.finance.repository.IncomeRepository;
 
@@ -35,6 +36,10 @@ public class IncomeService {
 		}
 
 		return repository.save(income);
+	}
+
+	public Income findById(Long id) {
+		return repository.findById(id).orElseThrow(() -> new EntityNotFoundException("Entity not found"));
 	}
 
 }

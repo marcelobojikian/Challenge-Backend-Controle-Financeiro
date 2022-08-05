@@ -10,6 +10,7 @@ import java.time.format.DateTimeFormatter;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.BDDMockito;
@@ -59,45 +60,83 @@ class IncomeControllerTest {
 		mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 	}
 
-	@Test
-	@DisplayName("Should create a income with success")
-	public void successCreateIncome() throws Exception {
+	@Nested
+	@DisplayName("Method GET")
+	class MethodGet {
 
-		// cenario
-		IncomeDTO entityDTO = new IncomeDTO(1l, "Teste", BigDecimal.ZERO, toDate("03/09/2022"));
-		Income savedEntity = new Income(1l, "Teste", BigDecimal.ZERO, toDate("03/09/2022"));
+		@Test
+		@DisplayName("Should create a income with success")
+		public void successCreateIncome() throws Exception {
+			
+			IncomeDTO entityDTO = new IncomeDTO(1l, "Teste", BigDecimal.ZERO, toDate("03/09/2022"));
 
-		// execucao
-		BDDMockito.given(modelMapper.map(Mockito.any(), Mockito.eq(Income.class))).willReturn(savedEntity);
-		BDDMockito.given(modelMapper.map(Mockito.any(), Mockito.eq(IncomeDTO.class))).willReturn(entityDTO);
-		BDDMockito.given(incomeService.create(Mockito.any(Income.class))).willReturn(savedEntity);
-
-		IncomeDTO entity = new IncomeDTO(null, "Teste", BigDecimal.ZERO, LocalDate.now());
-		String json = mapper.writeValueAsString(entity);
-
-		// @formatter:off
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-                .post(INCOME_API)
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
-                .content(json);
-        
-        mockMvc.perform(request)
-				.andDo(print())
-				.andExpect(status().isCreated())
-				.andExpect(jsonPath("id").value(entityDTO.getId()))
-				.andExpect(jsonPath("descricao").value(entityDTO.getDescricao()))
-				.andExpect(jsonPath("valor").value(entityDTO.getValor()))
-				.andExpect(jsonPath("data").value(toString(entityDTO.getData())));
-		// @formatter:on
-
+			Income savedEntity = new Income(1l, "Teste", BigDecimal.ZERO, toDate("03/09/2022"));
+			BDDMockito.given(modelMapper.map(Mockito.any(), Mockito.eq(IncomeDTO.class))).willReturn(entityDTO);
+			BDDMockito.given(modelMapper.map(Mockito.any(), Mockito.eq(Income.class))).willReturn(savedEntity);
+			
+			// @formatter:off
+	        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+	                .get(INCOME_API+"/1")
+	                .contentType(MediaType.APPLICATION_JSON)
+	                .accept(MediaType.APPLICATION_JSON);
+	        
+	        mockMvc.perform(request)
+					.andDo(print())
+					.andExpect(status().isOk())
+					.andExpect(jsonPath("id").value(entityDTO.getId()))
+					.andExpect(jsonPath("descricao").value(entityDTO.getDescricao()))
+					.andExpect(jsonPath("valor").value(entityDTO.getValor()))
+					.andExpect(jsonPath("data").value(IncomeControllerTest.toString(entityDTO.getData())));
+			
+		}
+		
 	}
 
-	LocalDate toDate(String date) {
+	@Nested
+	@DisplayName("Method POST")
+	class MehtodPost {
+
+		@Test
+		@DisplayName("Should create a income with success")
+		public void successCreateIncome() throws Exception {
+
+			// cenario
+			IncomeDTO entityDTO = new IncomeDTO(1l, "Teste", BigDecimal.ZERO, toDate("03/09/2022"));
+			Income savedEntity = new Income(1l, "Teste", BigDecimal.ZERO, toDate("03/09/2022"));
+
+			// execucao
+			BDDMockito.given(modelMapper.map(Mockito.any(), Mockito.eq(Income.class))).willReturn(savedEntity);
+			BDDMockito.given(modelMapper.map(Mockito.any(), Mockito.eq(IncomeDTO.class))).willReturn(entityDTO);
+			BDDMockito.given(incomeService.create(Mockito.any(Income.class))).willReturn(savedEntity);
+
+			IncomeDTO entity = new IncomeDTO(null, "Teste", BigDecimal.ZERO, LocalDate.now());
+			String json = mapper.writeValueAsString(entity);
+			
+			// @formatter:off
+	        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+	                .post(INCOME_API)
+	                .contentType(MediaType.APPLICATION_JSON)
+	                .accept(MediaType.APPLICATION_JSON)
+	                .content(json);
+	        
+	        mockMvc.perform(request)
+					.andDo(print())
+					.andExpect(status().isCreated())
+					.andExpect(jsonPath("id").value(entityDTO.getId()))
+					.andExpect(jsonPath("descricao").value(entityDTO.getDescricao()))
+					.andExpect(jsonPath("valor").value(entityDTO.getValor()))
+					.andExpect(jsonPath("data").value(IncomeControllerTest.toString(entityDTO.getData())));
+			// @formatter:on
+
+		}
+		
+	}
+
+	public static LocalDate toDate(String date) {
 		return LocalDate.parse(date, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
 	}
 
-	String toString(LocalDate localDate) {
+	public static String toString(LocalDate localDate) {
 		return localDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
 	}
 
