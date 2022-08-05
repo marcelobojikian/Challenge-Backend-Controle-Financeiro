@@ -3,6 +3,8 @@ package br.com.alura.challenge.finance.model;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.Month;
+import java.time.temporal.TemporalAdjuster;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -36,6 +38,15 @@ public class Income implements Serializable {
 		this.descricao = descricao;
 		this.valor = valor;
 		this.data = data;
+	}
+
+	public LocalDate getDataWith(TemporalAdjuster adjuster) {
+		return data.with(adjuster);
+	}
+
+	public boolean isSameMonth(Income income) {
+		Month month = income.getData().getMonth();
+		return this.data.getMonth().compareTo(month) == 0;
 	}
 
 	public Long getId() {

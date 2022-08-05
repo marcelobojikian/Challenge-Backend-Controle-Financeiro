@@ -5,13 +5,13 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.TemporalAdjuster;
-import java.time.temporal.TemporalAdjusters;
 import java.util.Arrays;
 import java.util.Optional;
 
@@ -42,7 +42,7 @@ class IncomeServiceTest {
 	class FindByIdIncoming {
 
 		@Test
-		@DisplayName("Should find by critery")
+		@DisplayName("Should find by id")
 		public void shouldFindIncome() {
 
 			Income expected = new Income(1l, "Test", BigDecimal.valueOf(23), toDate("03/08/2022"));
@@ -56,8 +56,8 @@ class IncomeServiceTest {
 		}
 
 		@Test
-		@DisplayName("Should return exception")
-		public void shouldCreateIncome() {
+		@DisplayName("Should throw exception")
+		public void shouldNotFindIncome() {
 
 			given(repository.findById(anyLong())).willReturn(Optional.empty());
 
@@ -79,10 +79,12 @@ class IncomeServiceTest {
 
 			Income expected = new Income(1l, "Test", BigDecimal.valueOf(23), toDate("03/08/2022"));
 
+			given(repository.findAllByDescricaoContainingIgnoreCaseAndDataBetween(any(String.class),
+					any(LocalDate.class), any(LocalDate.class))).willReturn(Arrays.asList());
 			given(repository.save(any(Income.class))).willReturn(expected);
 
 			Income entity = new Income(null, "Test", BigDecimal.valueOf(23), toDate("03/08/2022"));
-			Income result = incomeService.create(entity);
+			Income result = incomeService.save(entity);
 
 			assertThat(result.getId()).isEqualTo(expected.getId());
 			assertThat(result.getDescricao()).isEqualTo(expected.getDescricao());
@@ -92,15 +94,17 @@ class IncomeServiceTest {
 		}
 
 		@Test
-		@DisplayName("Should create when same name but different month")
+		@DisplayName("Should create when same name and different month")
 		public void shouldCreateWhenSameNameButDifferentMonth() {
 
 			Income expected = new Income(1l, "Test", BigDecimal.valueOf(23), toDate("03/09/2022"));
 
+			given(repository.findAllByDescricaoContainingIgnoreCaseAndDataBetween(any(String.class),
+					any(LocalDate.class), any(LocalDate.class))).willReturn(Arrays.asList());
 			given(repository.save(any(Income.class))).willReturn(expected);
 
 			Income entity = new Income(null, "Test", BigDecimal.valueOf(23), toDate("03/08/2022"));
-			Income result = incomeService.create(entity);
+			Income result = incomeService.save(entity);
 
 			assertThat(result.getId()).isEqualTo(expected.getId());
 			assertThat(result.getDescricao()).isEqualTo(expected.getDescricao());
@@ -110,36 +114,80 @@ class IncomeServiceTest {
 		}
 
 		@Test
-		@DisplayName("Should return exception when income already exist with same month")
+		@DisplayName("Should throw exception when same name and month")
 		public void shouldReturnExceptionWhenIncomeAlreadyExistWithSameMonth() {
 
-			String descricao = "Test";
-			LocalDate dateTimeMin = firstDayOfMonth("01/08/2022");
-			LocalDate dateTimeMax = lastDayOfMonth("31/08/2022");
+			given(repository.findAllByDescricaoContainingIgnoreCaseAndDataBetween(any(String.class),
+					any(LocalDate.class), any(LocalDate.class))).willReturn(
+							Arrays.asList(new Income(1l, "Test", BigDecimal.valueOf(23), toDate("05/08/2022"))));
 
-			given(repository.findAllByDescricaoContainingIgnoreCaseAndDataBetween(descricao, dateTimeMin, dateTimeMax))
-					.willReturn(Arrays.asList(new Income(1l, descricao, BigDecimal.valueOf(23), toDate("05/08/2022"))));
-
-			Income entity = new Income(null, "     Test ", BigDecimal.valueOf(23), toDate("03/08/2022"));
+			Income entity = new Income(null, "Test", BigDecimal.valueOf(23), toDate("03/08/2022"));
 
 			assertThrows(BusinessException.class, () -> {
-				incomeService.create(entity);
+				incomeService.save(entity);
 			});
 
 		}
 
 	}
 
-	LocalDate firstDayOfMonth(String date) {
-		return dayOfMonth(date, TemporalAdjusters.firstDayOfMonth(), LocalTime.MIN);
-	}
+	@Nested
+	@DisplayName("Update Income")
+	class UpdateIncoming {
 
-	LocalDate lastDayOfMonth(String date) {
-		return dayOfMonth(date, TemporalAdjusters.lastDayOfMonth(), LocalTime.MAX);
-	}
+		@Test
+		@DisplayName("Should update")
+		public void shouldUpdateIncome() {
 
-	LocalDate dayOfMonth(String date, TemporalAdjuster temporalAdjuster, LocalTime localTime) {
-		return toDate(date).with(temporalAdjuster);
+			Income expected = new Income(1l, "Test 2", BigDecimal.valueOf(34), toDate("07/08/2022"));
+
+			Income entityDB = new Income(1l, "Test", BigDecimal.valueOf(24), toDate("03/08/2022"));
+			given(repository.findById(any(Long.class))).willReturn(Optional.of(entityDB));
+			given(repository.save(any(Income.class))).willReturn(expected);
+
+			Income entity = new Income(1l, "Test 2", BigDecimal.valueOf(34), toDate("07/08/2022"));
+			Income result = incomeService.update(1l, entity);
+
+			assertThat(result.getId()).isEqualTo(expected.getId());
+			assertThat(result.getDescricao()).isEqualTo(expected.getDescricao());
+			assertThat(result.getValor()).isEqualTo(expected.getValor());
+			assertThat(result.getData()).isEqualTo(expected.getData());
+
+		}
+
+		@Test
+		@DisplayName("Should update when same name and different month")
+		public void shouldUpdateWhenSameNameAndDifferentMonth() {
+			IncomeService serviceSpy = spy(incomeService);
+
+			Long idExpected = 1l;
+			Income expected = new Income(1l, "Test 2", BigDecimal.valueOf(34), toDate("07/08/2022"));
+
+			Income entityDB = new Income(1l, "Test", BigDecimal.valueOf(24), toDate("03/07/2022"));
+			assertThat(entityDB.isSameMonth(expected)).isFalse();
+
+			given(repository.findById(any(Long.class))).willReturn(Optional.of(entityDB));
+
+			serviceSpy.update(idExpected, expected);
+
+			verify(serviceSpy, times(1)).save(any(Income.class));
+
+		}
+
+		@Test
+		@DisplayName("Should throw exception when income not exist")
+		public void shouldReturnExceptionWhenIncomeNotExist() {
+
+			given(repository.findById(any(Long.class))).willReturn(Optional.empty());
+
+			Income entity = new Income(-1l, "Test", BigDecimal.valueOf(23), toDate("03/08/2022"));
+
+			assertThrows(EntityNotFoundException.class, () -> {
+				incomeService.update(-1l, entity);
+			});
+
+		}
+
 	}
 
 	LocalDate toDate(String date) {
