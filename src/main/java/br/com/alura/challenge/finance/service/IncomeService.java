@@ -60,4 +60,9 @@ public class IncomeService {
 
 	}
 
+	public void delete(Long id) {
+		Income entity = repository.findById(id).orElseThrow(() -> new EntityNotFoundException("Entity not found"));
+		repository.delete(entity);
+	}
+
 }

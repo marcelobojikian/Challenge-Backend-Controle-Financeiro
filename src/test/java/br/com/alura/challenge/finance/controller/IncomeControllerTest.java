@@ -3,7 +3,6 @@ package br.com.alura.challenge.finance.controller;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -83,7 +82,6 @@ class IncomeControllerTest {
 	                .accept(MediaType.APPLICATION_JSON);
 	        
 	        mockMvc.perform(request)
-					.andDo(print())
 					.andExpect(status().isOk())
 					.andExpect(jsonPath("id").value(expectedDTO.getId()))
 					.andExpect(jsonPath("descricao").value(expectedDTO.getDescricao()))
@@ -106,7 +104,6 @@ class IncomeControllerTest {
 	                .accept(MediaType.APPLICATION_JSON);
 	        
 	        mockMvc.perform(request)
-					.andDo(print())
 					.andExpect(status().isNotFound());
 			// @formatter:on
 
@@ -140,7 +137,6 @@ class IncomeControllerTest {
 	                .content(json);
 	        
 	        mockMvc.perform(request)
-					.andDo(print())
 					.andExpect(status().isCreated())
 					.andExpect(jsonPath("id").value(expectedDTO.getId()))
 					.andExpect(jsonPath("descricao").value(expectedDTO.getDescricao()))
@@ -178,12 +174,51 @@ class IncomeControllerTest {
 	                .content(json);
 	        
 	        mockMvc.perform(request)
-					.andDo(print())
 					.andExpect(status().isOk())
 					.andExpect(jsonPath("id").value(expectedDTO.getId()))
 					.andExpect(jsonPath("descricao").value(expectedDTO.getDescricao()))
 					.andExpect(jsonPath("valor").value(expectedDTO.getValor()))
 					.andExpect(jsonPath("data").value(IncomeControllerTest.toString(expectedDTO.getData())));
+			// @formatter:on
+
+		}
+
+	}
+
+	@Nested
+	@DisplayName("Method DELETE")
+	class MethodDelete {
+
+		@Test
+		@DisplayName("Should delete the income with success")
+		public void successDeleteIncome() throws Exception {
+
+			// @formatter:off
+	        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+	                .delete(INCOME_API+"/1")
+	                .contentType(MediaType.APPLICATION_JSON)
+	                .accept(MediaType.APPLICATION_JSON);
+	        
+	        mockMvc.perform(request)
+					.andExpect(status().isOk());
+			// @formatter:on
+
+		}
+
+		@Test
+		@DisplayName("Should not delete the income - status 404")
+		public void errorDeleteIncome() throws Exception {
+
+			given(incomeService.findById(any(Long.class))).willThrow(EntityNotFoundException.class);
+
+			// @formatter:off
+			MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+	                .get(INCOME_API+"/-1")
+	                .contentType(MediaType.APPLICATION_JSON)
+	                .accept(MediaType.APPLICATION_JSON);
+	        
+	        mockMvc.perform(request)
+					.andExpect(status().isNotFound());
 			// @formatter:on
 
 		}

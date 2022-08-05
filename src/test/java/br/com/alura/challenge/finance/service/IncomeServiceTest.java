@@ -70,7 +70,7 @@ class IncomeServiceTest {
 	}
 
 	@Nested
-	@DisplayName("Create New Income")
+	@DisplayName("Create Income")
 	class CreateIncoming {
 
 		@Test
@@ -184,6 +184,38 @@ class IncomeServiceTest {
 
 			assertThrows(EntityNotFoundException.class, () -> {
 				incomeService.update(-1l, entity);
+			});
+
+		}
+
+	}
+
+	@Nested
+	@DisplayName("Delete Income")
+	class DeleteIncoming {
+
+		@Test
+		@DisplayName("Should delete")
+		public void shouldDeleteIncome() {
+
+			Income expected = new Income(1l, "Test", BigDecimal.valueOf(23), toDate("03/08/2022"));
+
+			given(repository.findById(anyLong())).willReturn(Optional.of(expected));
+
+			incomeService.delete(1L);
+
+			verify(repository, times(1)).delete(any(Income.class));
+
+		}
+
+		@Test
+		@DisplayName("Should throw exception")
+		public void shouldNotDeleteIncome() {
+
+			given(repository.findById(anyLong())).willReturn(Optional.empty());
+
+			assertThrows(EntityNotFoundException.class, () -> {
+				incomeService.delete(1L);
 			});
 
 		}
