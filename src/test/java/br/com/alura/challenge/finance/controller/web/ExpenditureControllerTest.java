@@ -99,7 +99,7 @@ class ExpenditureControllerTest {
 		@Test
 		@DisplayName("Should not find - status 404")
 		public void errorFind() throws Exception {
-			
+
 			EntityNotFoundException expected = new EntityNotFoundException("Entity not found");
 
 			given(service.findById(any(Long.class))).willThrow(expected);
@@ -155,7 +155,7 @@ class ExpenditureControllerTest {
 		@Test
 		@DisplayName("Should not find - status 404")
 		public void shouldNotFind() throws Exception {
-			
+
 			EntityNotFoundException expected = new EntityNotFoundException("Entity not found");
 
 			given(service.findById(any(Long.class))).willThrow(expected);
@@ -275,7 +275,7 @@ class ExpenditureControllerTest {
 		@Test
 		@DisplayName("Should not delete - status 404")
 		public void shouldNotDelete() throws Exception {
-			
+
 			EntityNotFoundException expected = new EntityNotFoundException("Entity not found");
 
 			given(service.findById(any(Long.class))).willThrow(expected);

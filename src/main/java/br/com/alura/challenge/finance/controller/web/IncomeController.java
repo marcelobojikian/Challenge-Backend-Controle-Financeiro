@@ -5,8 +5,6 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeToken;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.alura.challenge.finance.controller.dto.IncomeDTO;
+import br.com.alura.challenge.finance.controller.dto.FinanceDTO;
 import br.com.alura.challenge.finance.model.Income;
 import br.com.alura.challenge.finance.service.IncomeService;
 
@@ -26,44 +24,37 @@ import br.com.alura.challenge.finance.service.IncomeService;
 @RequestMapping("/api/incomes")
 public class IncomeController {
 
-	@Autowired
-	private IncomeService service;
+	private FinanceController<Income> service;
 
-	@Autowired
 	private ModelMapper modelMapper;
 
 	public IncomeController(IncomeService service, ModelMapper modelMapper) {
-		this.service = service;
+		this.service = new FinanceController<Income>(service, modelMapper);
 		this.modelMapper = modelMapper;
 	}
 
 	@GetMapping
-	public List<IncomeDTO> findAll() {
-		List<Income> entities = service.findAll();
-		return modelMapper.map(entities, new TypeToken<List<IncomeDTO>>() {
-		}.getType());
+	public List<FinanceDTO> findAll() {
+		return service.findAll();
 	}
 
 	@GetMapping("/{id}")
-	public IncomeDTO findById(@PathVariable Long id) {
-		Income entity = service.findById(id);
-		return modelMapper.map(entity, IncomeDTO.class);
+	public FinanceDTO findById(@PathVariable Long id) {
+		return service.findById(id);
 	}
 
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public IncomeDTO create(@RequestBody @Valid IncomeDTO dto) {
+	public FinanceDTO create(@RequestBody @Valid FinanceDTO dto) {
 		Income entity = modelMapper.map(dto, Income.class);
-		entity = service.save(entity);
-		return modelMapper.map(entity, IncomeDTO.class);
+		return service.create(entity);
 	}
 
 	@PutMapping("/{id}")
 	@ResponseStatus(HttpStatus.OK)
-	public IncomeDTO update(@PathVariable Long id, @RequestBody @Valid IncomeDTO dto) {
+	public FinanceDTO update(@PathVariable Long id, @RequestBody @Valid FinanceDTO dto) {
 		Income entity = modelMapper.map(dto, Income.class);
-		entity = service.update(id, entity);
-		return modelMapper.map(entity, IncomeDTO.class);
+		return service.update(id, entity);
 	}
 
 	@DeleteMapping("/{id}")

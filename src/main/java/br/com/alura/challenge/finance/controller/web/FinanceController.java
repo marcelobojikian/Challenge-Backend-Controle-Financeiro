@@ -22,7 +22,8 @@ public class FinanceController<T extends FinanceEntity> {
 
 	public List<FinanceDTO> findAll() {
 		List<T> entities = service.findAll();
-		return modelMapper.map(entities, new TypeToken<List<FinanceDTO>>() {}.getType());
+		return modelMapper.map(entities, new TypeToken<List<FinanceDTO>>() {
+		}.getType());
 	}
 
 	public FinanceDTO findById(Long id) {

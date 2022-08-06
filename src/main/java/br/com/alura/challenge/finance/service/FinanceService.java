@@ -5,7 +5,7 @@ import java.util.List;
 import br.com.alura.challenge.finance.model.FinanceEntity;
 
 public interface FinanceService<T extends FinanceEntity> {
-	
+
 	public List<T> findAll();
 
 	public T findById(Long id);

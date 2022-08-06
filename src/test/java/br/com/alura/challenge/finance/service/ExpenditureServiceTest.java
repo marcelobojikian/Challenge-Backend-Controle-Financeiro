@@ -97,11 +97,11 @@ class ExpenditureServiceTest {
 			Exception exception = assertThrows(EntityNotFoundException.class, () -> {
 				service.findById(1L);
 			});
-			
-			String expectedMessage = "Entity not found";
-		    String actualMessage = exception.getMessage();
 
-		    assertTrue(actualMessage.contains(expectedMessage));
+			String expectedMessage = "Entity not found";
+			String actualMessage = exception.getMessage();
+
+			assertTrue(actualMessage.contains(expectedMessage));
 
 		}
 
@@ -164,11 +164,11 @@ class ExpenditureServiceTest {
 			Exception exception = assertThrows(BusinessException.class, () -> {
 				service.save(entity);
 			});
-			
-			String expectedMessage = "There is this finance for this month";
-		    String actualMessage = exception.getMessage();
 
-		    assertTrue(actualMessage.contains(expectedMessage));
+			String expectedMessage = "There is this finance for this month";
+			String actualMessage = exception.getMessage();
+
+			assertTrue(actualMessage.contains(expectedMessage));
 
 		}
 
@@ -228,11 +228,11 @@ class ExpenditureServiceTest {
 			Exception exception = assertThrows(EntityNotFoundException.class, () -> {
 				service.update(-1l, entity);
 			});
-			
-			String expectedMessage = "Entity not found";
-		    String actualMessage = exception.getMessage();
 
-		    assertTrue(actualMessage.contains(expectedMessage));
+			String expectedMessage = "Entity not found";
+			String actualMessage = exception.getMessage();
+
+			assertTrue(actualMessage.contains(expectedMessage));
 
 		}
 
@@ -265,11 +265,11 @@ class ExpenditureServiceTest {
 			Exception exception = assertThrows(EntityNotFoundException.class, () -> {
 				service.delete(1L);
 			});
-			
-			String expectedMessage = "Entity not found";
-		    String actualMessage = exception.getMessage();
 
-		    assertTrue(actualMessage.contains(expectedMessage));
+			String expectedMessage = "Entity not found";
+			String actualMessage = exception.getMessage();
+
+			assertTrue(actualMessage.contains(expectedMessage));
 
 		}
 

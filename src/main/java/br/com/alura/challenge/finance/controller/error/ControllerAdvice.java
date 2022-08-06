@@ -33,7 +33,7 @@ public class ControllerAdvice {
 		ResponseError response = new ResponseError(HttpStatus.BAD_REQUEST, message, errors);
 		return new ResponseEntity<ResponseError>(response, new HttpHeaders(), response.getStatus());
 	}
-	
+
 	@ExceptionHandler(HttpMessageNotReadableException.class)
 	public ResponseEntity<ResponseError> handleMissingRequestBody(HttpMessageNotReadableException e) {
 		ResponseError apiError = new ResponseError(HttpStatus.BAD_REQUEST, "Required request body", "body is missing");

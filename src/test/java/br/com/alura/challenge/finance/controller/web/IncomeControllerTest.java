@@ -1,9 +1,11 @@
-package br.com.alura.challenge.finance.controller;
+package br.com.alura.challenge.finance.controller.web;
 
+import static org.hamcrest.Matchers.hasItems;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
-import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -33,8 +35,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
-import br.com.alura.challenge.finance.controller.dto.IncomeDTO;
-import br.com.alura.challenge.finance.controller.web.IncomeController;
+import br.com.alura.challenge.finance.controller.dto.FinanceDTO;
 import br.com.alura.challenge.finance.exception.EntityNotFoundException;
 import br.com.alura.challenge.finance.model.Income;
 import br.com.alura.challenge.finance.service.IncomeService;
@@ -44,18 +45,17 @@ import br.com.alura.challenge.finance.service.IncomeService;
 @AutoConfigureMockMvc
 class IncomeControllerTest {
 
-	static final String INCOME_API = "/api/incomes";
+	static final String URL_API = "/api/incomes";
+	static ObjectMapper mapper;
 
 	@Autowired
 	MockMvc mockMvc;
 
 	@MockBean
-	IncomeService incomeService;
+	IncomeService service;
 
 	@MockBean
 	ModelMapper modelMapper;
-
-	static ObjectMapper mapper;
 
 	@BeforeAll
 	static void setup() {
@@ -69,22 +69,22 @@ class IncomeControllerTest {
 	class MethodGetAll {
 
 		@Test
-		@DisplayName("Should find all incomes")
-		public void successFindIncome() throws Exception {
+		@DisplayName("Should find all")
+		public void successFind() throws Exception {
 
 			Income expected = new Income(1l, "Test", BigDecimal.valueOf(23), toDate("03/08/2022"));
 			Income secondExpected = new Income(2l, "Test 2", BigDecimal.valueOf(44), toDate("11/07/2022"));
 
-			IncomeDTO expectedDTO = new IncomeDTO(1l, "Test", BigDecimal.valueOf(23), toDate("03/08/2022"));
-			IncomeDTO secondExpectedDTO = new IncomeDTO(2l, "Test 2", BigDecimal.valueOf(44), toDate("11/07/2022"));
+			FinanceDTO expectedDTO = new FinanceDTO(1l, "Test", BigDecimal.valueOf(23), toDate("03/08/2022"));
+			FinanceDTO secondExpectedDTO = new FinanceDTO(2l, "Test 2", BigDecimal.valueOf(44), toDate("11/07/2022"));
 
-			given(incomeService.findAll()).willReturn(Arrays.asList(expected, secondExpected));
+			given(service.findAll()).willReturn(Arrays.asList(expected, secondExpected));
 			given(modelMapper.map(any(Object.class), any(Type.class)))
 					.willReturn(Arrays.asList(expectedDTO, secondExpectedDTO));
 
 			// @formatter:off
 	        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-	                .get(INCOME_API)
+	                .get(URL_API)
 	                .contentType(MediaType.APPLICATION_JSON)
 	                .accept(MediaType.APPLICATION_JSON);
 	        
@@ -99,19 +99,25 @@ class IncomeControllerTest {
 		}
 
 		@Test
-		@DisplayName("Should not find the income - status 404")
-		public void errorFindIncome() throws Exception {
+		@DisplayName("Should not find - status 404")
+		public void errorFind() throws Exception {
 
-			given(incomeService.findById(any(Long.class))).willThrow(EntityNotFoundException.class);
+			EntityNotFoundException expected = new EntityNotFoundException("Entity not found");
+
+			given(service.findById(any(Long.class))).willThrow(expected);
 
 			// @formatter:off
 			MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-	                .get(INCOME_API+"/-1")
+	                .get(URL_API+"/-1")
 	                .contentType(MediaType.APPLICATION_JSON)
 	                .accept(MediaType.APPLICATION_JSON);
-	        
+
 	        mockMvc.perform(request)
-					.andExpect(status().isNotFound());
+					.andExpect(status().isNotFound())
+					.andExpect(jsonPath("$.status", is("NOT_FOUND")))
+					.andExpect(jsonPath("$.message", is("Entity not found")))
+					.andExpect(jsonPath("$.errors", hasSize(1)))
+					.andExpect(jsonPath("$.errors.[0]", is("Entity not found")));
 			// @formatter:on
 
 		}
@@ -123,18 +129,18 @@ class IncomeControllerTest {
 	class MethodGet {
 
 		@Test
-		@DisplayName("Should find the income with success")
-		public void successFindIncome() throws Exception {
+		@DisplayName("Should find")
+		public void successFind() throws Exception {
 
-			IncomeDTO expectedDTO = new IncomeDTO(1l, "Teste", BigDecimal.ZERO, toDate("03/09/2022"));
+			FinanceDTO expectedDTO = new FinanceDTO(1l, "Teste", BigDecimal.ZERO, toDate("03/09/2022"));
 
 			Income savedEntity = new Income(1l, "Teste", BigDecimal.ZERO, toDate("03/09/2022"));
-			given(incomeService.findById(any(Long.class))).willReturn(savedEntity);
-			given(modelMapper.map(any(Income.class), eq(IncomeDTO.class))).willReturn(expectedDTO);
+			given(service.findById(any(Long.class))).willReturn(savedEntity);
+			given(modelMapper.map(any(Income.class), eq(FinanceDTO.class))).willReturn(expectedDTO);
 
 			// @formatter:off
 	        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-	                .get(INCOME_API+"/1")
+	                .get(URL_API+"/1")
 	                .contentType(MediaType.APPLICATION_JSON)
 	                .accept(MediaType.APPLICATION_JSON);
 	        
@@ -149,19 +155,25 @@ class IncomeControllerTest {
 		}
 
 		@Test
-		@DisplayName("Should not find the income - status 404")
-		public void errorFindIncome() throws Exception {
+		@DisplayName("Should not find - status 404")
+		public void shouldNotFind() throws Exception {
 
-			given(incomeService.findById(any(Long.class))).willThrow(EntityNotFoundException.class);
+			EntityNotFoundException expected = new EntityNotFoundException("Entity not found");
+
+			given(service.findById(any(Long.class))).willThrow(expected);
 
 			// @formatter:off
 			MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-	                .get(INCOME_API+"/-1")
+	                .get(URL_API+"/-1")
 	                .contentType(MediaType.APPLICATION_JSON)
 	                .accept(MediaType.APPLICATION_JSON);
 	        
 	        mockMvc.perform(request)
-					.andExpect(status().isNotFound());
+					.andExpect(status().isNotFound())
+					.andExpect(jsonPath("$.status", is("NOT_FOUND")))
+					.andExpect(jsonPath("$.message", is("Entity not found")))
+					.andExpect(jsonPath("$.errors", hasSize(1)))
+					.andExpect(jsonPath("$.errors.[0]", is("Entity not found")));;
 			// @formatter:on
 
 		}
@@ -173,22 +185,22 @@ class IncomeControllerTest {
 	class MehtodPost {
 
 		@Test
-		@DisplayName("Should create a income with success")
-		public void successCreateIncome() throws Exception {
+		@DisplayName("Should create")
+		public void successCreate() throws Exception {
 
-			IncomeDTO expectedDTO = new IncomeDTO(1l, "Teste", BigDecimal.ZERO, toDate("03/09/2022"));
+			FinanceDTO expectedDTO = new FinanceDTO(1l, "Teste", BigDecimal.ZERO, toDate("03/09/2022"));
 			Income savedEntity = new Income(1l, "Teste", BigDecimal.ZERO, toDate("03/09/2022"));
 
 			given(modelMapper.map(any(), eq(Income.class))).willReturn(savedEntity);
-			given(modelMapper.map(any(), eq(IncomeDTO.class))).willReturn(expectedDTO);
-			given(incomeService.save(any(Income.class))).willReturn(savedEntity);
+			given(modelMapper.map(any(), eq(FinanceDTO.class))).willReturn(expectedDTO);
+			given(service.save(any(Income.class))).willReturn(savedEntity);
 
-			IncomeDTO entity = new IncomeDTO(null, "Teste", BigDecimal.ZERO, LocalDate.now());
+			FinanceDTO entity = new FinanceDTO(null, "Teste", BigDecimal.ZERO, LocalDate.now());
 			String json = mapper.writeValueAsString(entity);
 
 			// @formatter:off
 	        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-	                .post(INCOME_API)
+	                .post(URL_API)
 	                .contentType(MediaType.APPLICATION_JSON)
 	                .accept(MediaType.APPLICATION_JSON)
 	                .content(json);
@@ -210,22 +222,22 @@ class IncomeControllerTest {
 	class MehtodPut {
 
 		@Test
-		@DisplayName("Should update the income with success")
-		public void successUpdateIncome() throws Exception {
+		@DisplayName("Should update")
+		public void successUpdate() throws Exception {
 
-			IncomeDTO expectedDTO = new IncomeDTO(1l, "Teste 2", BigDecimal.ONE, toDate("10/09/2022"));
+			FinanceDTO expectedDTO = new FinanceDTO(1l, "Teste 2", BigDecimal.ONE, toDate("10/09/2022"));
 			Income entityExpected = new Income(1l, "Teste", BigDecimal.ZERO, toDate("03/09/2022"));
 
 			given(modelMapper.map(any(), eq(Income.class))).willReturn(entityExpected);
-			given(incomeService.update(any(Long.class), any(Income.class))).willReturn(entityExpected);
-			given(modelMapper.map(any(), eq(IncomeDTO.class))).willReturn(expectedDTO);
+			given(service.update(any(Long.class), any(Income.class))).willReturn(entityExpected);
+			given(modelMapper.map(any(), eq(FinanceDTO.class))).willReturn(expectedDTO);
 
-			IncomeDTO entity = new IncomeDTO(1l, "Teste 2", BigDecimal.ONE, toDate("10/09/2022"));
+			FinanceDTO entity = new FinanceDTO(1l, "Teste 2", BigDecimal.ONE, toDate("10/09/2022"));
 			String json = mapper.writeValueAsString(entity);
 
 			// @formatter:off
 	        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-	                .put(INCOME_API+"/1")
+	                .put(URL_API+"/1")
 	                .contentType(MediaType.APPLICATION_JSON)
 	                .accept(MediaType.APPLICATION_JSON)
 	                .content(json);
@@ -247,12 +259,12 @@ class IncomeControllerTest {
 	class MethodDelete {
 
 		@Test
-		@DisplayName("Should delete the income with success")
-		public void successDeleteIncome() throws Exception {
+		@DisplayName("Should delete")
+		public void successDelete() throws Exception {
 
 			// @formatter:off
 	        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-	                .delete(INCOME_API+"/1")
+	                .delete(URL_API+"/1")
 	                .contentType(MediaType.APPLICATION_JSON)
 	                .accept(MediaType.APPLICATION_JSON);
 	        
@@ -263,19 +275,25 @@ class IncomeControllerTest {
 		}
 
 		@Test
-		@DisplayName("Should not delete the income - status 404")
-		public void errorDeleteIncome() throws Exception {
+		@DisplayName("Should not delete - status 404")
+		public void shouldNotDelete() throws Exception {
 
-			given(incomeService.findById(any(Long.class))).willThrow(EntityNotFoundException.class);
+			EntityNotFoundException expected = new EntityNotFoundException("Entity not found");
+
+			given(service.findById(any(Long.class))).willThrow(expected);
 
 			// @formatter:off
 			MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-	                .get(INCOME_API+"/-1")
+	                .get(URL_API+"/-1")
 	                .contentType(MediaType.APPLICATION_JSON)
 	                .accept(MediaType.APPLICATION_JSON);
-	        
+			
 	        mockMvc.perform(request)
-					.andExpect(status().isNotFound());
+					.andExpect(status().isNotFound())
+					.andExpect(jsonPath("$.status", is("NOT_FOUND")))
+					.andExpect(jsonPath("$.message", is("Entity not found")))
+					.andExpect(jsonPath("$.errors", hasSize(1)))
+					.andExpect(jsonPath("$.errors.[0]", is("Entity not found")));;
 			// @formatter:on
 
 		}

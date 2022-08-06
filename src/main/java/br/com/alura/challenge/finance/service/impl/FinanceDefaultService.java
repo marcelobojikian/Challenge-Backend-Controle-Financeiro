@@ -32,8 +32,8 @@ public abstract class FinanceDefaultService<T extends FinanceEntity> implements 
 		LocalDate firstDayOfMonth = entity.getDataWith(TemporalAdjusters.firstDayOfMonth());
 		LocalDate lastDayOfMonth = entity.getDataWith(TemporalAdjusters.lastDayOfMonth());
 
-		List<T> entities = repository.findAllByDescricaoContainingIgnoreCaseAndDataBetween(descricao,
-				firstDayOfMonth, lastDayOfMonth);
+		List<T> entities = repository.findAllByDescricaoContainingIgnoreCaseAndDataBetween(descricao, firstDayOfMonth,
+				lastDayOfMonth);
 
 		if (!entities.isEmpty()) {
 			throw new BusinessException("There is this finance for this month");

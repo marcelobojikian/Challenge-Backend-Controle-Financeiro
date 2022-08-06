@@ -22,11 +22,11 @@ import br.com.alura.challenge.finance.model.Expenditure;
 @DataJpaTest
 class ExpenditureRepositoryTest {
 
-    @Autowired
-    TestEntityManager entityManager;
+	@Autowired
+	TestEntityManager entityManager;
 
-    @Autowired
-    ExpenditureRepository repository;
+	@Autowired
+	ExpenditureRepository repository;
 
 	@Test
 	@DisplayName("Should persist entity.")
