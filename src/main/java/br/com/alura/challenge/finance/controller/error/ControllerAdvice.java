@@ -1,6 +1,5 @@
 package br.com.alura.challenge.finance.controller.error;
 
-import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,6 +11,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 
 import br.com.alura.challenge.finance.exception.BusinessException;
 import br.com.alura.challenge.finance.exception.EntityNotFoundException;
@@ -36,22 +37,23 @@ public class ControllerAdvice {
 	}
 
 	@ExceptionHandler(HttpMessageNotReadableException.class)
-	public ResponseEntity<ResponseError> handleMissingRequestBody(HttpMessageNotReadableException e) {
+	public ResponseEntity<ResponseError> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
 		Throwable specificCause = e.getMostSpecificCause();
 
-		String message = null;
-		String errorMessage = null;
-
-		if (e.contains(DateTimeParseException.class)) {
-			message = "Invalid field";
-			errorMessage = specificCause.getMessage();
+		if (specificCause instanceof HttpMessageNotReadableException) {
+			ResponseError response = new ResponseError(HttpStatus.BAD_REQUEST, "Required request body",
+					"body is missing");
+			return new ResponseEntity<ResponseError>(response, new HttpHeaders(), response.getStatus());
+		} else if (specificCause instanceof InvalidFormatException) {
+			InvalidFormatException invalidFormatException = (InvalidFormatException) specificCause;
+			ResponseError response = new ResponseError(HttpStatus.BAD_REQUEST, "Invalid field",
+					"Value '" + invalidFormatException.getValue() + "' is not valid");
+			return new ResponseEntity<ResponseError>(response, new HttpHeaders(), response.getStatus());
 		} else {
-			message = "Required request body";
-			errorMessage = "body is missing";
+			ResponseError response = new ResponseError(HttpStatus.BAD_REQUEST, "Invalid field",
+					specificCause.getMessage());
+			return new ResponseEntity<ResponseError>(response, new HttpHeaders(), response.getStatus());
 		}
-
-		ResponseError response = new ResponseError(HttpStatus.BAD_REQUEST, message, errorMessage);
-		return new ResponseEntity<ResponseError>(response, new HttpHeaders(), response.getStatus());
 	}
 
 	@ExceptionHandler(BusinessException.class)

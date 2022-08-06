@@ -6,6 +6,7 @@ import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 import javax.validation.Valid;
@@ -81,7 +82,7 @@ class ControllerAdviceTest {
                 .post(URL_API_BEAN_INVALID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-                .content("{\"value\": \"123\" }");
+                .content("{\"value\": \"123\", \"description\": \"aaa\" }");
         
         mockMvc.perform(request)
 				.andExpect(status().isBadRequest())
@@ -89,6 +90,27 @@ class ControllerAdviceTest {
 				.andExpect(jsonPath("$.message", is("Invalid field")))
 				.andExpect(jsonPath("$.errors", hasSize(1)))
 				.andExpect(jsonPath("$.errors.[0]", is("date: must not be null")));
+		// @formatter:on
+
+	}
+
+	@Test
+	@DisplayName("Should throw invalid value field error")
+	public void shouldThrowInvalidValueFieldError() throws Exception {
+
+		// @formatter:off
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .post(URL_API_BEAN_INVALID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content("{\"value\": \"as\", \"date\": \"12/12/2022\" }"); 
+        
+        mockMvc.perform(request)
+				.andExpect(status().isBadRequest())
+				.andExpect(jsonPath("$.status", is("BAD_REQUEST")))
+				.andExpect(jsonPath("$.message", is("Invalid field")))
+				.andExpect(jsonPath("$.errors", hasSize(1)))
+				.andExpect(jsonPath("$.errors.[0]", is("Value 'as' is not valid")));
 		// @formatter:on
 
 	}
@@ -129,8 +151,8 @@ class ControllerAdviceTest {
 				.andExpect(status().isBadRequest())
 				.andExpect(jsonPath("$.status", is("BAD_REQUEST")))
 				.andExpect(jsonPath("$.message", is("Invalid fields")))
-				.andExpect(jsonPath("$.errors", hasSize(2)))
-				.andExpect(jsonPath("$.errors", hasItems("value: must not be empty","date: must not be null")));
+				.andExpect(jsonPath("$.errors", hasSize(3)))
+				.andExpect(jsonPath("$.errors", hasItems("value: must not be null","date: must not be null", "description: must not be empty")));
 		// @formatter:on
 
 	}
@@ -204,18 +226,37 @@ class SampleController {
 class SimpleBean {
 
 	@NotEmpty
-	String value;
+	String description;
+
+	@NotNull
+	BigDecimal value;
 
 	@NotNull
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
 	LocalDate date;
 
-	public String getValue() {
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public BigDecimal getValue() {
 		return value;
 	}
 
-	public void setValue(String value) {
+	public void setValue(BigDecimal value) {
 		this.value = value;
+	}
+
+	public LocalDate getDate() {
+		return date;
+	}
+
+	public void setDate(LocalDate date) {
+		this.date = date;
 	}
 
 }
