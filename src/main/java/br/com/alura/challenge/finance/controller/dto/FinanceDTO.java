@@ -6,9 +6,7 @@ import java.time.LocalDate;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-
-public class IncomeDTO {
+public class FinanceDTO {
 
 	private Long id;
 
@@ -19,13 +17,12 @@ public class IncomeDTO {
 	private BigDecimal valor;
 
 	@NotNull
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
 	private LocalDate data;
 
-	public IncomeDTO() {
+	public FinanceDTO() {
 	}
 
-	public IncomeDTO(Long id, String descricao, BigDecimal valor, LocalDate data) {
+	public FinanceDTO(Long id, String descricao, BigDecimal valor, LocalDate data) {
 		this.id = id;
 		this.descricao = descricao;
 		this.valor = valor;

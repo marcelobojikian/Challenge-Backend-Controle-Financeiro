@@ -1,39 +1,40 @@
 package br.com.alura.challenge.finance.controller.error;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.springframework.validation.BindingResult;
-import org.springframework.web.server.ResponseStatusException;
-
-import br.com.alura.challenge.finance.exception.BusinessException;
-import br.com.alura.challenge.finance.exception.EntityNotFoundException;
+import org.springframework.http.HttpStatus;
 
 public class ResponseError {
-	
-    private final List<String> errors;
 
-    public ResponseError(BindingResult bindingResult) {
-        this.errors = new ArrayList<>();
-        bindingResult.getAllErrors()
-                .forEach(error -> this.errors.add(error.getDefaultMessage()));
-    }
+	private HttpStatus status;
+	private String message;
+	private List<String> errors;
 
-    public ResponseError(EntityNotFoundException e) {
-        this.errors = Arrays.asList(e.getMessage());
-    }
+	public ResponseError(HttpStatus status, String message, List<String> errors) {
+		super();
+		this.status = status;
+		this.message = message;
+		this.errors = errors;
+	}
 
-    public ResponseError(BusinessException e) {
-        this.errors = Arrays.asList(e.getMessage());
-    }
+	public ResponseError(HttpStatus status, String message, String error) {
+		super();
+		this.status = status;
+		this.message = message;
+		errors = Arrays.asList(error);
+	}
 
-    public ResponseError(ResponseStatusException e) {
-        this.errors = Arrays.asList(e.getReason());
-    }
+	public HttpStatus getStatus() {
+		return status;
+	}
 
-    public List<String> getErrors() {
-        return errors;
-    }
+	public String getMessage() {
+		return message;
+	}
+
+	public List<String> getErrors() {
+		return errors;
+	}
 
 }

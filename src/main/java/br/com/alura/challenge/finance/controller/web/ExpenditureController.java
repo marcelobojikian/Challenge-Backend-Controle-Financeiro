@@ -17,19 +17,19 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.alura.challenge.finance.controller.dto.FinanceDTO;
-import br.com.alura.challenge.finance.model.Income;
-import br.com.alura.challenge.finance.service.IncomeService;
+import br.com.alura.challenge.finance.model.Expenditure;
+import br.com.alura.challenge.finance.service.ExpenditureService;
 
 @RestController
-@RequestMapping("/api/incomes")
-public class IncomeController {
+@RequestMapping("/api/expenditures")
+public class ExpenditureController {
 
-	private FinanceController<Income> service;
+	private FinanceController<Expenditure> service;
 
 	private ModelMapper modelMapper;
 
-	public IncomeController(IncomeService service, ModelMapper modelMapper) {
-		this.service = new FinanceController<Income>(service, modelMapper);
+	public ExpenditureController(ExpenditureService service, ModelMapper modelMapper) {
+		this.service = new FinanceController<Expenditure>(service, modelMapper);
 		this.modelMapper = modelMapper;
 	}
 
@@ -46,14 +46,14 @@ public class IncomeController {
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
 	public FinanceDTO create(@RequestBody @Valid FinanceDTO dto) {
-		Income entity = modelMapper.map(dto, Income.class);
+		Expenditure entity = modelMapper.map(dto, Expenditure.class);
 		return service.create(entity);
 	}
 
 	@PutMapping("/{id}")
 	@ResponseStatus(HttpStatus.OK)
 	public FinanceDTO update(@PathVariable Long id, @RequestBody @Valid FinanceDTO dto) {
-		Income entity = modelMapper.map(dto, Income.class);
+		Expenditure entity = modelMapper.map(dto, Expenditure.class);
 		return service.update(id, entity);
 	}
 

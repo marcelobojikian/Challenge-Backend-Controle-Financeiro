@@ -1,41 +1,23 @@
 package br.com.alura.challenge.finance.model;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.Table;
 
 @Entity
-public class Expenditure implements Serializable {
+@Table(name = "despesas")
+public class Expenditure extends FinanceEntity {
 
 	private static final long serialVersionUID = 1L;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
-
-	@Column
-	private String descricao;
-
-	@Column
-	private BigDecimal valor;
-	
-	@Column
-	private LocalDateTime data;
-
-	public Expenditure(String descricao) {
-		this(descricao, BigDecimal.ZERO, LocalDateTime.now());
+	public Expenditure() {
+		super();
 	}
 
-	public Expenditure(String descricao, BigDecimal valor, LocalDateTime data) {
-		this.descricao = descricao;
-		this.valor = BigDecimal.ZERO;
-		this.data = data;
+	public Expenditure(Long id, String descricao, BigDecimal valor, LocalDate data) {
+		super(id, descricao, valor, data);
 	}
 
 }
