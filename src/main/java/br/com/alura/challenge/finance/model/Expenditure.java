@@ -12,6 +12,10 @@ public class Expenditure extends FinanceEntity {
 
 	private static final long serialVersionUID = 1L;
 
+	public Expenditure() {
+		super();
+	}
+
 	public Expenditure(Long id, String descricao, BigDecimal valor, LocalDate data) {
 		super(id, descricao, valor, data);
 	}

@@ -30,6 +30,9 @@ public abstract class FinanceEntity implements Serializable {
 	@Column
 	private LocalDate data;
 
+	public FinanceEntity() {
+	}
+
 	public FinanceEntity(Long id, String descricao, BigDecimal valor, LocalDate data) {
 		this.id = id;
 		this.descricao = descricao;
