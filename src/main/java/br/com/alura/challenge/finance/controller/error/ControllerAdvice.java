@@ -1,5 +1,6 @@
 package br.com.alura.challenge.finance.controller.error;
 
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,8 +37,21 @@ public class ControllerAdvice {
 
 	@ExceptionHandler(HttpMessageNotReadableException.class)
 	public ResponseEntity<ResponseError> handleMissingRequestBody(HttpMessageNotReadableException e) {
-		ResponseError apiError = new ResponseError(HttpStatus.BAD_REQUEST, "Required request body", "body is missing");
-		return new ResponseEntity<ResponseError>(apiError, new HttpHeaders(), apiError.getStatus());
+		Throwable specificCause = e.getMostSpecificCause();
+
+		String message = null;
+		String errorMessage = null;
+
+		if (e.contains(DateTimeParseException.class)) {
+			message = "Invalid field";
+			errorMessage = specificCause.getMessage();
+		} else {
+			message = "Required request body";
+			errorMessage = "body is missing";
+		}
+
+		ResponseError response = new ResponseError(HttpStatus.BAD_REQUEST, message, errorMessage);
+		return new ResponseEntity<ResponseError>(response, new HttpHeaders(), response.getStatus());
 	}
 
 	@ExceptionHandler(BusinessException.class)

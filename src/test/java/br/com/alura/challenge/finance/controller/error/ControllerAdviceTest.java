@@ -6,8 +6,11 @@ import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.time.LocalDate;
+
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,6 +18,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -27,6 +31,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+import br.com.alura.challenge.finance.config.DateFormatConfig;
 import br.com.alura.challenge.finance.exception.BusinessException;
 import br.com.alura.challenge.finance.exception.EntityNotFoundException;
 
@@ -34,6 +41,7 @@ import br.com.alura.challenge.finance.exception.EntityNotFoundException;
 @WebMvcTest(SampleController.class)
 @ContextConfiguration(classes = { SampleController.class, ControllerAdvice.class })
 @AutoConfigureMockMvc
+@Import(DateFormatConfig.class)
 class ControllerAdviceTest {
 
 	static final String URL_API = "/api/exception";
@@ -80,7 +88,28 @@ class ControllerAdviceTest {
 				.andExpect(jsonPath("$.status", is("BAD_REQUEST")))
 				.andExpect(jsonPath("$.message", is("Invalid field")))
 				.andExpect(jsonPath("$.errors", hasSize(1)))
-				.andExpect(jsonPath("$.errors.[0]", is("description: must not be empty")));
+				.andExpect(jsonPath("$.errors.[0]", is("date: must not be null")));
+		// @formatter:on
+
+	}
+
+	@Test
+	@DisplayName("Should throw invalid date field error")
+	public void shouldThrowInvalidDateFieldError() throws Exception {
+
+		// @formatter:off
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .post(URL_API_BEAN_INVALID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content("{\"value\": \"123\", \"date\": \"231\" }"); 
+        
+        mockMvc.perform(request)
+				.andExpect(status().isBadRequest())
+				.andExpect(jsonPath("$.status", is("BAD_REQUEST")))
+				.andExpect(jsonPath("$.message", is("Invalid field")))
+				.andExpect(jsonPath("$.errors", hasSize(1)))
+				.andExpect(jsonPath("$.errors.[0]", is("Text '231' could not be parsed at index 2")));
 		// @formatter:on
 
 	}
@@ -101,7 +130,7 @@ class ControllerAdviceTest {
 				.andExpect(jsonPath("$.status", is("BAD_REQUEST")))
 				.andExpect(jsonPath("$.message", is("Invalid fields")))
 				.andExpect(jsonPath("$.errors", hasSize(2)))
-				.andExpect(jsonPath("$.errors", hasItems("value: must not be empty","description: must not be empty")));
+				.andExpect(jsonPath("$.errors", hasItems("value: must not be empty","date: must not be null")));
 		// @formatter:on
 
 	}
@@ -177,8 +206,9 @@ class SimpleBean {
 	@NotEmpty
 	String value;
 
-	@NotEmpty
-	String description;
+	@NotNull
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
+	LocalDate date;
 
 	public String getValue() {
 		return value;

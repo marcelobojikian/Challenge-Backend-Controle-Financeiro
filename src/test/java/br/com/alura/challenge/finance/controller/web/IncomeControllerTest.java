@@ -15,7 +15,6 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -25,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
@@ -32,9 +32,8 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
+import br.com.alura.challenge.finance.config.DateFormatConfig;
 import br.com.alura.challenge.finance.controller.dto.FinanceDTO;
 import br.com.alura.challenge.finance.exception.EntityNotFoundException;
 import br.com.alura.challenge.finance.model.Income;
@@ -43,10 +42,13 @@ import br.com.alura.challenge.finance.service.IncomeService;
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(controllers = { IncomeController.class })
 @AutoConfigureMockMvc
+@Import(DateFormatConfig.class)
 class IncomeControllerTest {
 
 	static final String URL_API = "/api/incomes";
-	static ObjectMapper mapper;
+
+	@Autowired
+	ObjectMapper mapper;
 
 	@Autowired
 	MockMvc mockMvc;
@@ -56,13 +58,6 @@ class IncomeControllerTest {
 
 	@MockBean
 	ModelMapper modelMapper;
-
-	@BeforeAll
-	static void setup() {
-		mapper = new ObjectMapper();
-		mapper.registerModule(new JavaTimeModule());
-		mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-	}
 
 	@Nested
 	@DisplayName("Method GET ALL")
