@@ -109,10 +109,9 @@ class ExpenditureControllerTest {
 
 	        mockMvc.perform(request)
 					.andExpect(status().isNotFound())
-					.andExpect(jsonPath("$.status", is("NOT_FOUND")))
-					.andExpect(jsonPath("$.message", is("Entity not found")))
-					.andExpect(jsonPath("$.errors", hasSize(1)))
-					.andExpect(jsonPath("$.errors.[0]", is("Entity not found")));
+					.andExpect(jsonPath("$.message", is("Record not found")))
+					.andExpect(jsonPath("$.details", hasSize(1)))
+					.andExpect(jsonPath("$.details.[0]", is("Entity not found")));
 			// @formatter:on
 
 		}
@@ -165,10 +164,9 @@ class ExpenditureControllerTest {
 	        
 	        mockMvc.perform(request)
 					.andExpect(status().isNotFound())
-					.andExpect(jsonPath("$.status", is("NOT_FOUND")))
-					.andExpect(jsonPath("$.message", is("Entity not found")))
-					.andExpect(jsonPath("$.errors", hasSize(1)))
-					.andExpect(jsonPath("$.errors.[0]", is("Entity not found")));;
+					.andExpect(jsonPath("$.message", is("Record not found")))
+					.andExpect(jsonPath("$.details", hasSize(1)))
+					.andExpect(jsonPath("$.details.[0]", is("Entity not found")));;
 			// @formatter:on
 
 		}
@@ -285,10 +283,9 @@ class ExpenditureControllerTest {
 			
 	        mockMvc.perform(request)
 					.andExpect(status().isNotFound())
-					.andExpect(jsonPath("$.status", is("NOT_FOUND")))
-					.andExpect(jsonPath("$.message", is("Entity not found")))
-					.andExpect(jsonPath("$.errors", hasSize(1)))
-					.andExpect(jsonPath("$.errors.[0]", is("Entity not found")));;
+					.andExpect(jsonPath("$.message", is("Record not found")))
+					.andExpect(jsonPath("$.details", hasSize(1)))
+					.andExpect(jsonPath("$.details.[0]", is("Entity not found")));;
 			// @formatter:on
 
 		}
