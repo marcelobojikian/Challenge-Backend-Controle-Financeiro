@@ -6,6 +6,9 @@ import java.time.LocalDate;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
+import org.springframework.hateoas.server.core.Relation;
+
+@Relation(collectionRelation = "finances", itemRelation = "finance")
 public class FinanceDTO {
 
 	private Long id;

@@ -5,7 +5,10 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.modelmapper.ModelMapper;
-import org.springframework.http.HttpStatus;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.IanaLinkRelations;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,10 +16,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.alura.challenge.finance.controller.dto.FinanceDTO;
+import br.com.alura.challenge.finance.controller.hateos.ExpenditureModelAssembler;
 import br.com.alura.challenge.finance.model.Expenditure;
 import br.com.alura.challenge.finance.service.ExpenditureService;
 
@@ -24,43 +27,56 @@ import br.com.alura.challenge.finance.service.ExpenditureService;
 @RequestMapping("/api/expenditures")
 public class ExpenditureController {
 
-	private FinanceController<Expenditure> service;
+	private final ExpenditureModelAssembler assembler;
 
-	private ModelMapper modelMapper;
+	private final FinanceController<Expenditure> service;
 
-	public ExpenditureController(ExpenditureService service, ModelMapper modelMapper) {
+	private final ModelMapper modelMapper;
+
+	public ExpenditureController(ExpenditureService service, ModelMapper modelMapper,
+			ExpenditureModelAssembler assembler) {
 		this.service = new FinanceController<Expenditure>(service, modelMapper);
 		this.modelMapper = modelMapper;
+		this.assembler = assembler;
 	}
 
 	@GetMapping
-	public List<FinanceDTO> findAll() {
-		return service.findAll();
+	public ResponseEntity<?> findAll() {
+		List<FinanceDTO> finances = service.findAll();
+
+		if (finances.isEmpty()) {
+			return ResponseEntity.noContent().build();
+		}
+
+		CollectionModel<EntityModel<FinanceDTO>> collectionModel = assembler.toCollectionModel(finances);
+
+		return ResponseEntity.ok(collectionModel);
 	}
 
 	@GetMapping("/{id}")
-	public FinanceDTO findById(@PathVariable Long id) {
-		return service.findById(id);
+	public EntityModel<FinanceDTO> findById(@PathVariable Long id) {
+		FinanceDTO entity = service.findById(id);
+		return assembler.toModel(entity);
 	}
 
 	@PostMapping
-	@ResponseStatus(HttpStatus.CREATED)
-	public FinanceDTO create(@RequestBody @Valid FinanceDTO dto) {
+	public ResponseEntity<?> create(@RequestBody @Valid FinanceDTO dto) {
 		Expenditure entity = modelMapper.map(dto, Expenditure.class);
-		return service.create(entity);
+		EntityModel<FinanceDTO> entityModel = assembler.toModel(service.create(entity));
+		return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(entityModel);
 	}
 
 	@PutMapping("/{id}")
-	@ResponseStatus(HttpStatus.OK)
-	public FinanceDTO update(@PathVariable Long id, @RequestBody @Valid FinanceDTO dto) {
+	public ResponseEntity<?> update(@PathVariable Long id, @RequestBody @Valid FinanceDTO dto) {
 		Expenditure entity = modelMapper.map(dto, Expenditure.class);
-		return service.update(id, entity);
+		EntityModel<FinanceDTO> entityModel = assembler.toModel(service.update(id, entity));
+		return ResponseEntity.ok(entityModel);
 	}
 
 	@DeleteMapping("/{id}")
-	@ResponseStatus(HttpStatus.OK)
-	public void delete(@PathVariable Long id) {
+	public ResponseEntity<?> delete(@PathVariable Long id) {
 		service.delete(id);
+		return ResponseEntity.noContent().build();
 	}
 
 }

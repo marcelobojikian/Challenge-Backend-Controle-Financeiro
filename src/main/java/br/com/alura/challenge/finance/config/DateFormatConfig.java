@@ -8,9 +8,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 
+import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -25,10 +27,13 @@ public class DateFormatConfig {
 	@Bean
 	@Primary
 	public ObjectMapper serializingObjectMapper() {
+		JsonFactory factory = new JsonFactory();
+		factory.enable(JsonParser.Feature.ALLOW_SINGLE_QUOTES);
 		ObjectMapper objectMapper = new ObjectMapper();
 		JavaTimeModule javaTimeModule = new JavaTimeModule();
 		javaTimeModule.addSerializer(LocalDate.class, new LocalDateSerializer());
 		javaTimeModule.addDeserializer(LocalDate.class, new LocalDateDeserializer());
+		objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 		objectMapper.registerModule(javaTimeModule);
 		return objectMapper;
 	}

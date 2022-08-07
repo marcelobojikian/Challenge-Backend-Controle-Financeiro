@@ -35,12 +35,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import br.com.alura.challenge.finance.config.DateFormatConfig;
 import br.com.alura.challenge.finance.controller.dto.FinanceDTO;
+import br.com.alura.challenge.finance.controller.hateos.ExpenditureModelAssembler;
 import br.com.alura.challenge.finance.exception.EntityNotFoundException;
 import br.com.alura.challenge.finance.model.Expenditure;
 import br.com.alura.challenge.finance.service.ExpenditureService;
 
 @ExtendWith(SpringExtension.class)
-@WebMvcTest(controllers = { ExpenditureController.class })
+@WebMvcTest(controllers = { ExpenditureController.class, ExpenditureModelAssembler.class })
 @AutoConfigureMockMvc
 @Import(DateFormatConfig.class)
 class ExpenditureControllerTest {
@@ -94,25 +95,20 @@ class ExpenditureControllerTest {
 		}
 
 		@Test
-		@DisplayName("Should not find - status 404")
-		public void errorFind() throws Exception {
+		@DisplayName("Should no content")
+		public void shouldNoContent() throws Exception {
 
-			EntityNotFoundException expected = new EntityNotFoundException("Entity not found");
-
-			given(service.findById(any(Long.class))).willThrow(expected);
+			given(service.findAll()).willReturn(Arrays.asList());
+			given(modelMapper.map(any(Object.class), any(Type.class))).willReturn(Arrays.asList());
 
 			// @formatter:off
 			MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-	                .get(URL_API+"/-1")
+	                .get(URL_API)
 	                .contentType(MediaType.APPLICATION_JSON)
 	                .accept(MediaType.APPLICATION_JSON);
 
 	        mockMvc.perform(request)
-					.andExpect(status().isNotFound())
-					.andExpect(jsonPath("$.status", is("NOT_FOUND")))
-					.andExpect(jsonPath("$.message", is("Entity not found")))
-					.andExpect(jsonPath("$.errors", hasSize(1)))
-					.andExpect(jsonPath("$.errors.[0]", is("Entity not found")));
+					.andExpect(status().isNoContent());
 			// @formatter:on
 
 		}
@@ -165,10 +161,9 @@ class ExpenditureControllerTest {
 	        
 	        mockMvc.perform(request)
 					.andExpect(status().isNotFound())
-					.andExpect(jsonPath("$.status", is("NOT_FOUND")))
-					.andExpect(jsonPath("$.message", is("Entity not found")))
-					.andExpect(jsonPath("$.errors", hasSize(1)))
-					.andExpect(jsonPath("$.errors.[0]", is("Entity not found")));;
+					.andExpect(jsonPath("$.message", is("Record not found")))
+					.andExpect(jsonPath("$.details", hasSize(1)))
+					.andExpect(jsonPath("$.details.[0]", is("Entity not found")));;
 			// @formatter:on
 
 		}
@@ -264,7 +259,7 @@ class ExpenditureControllerTest {
 	                .accept(MediaType.APPLICATION_JSON);
 	        
 	        mockMvc.perform(request)
-					.andExpect(status().isOk());
+					.andExpect(status().isNoContent());
 			// @formatter:on
 
 		}
@@ -285,10 +280,9 @@ class ExpenditureControllerTest {
 			
 	        mockMvc.perform(request)
 					.andExpect(status().isNotFound())
-					.andExpect(jsonPath("$.status", is("NOT_FOUND")))
-					.andExpect(jsonPath("$.message", is("Entity not found")))
-					.andExpect(jsonPath("$.errors", hasSize(1)))
-					.andExpect(jsonPath("$.errors.[0]", is("Entity not found")));;
+					.andExpect(jsonPath("$.message", is("Record not found")))
+					.andExpect(jsonPath("$.details", hasSize(1)))
+					.andExpect(jsonPath("$.details.[0]", is("Entity not found")));;
 			// @formatter:on
 
 		}

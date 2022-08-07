@@ -1,4 +1,4 @@
-package br.com.alura.challenge.finance.controller.error;
+package br.com.alura.challenge.finance.controller.advice;
 
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.hasSize;
@@ -40,18 +40,38 @@ import br.com.alura.challenge.finance.exception.EntityNotFoundException;
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(SampleController.class)
-@ContextConfiguration(classes = { SampleController.class, ControllerAdvice.class })
+@ContextConfiguration(classes = { SampleController.class, RestAdviceController.class })
 @AutoConfigureMockMvc
 @Import(DateFormatConfig.class)
-class ControllerAdviceTest {
+class RestAdviceControllerTest {
 
 	static final String URL_API = "/api/exception";
 	static final String URL_API_BEAN_INVALID = URL_API + SampleController.PATH_BEAN_INVALID;
 	static final String URL_API_NOT_FOUND = URL_API + SampleController.PATH_BEAN_NOT_FOUND;
 	static final String URL_API_BUSINESS_EXCEPTION = URL_API + SampleController.PATH_BUSINESS_EXCEPTION;
+	static final String URL_API_EXCEPTION = URL_API + SampleController.PATH_EXCEPTION;
 
 	@Autowired
 	MockMvc mockMvc;
+
+	@Test
+	@DisplayName("Should throw internal server error")
+	public void shouldThrowInternalServerError() throws Exception {
+
+		// @formatter:off
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .get(URL_API_EXCEPTION)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON);
+        
+        mockMvc.perform(request)
+				.andExpect(status().isInternalServerError())
+				.andExpect(jsonPath("$.message", is("Server Error")))
+				.andExpect(jsonPath("$.details", hasSize(1)))
+				.andExpect(jsonPath("$.details.[0]", is("Generic Error")));
+		// @formatter:on
+
+	}
 
 	@Test
 	@DisplayName("Should throw not empty body error")
@@ -65,10 +85,9 @@ class ControllerAdviceTest {
         
         mockMvc.perform(request)
 				.andExpect(status().isBadRequest())
-				.andExpect(jsonPath("$.status", is("BAD_REQUEST")))
 				.andExpect(jsonPath("$.message", is("Required request body")))
-				.andExpect(jsonPath("$.errors", hasSize(1)))
-				.andExpect(jsonPath("$.errors.[0]", is("body is missing")));
+				.andExpect(jsonPath("$.details", hasSize(1)))
+				.andExpect(jsonPath("$.details.[0]", is("body is missing")));
 		// @formatter:on
 
 	}
@@ -86,10 +105,9 @@ class ControllerAdviceTest {
         
         mockMvc.perform(request)
 				.andExpect(status().isBadRequest())
-				.andExpect(jsonPath("$.status", is("BAD_REQUEST")))
 				.andExpect(jsonPath("$.message", is("Invalid field")))
-				.andExpect(jsonPath("$.errors", hasSize(1)))
-				.andExpect(jsonPath("$.errors.[0]", is("date: must not be null")));
+				.andExpect(jsonPath("$.details", hasSize(1)))
+				.andExpect(jsonPath("$.details.[0]", is("date: must not be null")));
 		// @formatter:on
 
 	}
@@ -107,10 +125,9 @@ class ControllerAdviceTest {
         
         mockMvc.perform(request)
 				.andExpect(status().isBadRequest())
-				.andExpect(jsonPath("$.status", is("BAD_REQUEST")))
 				.andExpect(jsonPath("$.message", is("Invalid field")))
-				.andExpect(jsonPath("$.errors", hasSize(1)))
-				.andExpect(jsonPath("$.errors.[0]", is("Value 'as' is not valid")));
+				.andExpect(jsonPath("$.details", hasSize(1)))
+				.andExpect(jsonPath("$.details.[0]", is("Value 'as' is not valid")));
 		// @formatter:on
 
 	}
@@ -128,10 +145,9 @@ class ControllerAdviceTest {
         
         mockMvc.perform(request)
 				.andExpect(status().isBadRequest())
-				.andExpect(jsonPath("$.status", is("BAD_REQUEST")))
 				.andExpect(jsonPath("$.message", is("Invalid field")))
-				.andExpect(jsonPath("$.errors", hasSize(1)))
-				.andExpect(jsonPath("$.errors.[0]", is("Text '231' could not be parsed at index 2")));
+				.andExpect(jsonPath("$.details", hasSize(1)))
+				.andExpect(jsonPath("$.details.[0]", is("Text '231' could not be parsed at index 2")));
 		// @formatter:on
 
 	}
@@ -149,10 +165,9 @@ class ControllerAdviceTest {
         
         mockMvc.perform(request)
 				.andExpect(status().isBadRequest())
-				.andExpect(jsonPath("$.status", is("BAD_REQUEST")))
 				.andExpect(jsonPath("$.message", is("Invalid fields")))
-				.andExpect(jsonPath("$.errors", hasSize(3)))
-				.andExpect(jsonPath("$.errors", hasItems("value: must not be null","date: must not be null", "description: must not be empty")));
+				.andExpect(jsonPath("$.details", hasSize(3)))
+				.andExpect(jsonPath("$.details", hasItems("value: must not be null","date: must not be null", "description: must not be empty")));
 		// @formatter:on
 
 	}
@@ -169,10 +184,9 @@ class ControllerAdviceTest {
         
         mockMvc.perform(request)
 				.andExpect(status().isNotFound())
-				.andExpect(jsonPath("$.status", is("NOT_FOUND")))
-				.andExpect(jsonPath("$.message", is("Entity not found")))
-				.andExpect(jsonPath("$.errors", hasSize(1)))
-				.andExpect(jsonPath("$.errors.[0]", is("Entity not found")));
+				.andExpect(jsonPath("$.message", is("Record not found")))
+				.andExpect(jsonPath("$.details", hasSize(1)))
+				.andExpect(jsonPath("$.details.[0]", is("Entity not found")));
 		// @formatter:on
 
 	}
@@ -189,10 +203,9 @@ class ControllerAdviceTest {
         
         mockMvc.perform(request)
 				.andExpect(status().isBadRequest())
-				.andExpect(jsonPath("$.status", is("BAD_REQUEST")))
 				.andExpect(jsonPath("$.message", is("Error business")))
-				.andExpect(jsonPath("$.errors", hasSize(1)))
-				.andExpect(jsonPath("$.errors.[0]", is("Error business")));
+				.andExpect(jsonPath("$.details", hasSize(1)))
+				.andExpect(jsonPath("$.details.[0]", is("Error business")));
 		// @formatter:on
 
 	}
@@ -200,12 +213,13 @@ class ControllerAdviceTest {
 }
 
 @RestController
-@RequestMapping(ControllerAdviceTest.URL_API)
+@RequestMapping(RestAdviceControllerTest.URL_API)
 class SampleController {
 
 	static final String PATH_BEAN_INVALID = "/bean/validator";
 	static final String PATH_BEAN_NOT_FOUND = "/not_found";
 	static final String PATH_BUSINESS_EXCEPTION = "/business_exception";
+	static final String PATH_EXCEPTION = "/exception";
 
 	@PostMapping(PATH_BEAN_INVALID)
 	public void throwMethodArgumentNotValidException(@RequestBody @Valid SimpleBean propertie) {
@@ -219,6 +233,11 @@ class SampleController {
 	@GetMapping(PATH_BUSINESS_EXCEPTION)
 	public void throwBusinessException() {
 		throw new BusinessException("Error business");
+	}
+
+	@GetMapping(PATH_EXCEPTION)
+	public void throwException() throws Exception {
+		throw new Exception("Generic Error");
 	}
 
 }
