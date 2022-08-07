@@ -28,7 +28,7 @@ public class DateFormatConfig {
 	@Primary
 	public ObjectMapper serializingObjectMapper() {
 		JsonFactory factory = new JsonFactory();
-	    factory.enable(JsonParser.Feature.ALLOW_SINGLE_QUOTES);
+		factory.enable(JsonParser.Feature.ALLOW_SINGLE_QUOTES);
 		ObjectMapper objectMapper = new ObjectMapper();
 		JavaTimeModule javaTimeModule = new JavaTimeModule();
 		javaTimeModule.addSerializer(LocalDate.class, new LocalDateSerializer());

@@ -23,20 +23,19 @@ public class RestAdviceController {
 
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	public ResponseEntity<ApiErrorDTO> handleValidateException(MethodArgumentNotValidException ex) {
-		
+
 		List<String> details = new ArrayList<>();
 		ex.getBindingResult().getFieldErrors()
 				.forEach(error -> details.add(error.getField() + ": " + error.getDefaultMessage()));
 
-		ex.getBindingResult().getGlobalErrors()
-				.forEach(error -> details.add(error.getDefaultMessage()));
-		
+		ex.getBindingResult().getGlobalErrors().forEach(error -> details.add(error.getDefaultMessage()));
+
 		String messageTittle = details.size() > 1 ? "Invalid fields" : "Invalid field";
-		
+
 		ApiErrorDTO error = new ApiErrorDTO(messageTittle, details);
 		return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
 	}
-	
+
 	@ExceptionHandler(Exception.class)
 	public final ResponseEntity<ApiErrorDTO> handleAllExceptions(Exception ex, WebRequest request) {
 		List<String> details = new ArrayList<>();
@@ -71,14 +70,15 @@ public class RestAdviceController {
 		} else if (specificCause instanceof InvalidFormatException) {
 			return handleInvalidFormatException((InvalidFormatException) specificCause);
 		}
-		
-		ApiErrorDTO error = new ApiErrorDTO("Invalid field",  Arrays.asList(specificCause.getMessage()));
+
+		ApiErrorDTO error = new ApiErrorDTO("Invalid field", Arrays.asList(specificCause.getMessage()));
 		return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
 	}
 
 	public ResponseEntity<ApiErrorDTO> handleInvalidFormatException(InvalidFormatException ex) {
-		ApiErrorDTO error = new ApiErrorDTO("Invalid field", Arrays.asList("Value '" + ex.getValue() + "' is not valid"));
+		ApiErrorDTO error = new ApiErrorDTO("Invalid field",
+				Arrays.asList("Value '" + ex.getValue() + "' is not valid"));
 		return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
 	}
-	
+
 }
