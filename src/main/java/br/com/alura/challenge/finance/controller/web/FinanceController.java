@@ -6,6 +6,8 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import com.querydsl.core.types.Predicate;
+
 import br.com.alura.challenge.finance.controller.dto.FinanceDTO;
 import br.com.alura.challenge.finance.model.FinanceEntity;
 import br.com.alura.challenge.finance.service.FinanceService;
@@ -20,8 +22,8 @@ public class FinanceController<T extends FinanceEntity> {
 		this.modelMapper = modelMapper;
 	}
 
-	public List<FinanceDTO> findAll() {
-		List<T> entities = service.findAll();
+	public List<FinanceDTO> findAll(Predicate predicate) {
+		Iterable<T> entities = service.findAll(predicate);
 		return modelMapper.map(entities, new TypeToken<List<FinanceDTO>>() {
 		}.getType());
 	}

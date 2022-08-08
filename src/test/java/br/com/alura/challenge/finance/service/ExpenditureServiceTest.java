@@ -24,6 +24,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Predicate;
+
 import br.com.alura.challenge.finance.exception.BusinessException;
 import br.com.alura.challenge.finance.exception.EntityNotFoundException;
 import br.com.alura.challenge.finance.model.Expenditure;
@@ -52,6 +55,21 @@ class ExpenditureServiceTest {
 			given(repository.findAll()).willReturn(Arrays.asList(expected, secondExpected));
 
 			List<Expenditure> result = service.findAll();
+
+			assertThat(result).contains(expected, secondExpected);
+
+		}
+
+		@Test
+		@DisplayName("Should find all with Predicate")
+		public void shouldFindWithPredicate() {
+
+			Expenditure expected = new Expenditure(1l, "Test", BigDecimal.valueOf(23), toDate("03/08/2022"));
+			Expenditure secondExpected = new Expenditure(2l, "Test 2", BigDecimal.valueOf(44), toDate("11/07/2022"));
+
+			given(repository.findAll(any(Predicate.class))).willReturn(Arrays.asList(expected, secondExpected));
+
+			Iterable<Expenditure> result = service.findAll(new BooleanBuilder());
 
 			assertThat(result).contains(expected, secondExpected);
 

@@ -24,6 +24,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Predicate;
+
 import br.com.alura.challenge.finance.exception.BusinessException;
 import br.com.alura.challenge.finance.exception.EntityNotFoundException;
 import br.com.alura.challenge.finance.model.Income;
@@ -33,25 +36,40 @@ import br.com.alura.challenge.finance.repository.IncomeRepository;
 class IncomeServiceTest {
 
 	@InjectMocks
-	IncomeService incomeService;
+	IncomeService service;
 
 	@Mock
 	IncomeRepository repository;
 
 	@Nested
-	@DisplayName("Find All Income ")
-	class FindAllIncoming {
+	@DisplayName("Find All ")
+	class FindAll {
 
 		@Test
 		@DisplayName("Should find all")
-		public void shouldFindIncome() {
+		public void shouldFind() {
 
 			Income expected = new Income(1l, "Test", BigDecimal.valueOf(23), toDate("03/08/2022"));
 			Income secondExpected = new Income(2l, "Test 2", BigDecimal.valueOf(44), toDate("11/07/2022"));
 
 			given(repository.findAll()).willReturn(Arrays.asList(expected, secondExpected));
 
-			List<Income> result = incomeService.findAll();
+			List<Income> result = service.findAll();
+
+			assertThat(result).contains(expected, secondExpected);
+
+		}
+
+		@Test
+		@DisplayName("Should find all with Predicate")
+		public void shouldFindWithPredicate() {
+
+			Income expected = new Income(1l, "Test", BigDecimal.valueOf(23), toDate("03/08/2022"));
+			Income secondExpected = new Income(2l, "Test 2", BigDecimal.valueOf(44), toDate("11/07/2022"));
+
+			given(repository.findAll(any(Predicate.class))).willReturn(Arrays.asList(expected, secondExpected));
+
+			Iterable<Income> result = service.findAll(new BooleanBuilder());
 
 			assertThat(result).contains(expected, secondExpected);
 
@@ -59,10 +77,10 @@ class IncomeServiceTest {
 
 		@Test
 		@DisplayName("Should find empty list")
-		public void shouldNotFindIncome() {
+		public void shouldNotFind() {
 
 			given(repository.findAll()).willReturn(Arrays.asList());
-			List<Income> result = incomeService.findAll();
+			List<Income> result = service.findAll();
 
 			assertThat(result).isEmpty();
 
@@ -71,18 +89,18 @@ class IncomeServiceTest {
 	}
 
 	@Nested
-	@DisplayName("Find Income by ID")
-	class FindByIdIncoming {
+	@DisplayName("Find by ID")
+	class FindById {
 
 		@Test
 		@DisplayName("Should find by id")
-		public void shouldFindIncome() {
+		public void shouldFind() {
 
 			Income expected = new Income(1l, "Test", BigDecimal.valueOf(23), toDate("03/08/2022"));
 
 			given(repository.findById(anyLong())).willReturn(Optional.of(expected));
 
-			Income result = incomeService.findById(1L);
+			Income result = service.findById(1L);
 
 			assertThat(result).isEqualTo(expected);
 
@@ -90,12 +108,12 @@ class IncomeServiceTest {
 
 		@Test
 		@DisplayName("Should throw exception")
-		public void shouldNotFindIncome() {
+		public void shouldNotFind() {
 
 			given(repository.findById(anyLong())).willReturn(Optional.empty());
 
 			assertThrows(EntityNotFoundException.class, () -> {
-				incomeService.findById(1L);
+				service.findById(1L);
 			});
 
 		}
@@ -103,12 +121,12 @@ class IncomeServiceTest {
 	}
 
 	@Nested
-	@DisplayName("Create Income")
-	class CreateIncoming {
+	@DisplayName("Create")
+	class Create {
 
 		@Test
 		@DisplayName("Should create")
-		public void shouldCreateIncome() {
+		public void shouldCreate() {
 
 			Income expected = new Income(1l, "Test", BigDecimal.valueOf(23), toDate("03/08/2022"));
 
@@ -117,7 +135,7 @@ class IncomeServiceTest {
 			given(repository.save(any(Income.class))).willReturn(expected);
 
 			Income entity = new Income(null, "Test", BigDecimal.valueOf(23), toDate("03/08/2022"));
-			Income result = incomeService.save(entity);
+			Income result = service.save(entity);
 
 			assertThat(result.getId()).isEqualTo(expected.getId());
 			assertThat(result.getDescricao()).isEqualTo(expected.getDescricao());
@@ -137,7 +155,7 @@ class IncomeServiceTest {
 			given(repository.save(any(Income.class))).willReturn(expected);
 
 			Income entity = new Income(null, "Test", BigDecimal.valueOf(23), toDate("03/08/2022"));
-			Income result = incomeService.save(entity);
+			Income result = service.save(entity);
 
 			assertThat(result.getId()).isEqualTo(expected.getId());
 			assertThat(result.getDescricao()).isEqualTo(expected.getDescricao());
@@ -148,7 +166,7 @@ class IncomeServiceTest {
 
 		@Test
 		@DisplayName("Should throw exception when same name and month")
-		public void shouldReturnExceptionWhenIncomeAlreadyExistWithSameMonth() {
+		public void shouldReturnExceptionWhenAlreadyExistWithSameMonth() {
 
 			given(repository.findAllByDescricaoContainingIgnoreCaseAndDataBetween(any(String.class),
 					any(LocalDate.class), any(LocalDate.class))).willReturn(
@@ -157,7 +175,7 @@ class IncomeServiceTest {
 			Income entity = new Income(null, "Test", BigDecimal.valueOf(23), toDate("03/08/2022"));
 
 			assertThrows(BusinessException.class, () -> {
-				incomeService.save(entity);
+				service.save(entity);
 			});
 
 		}
@@ -165,12 +183,12 @@ class IncomeServiceTest {
 	}
 
 	@Nested
-	@DisplayName("Update Income")
-	class UpdateIncoming {
+	@DisplayName("Update")
+	class Update {
 
 		@Test
 		@DisplayName("Should update")
-		public void shouldUpdateIncome() {
+		public void shouldUpdate() {
 
 			Income expected = new Income(1l, "Test 2", BigDecimal.valueOf(34), toDate("07/08/2022"));
 
@@ -179,7 +197,7 @@ class IncomeServiceTest {
 			given(repository.save(any(Income.class))).willReturn(expected);
 
 			Income entity = new Income(1l, "Test 2", BigDecimal.valueOf(34), toDate("07/08/2022"));
-			Income result = incomeService.update(1l, entity);
+			Income result = service.update(1l, entity);
 
 			assertThat(result.getId()).isEqualTo(expected.getId());
 			assertThat(result.getDescricao()).isEqualTo(expected.getDescricao());
@@ -191,7 +209,7 @@ class IncomeServiceTest {
 		@Test
 		@DisplayName("Should update when same name and different month")
 		public void shouldUpdateWhenSameNameAndDifferentMonth() {
-			IncomeService serviceSpy = spy(incomeService);
+			IncomeService serviceSpy = spy(service);
 
 			Long idExpected = 1l;
 			Income expected = new Income(1l, "Test 2", BigDecimal.valueOf(34), toDate("07/08/2022"));
@@ -208,15 +226,15 @@ class IncomeServiceTest {
 		}
 
 		@Test
-		@DisplayName("Should throw exception when income not exist")
-		public void shouldReturnExceptionWhenIncomeNotExist() {
+		@DisplayName("Should throw exception when not exist")
+		public void shouldReturnExceptionWhenNotExist() {
 
 			given(repository.findById(any(Long.class))).willReturn(Optional.empty());
 
 			Income entity = new Income(-1l, "Test", BigDecimal.valueOf(23), toDate("03/08/2022"));
 
 			assertThrows(EntityNotFoundException.class, () -> {
-				incomeService.update(-1l, entity);
+				service.update(-1l, entity);
 			});
 
 		}
@@ -224,18 +242,18 @@ class IncomeServiceTest {
 	}
 
 	@Nested
-	@DisplayName("Delete Income")
-	class DeleteIncoming {
+	@DisplayName("Delete")
+	class Delete {
 
 		@Test
 		@DisplayName("Should delete")
-		public void shouldDeleteIncome() {
+		public void shouldDelete() {
 
 			Income expected = new Income(1l, "Test", BigDecimal.valueOf(23), toDate("03/08/2022"));
 
 			given(repository.findById(anyLong())).willReturn(Optional.of(expected));
 
-			incomeService.delete(1L);
+			service.delete(1L);
 
 			verify(repository, times(1)).delete(any(Income.class));
 
@@ -243,12 +261,12 @@ class IncomeServiceTest {
 
 		@Test
 		@DisplayName("Should throw exception")
-		public void shouldNotDeleteIncome() {
+		public void shouldNotDelete() {
 
 			given(repository.findById(anyLong())).willReturn(Optional.empty());
 
 			assertThrows(EntityNotFoundException.class, () -> {
-				incomeService.delete(1L);
+				service.delete(1L);
 			});
 
 		}

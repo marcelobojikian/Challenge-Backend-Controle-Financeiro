@@ -16,7 +16,11 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Predicate;
+
 import br.com.alura.challenge.finance.model.Expenditure;
+import br.com.alura.challenge.finance.model.QExpenditure;
 
 @ExtendWith(SpringExtension.class)
 @DataJpaTest
@@ -58,6 +62,49 @@ class ExpenditureRepositoryTest {
 		List<Expenditure> all = repository.findAllByDescricaoContainingIgnoreCaseAndDataBetween("Test", start, end);
 
 		assertThat(all).hasSize(sizeExpected);
+
+	}
+
+	@Test
+	@DisplayName("Should return entities when find by predicate.")
+	public void successWhenFindByPredicate() {
+
+		Expenditure entity = new Expenditure(null, "Test", BigDecimal.ZERO, parse("03/08/2022"));
+		entityManager.persist(entity);
+		Expenditure secondEntity = new Expenditure(null, "Test2", BigDecimal.TEN, parse("01/02/2022"));
+		entityManager.persist(secondEntity);
+
+		QExpenditure qExpenditure = QExpenditure.expenditure;
+		Predicate predicate = new BooleanBuilder();
+
+		Iterable<Expenditure> result = repository.findAll(predicate);
+
+		int sizeExpected = 2;
+		assertThat(result).hasSize(sizeExpected);
+
+		predicate = qExpenditure.descricao.contains("2");
+		result = repository.findAll(predicate);
+
+		sizeExpected = 1;
+		assertThat(result).hasSize(sizeExpected);
+
+		predicate = qExpenditure.valor.between(5, 15);
+		result = repository.findAll(predicate);
+
+		sizeExpected = 1;
+		assertThat(result).hasSize(sizeExpected);
+
+		predicate = qExpenditure.data.between(parse("01/01/2022"), parse("01/12/2022"));
+		result = repository.findAll(predicate);
+
+		sizeExpected = 2;
+		assertThat(result).hasSize(sizeExpected);
+
+		predicate = qExpenditure.data.between(parse("01/01/2022"), parse("01/04/2022"));
+		result = repository.findAll(predicate);
+
+		sizeExpected = 1;
+		assertThat(result).hasSize(sizeExpected);
 
 	}
 

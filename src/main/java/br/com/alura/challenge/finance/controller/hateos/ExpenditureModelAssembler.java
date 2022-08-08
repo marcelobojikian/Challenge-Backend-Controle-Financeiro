@@ -11,6 +11,8 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
 
+import com.querydsl.core.BooleanBuilder;
+
 import br.com.alura.challenge.finance.controller.dto.FinanceDTO;
 import br.com.alura.challenge.finance.controller.web.ExpenditureController;
 
@@ -23,7 +25,7 @@ public class ExpenditureModelAssembler implements RepresentationModelAssembler<F
 	public EntityModel<FinanceDTO> toModel(FinanceDTO entity) {
 		return EntityModel.of(entity,
 				linkTo(methodOn(ExpenditureController.class).findById(entity.getId())).withSelfRel(),
-				linkTo(methodOn(ExpenditureController.class).findAll()).withRel(ENTITY_REL));
+				linkTo(methodOn(ExpenditureController.class).findAll(new BooleanBuilder())).withRel(ENTITY_REL));
 	}
 
 	public List<EntityModel<FinanceDTO>> toCollections(List<FinanceDTO> finances) {
@@ -32,7 +34,7 @@ public class ExpenditureModelAssembler implements RepresentationModelAssembler<F
 
 	public CollectionModel<EntityModel<FinanceDTO>> toCollectionModel(List<FinanceDTO> finances) {
 		return CollectionModel.of(toCollections(finances),
-				linkTo(methodOn(ExpenditureController.class).findAll()).withSelfRel());
+				linkTo(methodOn(ExpenditureController.class).findAll(new BooleanBuilder())).withSelfRel());
 	}
 
 }

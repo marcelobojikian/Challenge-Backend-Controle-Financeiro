@@ -6,6 +6,7 @@ import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -32,6 +33,7 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.querydsl.core.types.Predicate;
 
 import br.com.alura.challenge.finance.config.DateFormatConfig;
 import br.com.alura.challenge.finance.controller.dto.FinanceDTO;
@@ -74,17 +76,18 @@ class ExpenditureControllerTest {
 			FinanceDTO expectedDTO = new FinanceDTO(1l, "Test", BigDecimal.valueOf(23), toDate("03/08/2022"));
 			FinanceDTO secondExpectedDTO = new FinanceDTO(2l, "Test 2", BigDecimal.valueOf(44), toDate("11/07/2022"));
 
-			given(service.findAll()).willReturn(Arrays.asList(expected, secondExpected));
+			given(service.findAll(any(Predicate.class))).willReturn(Arrays.asList(expected, secondExpected));
 			given(modelMapper.map(any(Object.class), any(Type.class)))
 					.willReturn(Arrays.asList(expectedDTO, secondExpectedDTO));
 
 			// @formatter:off
 	        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-	                .get(URL_API)
+	                .get(URL_API+"?descricao=aaa")
 	                .contentType(MediaType.APPLICATION_JSON)
 	                .accept(MediaType.APPLICATION_JSON);
 	        
 	        mockMvc.perform(request)
+	        .andDo(print())
 					.andExpect(status().isOk())
 					.andExpect(jsonPath("$..id", hasItems(1,2)))
 					.andExpect(jsonPath("$..descricao", hasItems("Test", "Test 2")))
@@ -98,7 +101,7 @@ class ExpenditureControllerTest {
 		@DisplayName("Should no content")
 		public void shouldNoContent() throws Exception {
 
-			given(service.findAll()).willReturn(Arrays.asList());
+			given(service.findAll(any(Predicate.class))).willReturn(Arrays.asList());
 			given(modelMapper.map(any(Object.class), any(Type.class))).willReturn(Arrays.asList());
 
 			// @formatter:off

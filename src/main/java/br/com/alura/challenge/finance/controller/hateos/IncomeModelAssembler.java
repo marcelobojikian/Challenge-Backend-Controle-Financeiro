@@ -11,6 +11,8 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
 
+import com.querydsl.core.BooleanBuilder;
+
 import br.com.alura.challenge.finance.controller.dto.FinanceDTO;
 import br.com.alura.challenge.finance.controller.web.IncomeController;
 
@@ -22,7 +24,7 @@ public class IncomeModelAssembler implements RepresentationModelAssembler<Financ
 	@Override
 	public EntityModel<FinanceDTO> toModel(FinanceDTO entity) {
 		return EntityModel.of(entity, linkTo(methodOn(IncomeController.class).findById(entity.getId())).withSelfRel(),
-				linkTo(methodOn(IncomeController.class).findAll()).withRel(ENTITY_REL));
+				linkTo(methodOn(IncomeController.class).findAll(new BooleanBuilder())).withRel(ENTITY_REL));
 	}
 
 	public List<EntityModel<FinanceDTO>> toCollections(List<FinanceDTO> finances) {
@@ -31,7 +33,7 @@ public class IncomeModelAssembler implements RepresentationModelAssembler<Financ
 
 	public CollectionModel<EntityModel<FinanceDTO>> toCollectionModel(List<FinanceDTO> finances) {
 		return CollectionModel.of(toCollections(finances),
-				linkTo(methodOn(IncomeController.class).findAll()).withSelfRel());
+				linkTo(methodOn(IncomeController.class).findAll(new BooleanBuilder())).withSelfRel());
 	}
 
 }

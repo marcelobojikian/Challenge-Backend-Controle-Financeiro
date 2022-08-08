@@ -5,6 +5,7 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.data.querydsl.binding.QuerydslPredicate;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
@@ -18,6 +19,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.querydsl.core.types.Predicate;
+
+import br.com.alura.challenge.finance.controller.dto.ExpenditureDTO;
 import br.com.alura.challenge.finance.controller.dto.FinanceDTO;
 import br.com.alura.challenge.finance.controller.hateos.ExpenditureModelAssembler;
 import br.com.alura.challenge.finance.model.Expenditure;
@@ -41,8 +45,9 @@ public class ExpenditureController {
 	}
 
 	@GetMapping
-	public ResponseEntity<?> findAll() {
-		List<FinanceDTO> finances = service.findAll();
+	public ResponseEntity<?> findAll(
+			@QuerydslPredicate(root = Expenditure.class, bindings = ExpenditureDTO.class) Predicate predicate) {
+		List<FinanceDTO> finances = service.findAll(predicate);
 
 		if (finances.isEmpty()) {
 			return ResponseEntity.noContent().build();
