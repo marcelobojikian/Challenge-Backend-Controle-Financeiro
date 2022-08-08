@@ -13,7 +13,7 @@
 
 	<groupId>br.com.alura.challenge</groupId>
 	<artifactId>finance</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.1.0-SNAPSHOT</version>
 
 	<name>Controle Financeiro</name>
 	<description>Alura Challenge Backend de Controle Financeiro</description>
