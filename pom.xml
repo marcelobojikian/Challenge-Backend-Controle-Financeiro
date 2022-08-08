@@ -20,6 +20,8 @@
 
 	<properties>
 		<jacoco.version>0.8.8</jacoco.version>
+		<sonar.organization>marcelobojikian</sonar.organization>
+		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
 	</properties>
 
 	<dependencies>
