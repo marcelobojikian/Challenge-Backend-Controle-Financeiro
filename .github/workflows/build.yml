@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - main
+      - semana1
   pull_request:
     types: [opened, synchronize, reopened]
 jobs:
