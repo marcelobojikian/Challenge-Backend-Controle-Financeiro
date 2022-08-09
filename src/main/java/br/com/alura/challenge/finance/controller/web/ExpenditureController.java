@@ -3,6 +3,8 @@ package br.com.alura.challenge.finance.controller.web;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -28,6 +30,7 @@ import com.querydsl.core.types.Predicate;
 
 import br.com.alura.challenge.finance.controller.dto.ExpenditureDTO;
 import br.com.alura.challenge.finance.model.Expenditure;
+import br.com.alura.challenge.finance.model.QExpenditure;
 import br.com.alura.challenge.finance.service.ExpenditureService;
 
 @RestController
@@ -43,6 +46,28 @@ public class ExpenditureController extends FinanceController<Expenditure, Expend
 	@GetMapping
 	public ResponseEntity<?> findAll(
 			@QuerydslPredicate(root = Expenditure.class, bindings = ExpenditureDTO.class) Predicate predicate) {
+
+		Iterable<Expenditure> entities = findEntities(predicate);
+		List<ExpenditureDTO> finances = covnertDtoList(entities);
+
+		if (finances.isEmpty()) {
+			return ResponseEntity.noContent().build();
+		}
+
+		CollectionModel<EntityModel<ExpenditureDTO>> collectionModel = toCollectionModel(finances);
+
+		return ResponseEntity.ok(collectionModel);
+
+	}
+
+	@GetMapping("/{year}/{month}")
+	public ResponseEntity<?> findByYearAndMonth(@PathVariable int year, @PathVariable Month month) {
+
+		LocalDate firstDayOfMonth = LocalDate.of(year, month, 1);
+		LocalDate lastDayOfMonth = LocalDate.of(year, month, month.maxLength());
+
+		QExpenditure expenditure = QExpenditure.expenditure;
+		Predicate predicate = expenditure.data.between(firstDayOfMonth, lastDayOfMonth);
 
 		Iterable<Expenditure> entities = findEntities(predicate);
 		List<ExpenditureDTO> finances = covnertDtoList(entities);
