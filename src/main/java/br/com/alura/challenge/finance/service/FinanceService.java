@@ -16,8 +16,6 @@ public interface FinanceService<T extends FinanceEntity> {
 
 	public T save(T entity);
 
-	public T update(Long id, T entity);
-
 	public void delete(Long id);
 
 }

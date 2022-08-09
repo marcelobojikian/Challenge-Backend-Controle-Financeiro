@@ -1,5 +1,8 @@
 package br.com.alura.challenge.finance.controller.web;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 import java.util.List;
 
 import javax.validation.Valid;
@@ -9,6 +12,7 @@ import org.springframework.data.querydsl.binding.QuerydslPredicate;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
+import org.springframework.hateoas.Link;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,69 +23,86 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 
 import br.com.alura.challenge.finance.controller.dto.ExpenditureDTO;
-import br.com.alura.challenge.finance.controller.dto.FinanceDTO;
-import br.com.alura.challenge.finance.controller.hateos.ExpenditureModelAssembler;
 import br.com.alura.challenge.finance.model.Expenditure;
 import br.com.alura.challenge.finance.service.ExpenditureService;
 
 @RestController
 @RequestMapping("/api/expenditures")
-public class ExpenditureController {
+public class ExpenditureController extends FinanceController<Expenditure, ExpenditureDTO> {
 
-	private final ExpenditureModelAssembler assembler;
+	public static final String NAME_COLLECTION_RELATION = "expenditures";
 
-	private final FinanceController<Expenditure> service;
-
-	private final ModelMapper modelMapper;
-
-	public ExpenditureController(ExpenditureService service, ModelMapper modelMapper,
-			ExpenditureModelAssembler assembler) {
-		this.service = new FinanceController<Expenditure>(service, modelMapper);
-		this.modelMapper = modelMapper;
-		this.assembler = assembler;
+	public ExpenditureController(ExpenditureService service, ModelMapper modelMapper) {
+		super(service, modelMapper, Expenditure.class, ExpenditureDTO.class);
 	}
 
 	@GetMapping
 	public ResponseEntity<?> findAll(
 			@QuerydslPredicate(root = Expenditure.class, bindings = ExpenditureDTO.class) Predicate predicate) {
-		List<FinanceDTO> finances = service.findAll(predicate);
+
+		Iterable<Expenditure> entities = findEntities(predicate);
+		List<ExpenditureDTO> finances = covnertDtoList(entities);
 
 		if (finances.isEmpty()) {
 			return ResponseEntity.noContent().build();
 		}
 
-		CollectionModel<EntityModel<FinanceDTO>> collectionModel = assembler.toCollectionModel(finances);
+		CollectionModel<EntityModel<ExpenditureDTO>> collectionModel = toCollectionModel(finances);
 
 		return ResponseEntity.ok(collectionModel);
+
 	}
 
 	@GetMapping("/{id}")
-	public EntityModel<FinanceDTO> findById(@PathVariable Long id) {
-		FinanceDTO entity = service.findById(id);
-		return assembler.toModel(entity);
+	public EntityModel<ExpenditureDTO> findById(@PathVariable Long id) {
+		Expenditure entity = findEntityById(id);
+		ExpenditureDTO entityDTO = covnertDto(entity);
+		return toModel(entityDTO);
 	}
 
 	@PostMapping
-	public ResponseEntity<?> create(@RequestBody @Valid FinanceDTO dto) {
-		Expenditure entity = modelMapper.map(dto, Expenditure.class);
-		EntityModel<FinanceDTO> entityModel = assembler.toModel(service.create(entity));
+	public ResponseEntity<?> create(@RequestBody @Valid ExpenditureDTO dto) {
+
+		Expenditure entity = covnertEntity(dto);
+		entity = save(entity);
+
+		ExpenditureDTO entityDTO = covnertDto(entity);
+		EntityModel<ExpenditureDTO> entityModel = toModel(entityDTO);
+
 		return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(entityModel);
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<?> update(@PathVariable Long id, @RequestBody @Valid FinanceDTO dto) {
-		Expenditure entity = modelMapper.map(dto, Expenditure.class);
-		EntityModel<FinanceDTO> entityModel = assembler.toModel(service.update(id, entity));
+	public ResponseEntity<?> update(@PathVariable Long id, @RequestBody @Valid ExpenditureDTO dto) {
+
+		Expenditure entity = updateWithDto(id, dto);
+
+		ExpenditureDTO entityDTO = covnertDto(entity);
+
+		EntityModel<ExpenditureDTO> entityModel = toModel(entityDTO);
+
 		return ResponseEntity.ok(entityModel);
 	}
 
 	@DeleteMapping("/{id}")
 	public ResponseEntity<?> delete(@PathVariable Long id) {
-		service.delete(id);
+		remove(id);
 		return ResponseEntity.noContent().build();
+	}
+
+	@Override
+	Link linkId(Long Id) {
+		return linkTo(methodOn(ExpenditureController.class).findById(Id)).withSelfRel();
+	}
+
+	@Override
+	Link linkAll(Predicate predicate) {
+		return linkTo(methodOn(ExpenditureController.class).findAll(new BooleanBuilder()))
+				.withRel(NAME_COLLECTION_RELATION);
 	}
 
 }

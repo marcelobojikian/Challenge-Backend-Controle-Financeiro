@@ -35,14 +35,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.querydsl.core.types.Predicate;
 
 import br.com.alura.challenge.finance.config.DateFormatConfig;
-import br.com.alura.challenge.finance.controller.dto.FinanceDTO;
-import br.com.alura.challenge.finance.controller.hateos.IncomeModelAssembler;
+import br.com.alura.challenge.finance.controller.dto.IncomeDTO;
 import br.com.alura.challenge.finance.exception.EntityNotFoundException;
 import br.com.alura.challenge.finance.model.Income;
 import br.com.alura.challenge.finance.service.IncomeService;
 
 @ExtendWith(SpringExtension.class)
-@WebMvcTest(controllers = { IncomeController.class, IncomeModelAssembler.class })
+@WebMvcTest(controllers = { IncomeController.class })
 @AutoConfigureMockMvc
 @Import(DateFormatConfig.class)
 class IncomeControllerTest {
@@ -72,8 +71,8 @@ class IncomeControllerTest {
 			Income expected = new Income(1l, "Test", BigDecimal.valueOf(23), toDate("03/08/2022"));
 			Income secondExpected = new Income(2l, "Test 2", BigDecimal.valueOf(44), toDate("11/07/2022"));
 
-			FinanceDTO expectedDTO = new FinanceDTO(1l, "Test", BigDecimal.valueOf(23), toDate("03/08/2022"));
-			FinanceDTO secondExpectedDTO = new FinanceDTO(2l, "Test 2", BigDecimal.valueOf(44), toDate("11/07/2022"));
+			IncomeDTO expectedDTO = new IncomeDTO(1l, "Test", BigDecimal.valueOf(23), toDate("03/08/2022"));
+			IncomeDTO secondExpectedDTO = new IncomeDTO(2l, "Test 2", BigDecimal.valueOf(44), toDate("11/07/2022"));
 
 			given(service.findAll(any(Predicate.class))).willReturn(Arrays.asList(expected, secondExpected));
 			given(modelMapper.map(any(Object.class), any(Type.class)))
@@ -124,11 +123,11 @@ class IncomeControllerTest {
 		@DisplayName("Should find")
 		public void successFind() throws Exception {
 
-			FinanceDTO expectedDTO = new FinanceDTO(1l, "Teste", BigDecimal.ZERO, toDate("03/09/2022"));
+			IncomeDTO expectedDTO = new IncomeDTO(1l, "Teste", BigDecimal.ZERO, toDate("03/09/2022"));
 
 			Income savedEntity = new Income(1l, "Teste", BigDecimal.ZERO, toDate("03/09/2022"));
 			given(service.findById(any(Long.class))).willReturn(savedEntity);
-			given(modelMapper.map(any(Income.class), eq(FinanceDTO.class))).willReturn(expectedDTO);
+			given(modelMapper.map(any(Income.class), eq(IncomeDTO.class))).willReturn(expectedDTO);
 
 			// @formatter:off
 	        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
@@ -179,14 +178,14 @@ class IncomeControllerTest {
 		@DisplayName("Should create")
 		public void successCreate() throws Exception {
 
-			FinanceDTO expectedDTO = new FinanceDTO(1l, "Teste", BigDecimal.ZERO, toDate("03/09/2022"));
+			IncomeDTO expectedDTO = new IncomeDTO(1l, "Teste", BigDecimal.ZERO, toDate("03/09/2022"));
 			Income savedEntity = new Income(1l, "Teste", BigDecimal.ZERO, toDate("03/09/2022"));
 
 			given(modelMapper.map(any(), eq(Income.class))).willReturn(savedEntity);
-			given(modelMapper.map(any(), eq(FinanceDTO.class))).willReturn(expectedDTO);
+			given(modelMapper.map(any(), eq(IncomeDTO.class))).willReturn(expectedDTO);
 			given(service.save(any(Income.class))).willReturn(savedEntity);
 
-			FinanceDTO entity = new FinanceDTO(null, "Teste", BigDecimal.ZERO, LocalDate.now());
+			IncomeDTO entity = new IncomeDTO(null, "Teste", BigDecimal.ZERO, LocalDate.now());
 			String json = mapper.writeValueAsString(entity);
 
 			// @formatter:off
@@ -216,14 +215,14 @@ class IncomeControllerTest {
 		@DisplayName("Should update")
 		public void successUpdate() throws Exception {
 
-			FinanceDTO expectedDTO = new FinanceDTO(1l, "Teste 2", BigDecimal.ONE, toDate("10/09/2022"));
+			IncomeDTO expectedDTO = new IncomeDTO(1l, "Teste 2", BigDecimal.ONE, toDate("10/09/2022"));
 			Income entityExpected = new Income(1l, "Teste", BigDecimal.ZERO, toDate("03/09/2022"));
 
-			given(modelMapper.map(any(), eq(Income.class))).willReturn(entityExpected);
-			given(service.update(any(Long.class), any(Income.class))).willReturn(entityExpected);
-			given(modelMapper.map(any(), eq(FinanceDTO.class))).willReturn(expectedDTO);
+			given(service.findById(any(Long.class))).willReturn(entityExpected);
+			given(service.save(any(Income.class))).willReturn(entityExpected);
+			given(modelMapper.map(any(), eq(IncomeDTO.class))).willReturn(expectedDTO);
 
-			FinanceDTO entity = new FinanceDTO(1l, "Teste 2", BigDecimal.ONE, toDate("10/09/2022"));
+			IncomeDTO entity = new IncomeDTO(1l, "Teste 2", BigDecimal.ONE, toDate("10/09/2022"));
 			String json = mapper.writeValueAsString(entity);
 
 			// @formatter:off

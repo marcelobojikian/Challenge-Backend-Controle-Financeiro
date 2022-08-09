@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -176,65 +175,6 @@ class IncomeServiceTest {
 
 			assertThrows(BusinessException.class, () -> {
 				service.save(entity);
-			});
-
-		}
-
-	}
-
-	@Nested
-	@DisplayName("Update")
-	class Update {
-
-		@Test
-		@DisplayName("Should update")
-		public void shouldUpdate() {
-
-			Income expected = new Income(1l, "Test 2", BigDecimal.valueOf(34), toDate("07/08/2022"));
-
-			Income entityDB = new Income(1l, "Test", BigDecimal.valueOf(24), toDate("03/08/2022"));
-			given(repository.findById(any(Long.class))).willReturn(Optional.of(entityDB));
-			given(repository.save(any(Income.class))).willReturn(expected);
-
-			Income entity = new Income(1l, "Test 2", BigDecimal.valueOf(34), toDate("07/08/2022"));
-			Income result = service.update(1l, entity);
-
-			assertThat(result.getId()).isEqualTo(expected.getId());
-			assertThat(result.getDescricao()).isEqualTo(expected.getDescricao());
-			assertThat(result.getValor()).isEqualTo(expected.getValor());
-			assertThat(result.getData()).isEqualTo(expected.getData());
-
-		}
-
-		@Test
-		@DisplayName("Should update when same name and different month")
-		public void shouldUpdateWhenSameNameAndDifferentMonth() {
-			IncomeService serviceSpy = spy(service);
-
-			Long idExpected = 1l;
-			Income expected = new Income(1l, "Test 2", BigDecimal.valueOf(34), toDate("07/08/2022"));
-
-			Income entityDB = new Income(1l, "Test", BigDecimal.valueOf(24), toDate("03/07/2022"));
-			assertThat(entityDB.isSameMonth(expected)).isFalse();
-
-			given(repository.findById(any(Long.class))).willReturn(Optional.of(entityDB));
-
-			serviceSpy.update(idExpected, expected);
-
-			verify(serviceSpy, times(1)).save(any(Income.class));
-
-		}
-
-		@Test
-		@DisplayName("Should throw exception when not exist")
-		public void shouldReturnExceptionWhenNotExist() {
-
-			given(repository.findById(any(Long.class))).willReturn(Optional.empty());
-
-			Income entity = new Income(-1l, "Test", BigDecimal.valueOf(23), toDate("03/08/2022"));
-
-			assertThrows(EntityNotFoundException.class, () -> {
-				service.update(-1l, entity);
 			});
 
 		}

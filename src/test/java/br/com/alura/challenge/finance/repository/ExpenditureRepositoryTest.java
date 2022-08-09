@@ -1,7 +1,6 @@
 package br.com.alura.challenge.finance.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertSame;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -20,6 +19,7 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 
 import br.com.alura.challenge.finance.model.Expenditure;
+import br.com.alura.challenge.finance.model.Expenditure.Categoria;
 import br.com.alura.challenge.finance.model.QExpenditure;
 
 @ExtendWith(SpringExtension.class)
@@ -43,7 +43,30 @@ class ExpenditureRepositoryTest {
 
 		List<Expenditure> all = repository.findAll();
 
-		assertSame(sizeExpected, all.size());
+		assertThat(all).hasSize(sizeExpected);
+
+		Expenditure entityDB = all.iterator().next();
+
+		assertThat(entityDB.getCategoria()).isEqualTo(Categoria.OUTRAS);
+
+	}
+
+	@Test
+	@DisplayName("Should persist entity with category.")
+	public void successWhenPersistEntityWithCategory() {
+
+		int sizeExpected = 1;
+
+		Expenditure entity = new Expenditure(null, "Test", BigDecimal.ZERO, parse("03/08/2022"), Categoria.ALIMENTACAO);
+		entityManager.persist(entity);
+
+		List<Expenditure> all = repository.findAll();
+
+		assertThat(all).hasSize(sizeExpected);
+
+		Expenditure entityDB = all.iterator().next();
+
+		assertThat(entityDB.getCategoria()).isEqualTo(Categoria.ALIMENTACAO);
 
 	}
 

@@ -1,11 +1,11 @@
 package br.com.alura.challenge.finance.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -30,6 +30,7 @@ import com.querydsl.core.types.Predicate;
 import br.com.alura.challenge.finance.exception.BusinessException;
 import br.com.alura.challenge.finance.exception.EntityNotFoundException;
 import br.com.alura.challenge.finance.model.Expenditure;
+import br.com.alura.challenge.finance.model.Expenditure.Categoria;
 import br.com.alura.challenge.finance.repository.ExpenditureRepository;
 
 @ExtendWith(MockitoExtension.class)
@@ -146,6 +147,7 @@ class ExpenditureServiceTest {
 			assertThat(result.getDescricao()).isEqualTo(expected.getDescricao());
 			assertThat(result.getValor()).isEqualTo(expected.getValor());
 			assertThat(result.getData()).isEqualTo(expected.getData());
+			assertThat(result.getCategoria()).isEqualTo(Categoria.OUTRAS);
 
 		}
 
@@ -166,6 +168,7 @@ class ExpenditureServiceTest {
 			assertThat(result.getDescricao()).isEqualTo(expected.getDescricao());
 			assertThat(result.getValor()).isEqualTo(expected.getValor());
 			assertThat(result.getData()).isEqualTo(expected.getData());
+			assertThat(result.getCategoria()).isEqualTo(Categoria.OUTRAS);
 
 		}
 
@@ -184,70 +187,6 @@ class ExpenditureServiceTest {
 			});
 
 			String expectedMessage = "There is this finance for this month";
-			String actualMessage = exception.getMessage();
-
-			assertTrue(actualMessage.contains(expectedMessage));
-
-		}
-
-	}
-
-	@Nested
-	@DisplayName("Update")
-	class Update {
-
-		@Test
-		@DisplayName("Should update")
-		public void shouldUpdate() {
-
-			Expenditure expected = new Expenditure(1l, "Test 2", BigDecimal.valueOf(34), toDate("07/08/2022"));
-
-			Expenditure entityDB = new Expenditure(1l, "Test", BigDecimal.valueOf(24), toDate("03/08/2022"));
-			given(repository.findById(any(Long.class))).willReturn(Optional.of(entityDB));
-			given(repository.save(any(Expenditure.class))).willReturn(expected);
-
-			Expenditure entity = new Expenditure(1l, "Test 2", BigDecimal.valueOf(34), toDate("07/08/2022"));
-			Expenditure result = service.update(1l, entity);
-
-			assertThat(result.getId()).isEqualTo(expected.getId());
-			assertThat(result.getDescricao()).isEqualTo(expected.getDescricao());
-			assertThat(result.getValor()).isEqualTo(expected.getValor());
-			assertThat(result.getData()).isEqualTo(expected.getData());
-
-		}
-
-		@Test
-		@DisplayName("Should update when same name and different month")
-		public void shouldUpdateWhenSameNameAndDifferentMonth() {
-			ExpenditureService serviceSpy = spy(service);
-
-			Long idExpected = 1l;
-			Expenditure expected = new Expenditure(1l, "Test 2", BigDecimal.valueOf(34), toDate("07/08/2022"));
-
-			Expenditure entityDB = new Expenditure(1l, "Test", BigDecimal.valueOf(24), toDate("03/07/2022"));
-			assertThat(entityDB.isSameMonth(expected)).isFalse();
-
-			given(repository.findById(any(Long.class))).willReturn(Optional.of(entityDB));
-
-			serviceSpy.update(idExpected, expected);
-
-			verify(serviceSpy, times(1)).save(any(Expenditure.class));
-
-		}
-
-		@Test
-		@DisplayName("Should throw exception when entity not exist")
-		public void shouldReturnExceptionWhenEntityNotExist() {
-
-			given(repository.findById(any(Long.class))).willReturn(Optional.empty());
-
-			Expenditure entity = new Expenditure(-1l, "Test", BigDecimal.valueOf(23), toDate("03/08/2022"));
-
-			Exception exception = assertThrows(EntityNotFoundException.class, () -> {
-				service.update(-1l, entity);
-			});
-
-			String expectedMessage = "Entity not found";
 			String actualMessage = exception.getMessage();
 
 			assertTrue(actualMessage.contains(expectedMessage));

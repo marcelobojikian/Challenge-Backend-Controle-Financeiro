@@ -48,24 +48,6 @@ public abstract class FinanceDefaultService<T extends FinanceEntity> implements 
 		return repository.save(entity);
 	}
 
-	public T update(Long id, T entity) {
-
-		T entityDB = repository.findById(id).orElseThrow(() -> new EntityNotFoundException("Entity not found"));
-
-		boolean sameMonth = entityDB.isSameMonth(entity);
-
-		entityDB.setDescricao(entity.getDescricao());
-		entityDB.setValor(entity.getValor());
-		entityDB.setData(entity.getData());
-
-		if (sameMonth) {
-			return repository.save(entityDB);
-		}
-
-		return save(entityDB);
-
-	}
-
 	public void delete(Long id) {
 		T entity = repository.findById(id).orElseThrow(() -> new EntityNotFoundException("Entity not found"));
 		repository.delete(entity);
