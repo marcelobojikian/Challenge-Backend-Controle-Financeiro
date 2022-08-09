@@ -3,6 +3,8 @@ package br.com.alura.challenge.finance.controller.web;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -28,6 +30,7 @@ import com.querydsl.core.types.Predicate;
 
 import br.com.alura.challenge.finance.controller.dto.IncomeDTO;
 import br.com.alura.challenge.finance.model.Income;
+import br.com.alura.challenge.finance.model.QIncome;
 import br.com.alura.challenge.finance.service.IncomeService;
 
 @RestController
@@ -55,6 +58,27 @@ public class IncomeController extends FinanceController<Income, IncomeDTO> {
 
 		return ResponseEntity.ok(collectionModel);
 
+	}
+
+	@GetMapping("/{year}/{month}")
+	public ResponseEntity<?> findByYearAndMonth(@PathVariable int year, @PathVariable Month month) {
+
+		LocalDate firstDayOfMonth = LocalDate.of(year, month, 1);
+		LocalDate lastDayOfMonth = LocalDate.of(year, month, month.maxLength());
+
+		QIncome income = QIncome.income;
+		Predicate predicate = income.data.between(firstDayOfMonth, lastDayOfMonth);
+
+		Iterable<Income> entities = findEntities(predicate);
+		List<IncomeDTO> finances = covnertDtoList(entities);
+
+		if (finances.isEmpty()) {
+			return ResponseEntity.noContent().build();
+		}
+
+		CollectionModel<EntityModel<IncomeDTO>> collectionModel = toCollectionModel(finances);
+
+		return ResponseEntity.ok(collectionModel);
 	}
 
 	@GetMapping("/{id}")

@@ -12,6 +12,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.Month;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 
@@ -59,6 +60,40 @@ class IncomeControllerTest {
 
 	@MockBean
 	ModelMapper modelMapper;
+
+	@Nested
+	@DisplayName("Method GET by MONTH")
+	class MethodGetMonth {
+
+		@Test
+		@DisplayName("Should find AUGUST")
+		public void successFind() throws Exception {
+
+			Income expected = new Income(1l, "Test", BigDecimal.valueOf(23), toDate("03/08/2022"));
+
+			IncomeDTO expectedDTO = new IncomeDTO(1l, "Test", BigDecimal.valueOf(23), toDate("03/08/2022"));
+
+			given(service.findAll(any(Predicate.class))).willReturn(Arrays.asList(expected));
+			given(modelMapper.map(any(Object.class), any(Type.class))).willReturn(Arrays.asList(expectedDTO));
+
+			// @formatter:off
+	        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+	                .get(URL_API+"/2022/"+Month.AUGUST)
+	                .contentType(MediaType.APPLICATION_JSON)
+	                .accept(MediaType.APPLICATION_JSON);
+	        
+	        mockMvc.perform(request)
+					.andExpect(status().isOk())
+					.andExpect(jsonPath("$._embedded.incomes", hasSize(1)))
+					.andExpect(jsonPath("$..id", hasItems(1)))
+					.andExpect(jsonPath("$..descricao", hasItems("Test")))
+					.andExpect(jsonPath("$..valor", hasItems(23)))
+					.andExpect(jsonPath("$..data", hasItems("03/08/2022")));
+			// @formatter:on
+
+		}
+
+	}
 
 	@Nested
 	@DisplayName("Method GET ALL")
