@@ -93,6 +93,25 @@ class IncomeControllerTest {
 
 		}
 
+		@Test
+		@DisplayName("Should no content")
+		public void shouldNoContent() throws Exception {
+
+			given(service.findAll(any(Predicate.class))).willReturn(Arrays.asList());
+			given(modelMapper.map(any(Object.class), any(Type.class))).willReturn(Arrays.asList());
+
+			// @formatter:off
+			MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+	                .get(URL_API+"/2022/"+Month.AUGUST)
+	                .contentType(MediaType.APPLICATION_JSON)
+	                .accept(MediaType.APPLICATION_JSON);
+
+	        mockMvc.perform(request)
+					.andExpect(status().isNoContent());
+			// @formatter:on
+
+		}
+
 	}
 
 	@Nested
