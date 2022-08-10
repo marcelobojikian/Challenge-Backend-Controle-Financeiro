@@ -4,7 +4,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.Month;
+import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
+import java.util.Iterator;
 import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
@@ -18,6 +21,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 
+import br.com.alura.challenge.finance.controller.dto.summary.GroupCategory;
 import br.com.alura.challenge.finance.model.Expenditure;
 import br.com.alura.challenge.finance.model.Expenditure.Categoria;
 import br.com.alura.challenge.finance.model.QExpenditure;
@@ -144,6 +148,57 @@ class ExpenditureRepositoryTest {
 		List<Expenditure> all = repository.findAllByDescricaoContainingIgnoreCaseAndDataBetween("Test", start, end);
 
 		assertThat(all).isEmpty();
+
+	}
+
+	@Test
+	@DisplayName("Should return categories list when find between dates.")
+	public void returnCategoriesWhenFindBetweenDates() {
+
+		entityManager.persist(new Expenditure(null, "Test", BigDecimal.ONE, parse("03/08/2022"), Categoria.LAZER));
+		entityManager.persist(new Expenditure(null, "Test 2", BigDecimal.TEN, parse("06/08/2022"), Categoria.LAZER));
+		entityManager
+				.persist(new Expenditure(null, "Test 3", BigDecimal.TEN, parse("09/08/2022"), Categoria.ALIMENTACAO));
+		entityManager.persist(new Expenditure(null, "Test 4", BigDecimal.ONE, parse("09/09/2022")));
+
+		YearMonth yearMonth = YearMonth.of(2022, Month.AUGUST);
+		LocalDate start = yearMonth.atDay(1);
+		LocalDate end = yearMonth.atEndOfMonth();
+
+		List<GroupCategory> all = repository.findGroupCategoryBetweenDate(start, end);
+
+		assertThat(all).isNotEmpty();
+		assertThat(all).hasSize(2);
+
+		Iterator<GroupCategory> it = all.iterator();
+
+		GroupCategory next = it.next();
+		assertThat(next.getCategory()).isEqualTo(Categoria.ALIMENTACAO);
+		assertThat(next.getAmount()).isEqualByComparingTo(BigDecimal.valueOf(10));
+
+		next = it.next();
+		assertThat(next.getCategory()).isEqualTo(Categoria.LAZER);
+		assertThat(next.getAmount()).isEqualByComparingTo(BigDecimal.valueOf(11));
+
+	}
+
+	@Test
+	@DisplayName("Should return amount when find between dates.")
+	public void returnAmountWhenFindBetweenDates() {
+
+		entityManager.persist(new Expenditure(null, "Test", BigDecimal.ONE, parse("03/08/2022"), Categoria.LAZER));
+		entityManager.persist(new Expenditure(null, "Test 2", BigDecimal.TEN, parse("06/08/2022"), Categoria.LAZER));
+		entityManager
+				.persist(new Expenditure(null, "Test 3", BigDecimal.TEN, parse("09/08/2022"), Categoria.ALIMENTACAO));
+		entityManager.persist(new Expenditure(null, "Test 4", BigDecimal.ONE, parse("09/09/2022")));
+
+		YearMonth yearMonth = YearMonth.of(2022, Month.AUGUST);
+		LocalDate start = yearMonth.atDay(1);
+		LocalDate end = yearMonth.atEndOfMonth();
+
+		BigDecimal amount = repository.getAmountBetweenDate(start, end);
+
+		assertThat(amount).isEqualByComparingTo(BigDecimal.valueOf(21));
 
 	}
 

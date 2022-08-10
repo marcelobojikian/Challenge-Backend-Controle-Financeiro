@@ -11,9 +11,9 @@ import org.springframework.hateoas.server.core.Relation;
 import com.querydsl.core.types.dsl.StringExpression;
 import com.querydsl.core.types.dsl.StringPath;
 
-import br.com.alura.challenge.finance.model.QExpenditure;
 import br.com.alura.challenge.finance.controller.web.ExpenditureController;
 import br.com.alura.challenge.finance.model.Expenditure.Categoria;
+import br.com.alura.challenge.finance.model.QExpenditure;
 
 @Relation(collectionRelation = ExpenditureController.NAME_COLLECTION_RELATION, itemRelation = "expenditure")
 public class ExpenditureDTO extends FinanceDTO implements QuerydslBinderCustomizer<QExpenditure> {

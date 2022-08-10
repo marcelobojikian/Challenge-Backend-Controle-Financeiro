@@ -74,8 +74,7 @@ class ExpenditureControllerTest {
 			ExpenditureDTO expectedDTO = new ExpenditureDTO(1l, "Test", BigDecimal.valueOf(23), toDate("03/08/2022"));
 
 			given(service.findAll(any(Predicate.class))).willReturn(Arrays.asList(expected));
-			given(modelMapper.map(any(Iterable.class), any(Type.class)))
-					.willReturn(Arrays.asList(expectedDTO));
+			given(modelMapper.map(any(Iterable.class), any(Type.class))).willReturn(Arrays.asList(expectedDTO));
 
 			// @formatter:off
 	        MockHttpServletRequestBuilder request = MockMvcRequestBuilders

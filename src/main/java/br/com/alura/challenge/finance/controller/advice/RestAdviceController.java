@@ -11,6 +11,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 
@@ -58,6 +59,15 @@ public class RestAdviceController {
 		details.add(ex.getLocalizedMessage());
 		ApiErrorDTO error = new ApiErrorDTO("Record not found", details);
 		return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+	}
+
+	@ExceptionHandler(MethodArgumentTypeMismatchException.class)
+	public final ResponseEntity<ApiErrorDTO> handleMethodArgumentTypeMismatchException(
+			MethodArgumentTypeMismatchException ex, WebRequest request) {
+		List<String> details = new ArrayList<>();
+		details.add(ex.getValue() + " is invalid");
+		ApiErrorDTO error = new ApiErrorDTO("Invalid parameter", details);
+		return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
 	}
 
 	@ExceptionHandler(HttpMessageNotReadableException.class)

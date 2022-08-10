@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.Month;
+import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -74,6 +76,25 @@ class IncomeRepositoryTest {
 		List<Income> all = repository.findAllByDescricaoContainingIgnoreCaseAndDataBetween("Test", start, end);
 
 		assertThat(all).isEmpty();
+
+	}
+
+	@Test
+	@DisplayName("Should return amount when find between dates.")
+	public void returnAmountWhenFindBetweenDates() {
+
+		entityManager.persist(new Income(null, "Test", BigDecimal.ONE, parse("03/08/2022")));
+		entityManager.persist(new Income(null, "Test 2", BigDecimal.TEN, parse("06/08/2022")));
+		entityManager.persist(new Income(null, "Test 3", BigDecimal.TEN, parse("09/08/2022")));
+		entityManager.persist(new Income(null, "Test 4", BigDecimal.ONE, parse("09/09/2022")));
+
+		YearMonth yearMonth = YearMonth.of(2022, Month.AUGUST);
+		LocalDate start = yearMonth.atDay(1);
+		LocalDate end = yearMonth.atEndOfMonth();
+
+		BigDecimal amount = repository.getAmountBetweenDate(start, end);
+
+		assertThat(amount).isEqualByComparingTo(BigDecimal.valueOf(21));
 
 	}
 

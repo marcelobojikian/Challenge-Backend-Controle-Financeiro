@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.Month;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
@@ -27,6 +28,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -46,6 +48,7 @@ import br.com.alura.challenge.finance.exception.EntityNotFoundException;
 class RestAdviceControllerTest {
 
 	static final String URL_API = "/api/exception";
+	static final String URL_API_PARAMETER_INVALID = URL_API + SampleController.PATH_PARAMETER_INVALID;
 	static final String URL_API_BEAN_INVALID = URL_API + SampleController.PATH_BEAN_INVALID;
 	static final String URL_API_NOT_FOUND = URL_API + SampleController.PATH_BEAN_NOT_FOUND;
 	static final String URL_API_BUSINESS_EXCEPTION = URL_API + SampleController.PATH_BUSINESS_EXCEPTION;
@@ -53,6 +56,25 @@ class RestAdviceControllerTest {
 
 	@Autowired
 	MockMvc mockMvc;
+
+	@Test
+	@DisplayName("Should throw parameter error")
+	public void shouldThrowParameterError() throws Exception {
+
+		// @formatter:off
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .get(URL_API_PARAMETER_INVALID+"/NOTHING")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON);
+        
+        mockMvc.perform(request)
+				.andExpect(status().isBadRequest())
+				.andExpect(jsonPath("$.message", is("Invalid parameter")))
+				.andExpect(jsonPath("$.details", hasSize(1)))
+				.andExpect(jsonPath("$.details.[0]", is("NOTHING is invalid")));
+		// @formatter:on
+
+	}
 
 	@Test
 	@DisplayName("Should throw internal server error")
@@ -216,10 +238,15 @@ class RestAdviceControllerTest {
 @RequestMapping(RestAdviceControllerTest.URL_API)
 class SampleController {
 
+	static final String PATH_PARAMETER_INVALID = "/parameter_exception";
 	static final String PATH_BEAN_INVALID = "/bean/validator";
 	static final String PATH_BEAN_NOT_FOUND = "/not_found";
 	static final String PATH_BUSINESS_EXCEPTION = "/business_exception";
 	static final String PATH_EXCEPTION = "/exception";
+
+	@GetMapping(PATH_PARAMETER_INVALID + "/{month}")
+	public void throwParameterNotValidException(@PathVariable Month month) {
+	}
 
 	@PostMapping(PATH_BEAN_INVALID)
 	public void throwMethodArgumentNotValidException(@RequestBody @Valid SimpleBean propertie) {
