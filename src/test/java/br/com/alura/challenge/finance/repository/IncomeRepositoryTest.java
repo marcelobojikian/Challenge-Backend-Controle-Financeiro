@@ -1,26 +1,27 @@
 package br.com.alura.challenge.finance.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertSame;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.Month;
-import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.converter.ConvertWith;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Predicate;
+
+import br.com.alura.challenge.finance.model.FinanceEntity;
 import br.com.alura.challenge.finance.model.Income;
+import br.com.alura.challenge.finance.model.QIncome;
+import br.com.alura.challenge.finance.parameter.ListFinanceConverter;
 
-@ExtendWith(SpringExtension.class)
 @DataJpaTest
 class IncomeRepositoryTest {
 
@@ -30,71 +31,45 @@ class IncomeRepositoryTest {
 	@Autowired
 	IncomeRepository repository;
 
-	@Test
-	@DisplayName("Should persist entity.")
-	public void successWhenPersistEntity() {
+	@DisplayName("Should return entities when find by predicate.")
+	@ParameterizedTest
+	@CsvSource({ "income::Test:0:03/08/2022;income::Test2:10:01/02/2022" })
+	public void successWhenFindByPredicate(@ConvertWith(ListFinanceConverter.class) List<FinanceEntity> entities) {
+		for (FinanceEntity finance : entities) {
+			entityManager.persist(finance);
+		}
 
-		int sizeExpected = 1;
+		QIncome qExpenditure = QIncome.income;
+		Predicate predicate = new BooleanBuilder();
 
-		Income entity = new Income(null, "Test", BigDecimal.ZERO, parse("03/08/2022"));
-		entityManager.persist(entity);
+		Iterable<Income> result = repository.findAll(predicate);
 
-		List<Income> all = repository.findAll();
+		int sizeExpected = 2;
+		assertThat(result).hasSize(sizeExpected);
 
-		assertSame(sizeExpected, all.size());
+		predicate = qExpenditure.descricao.contains("2");
+		result = repository.findAll(predicate);
 
-	}
+		sizeExpected = 1;
+		assertThat(result).hasSize(sizeExpected);
 
-	@Test
-	@DisplayName("Should return entities when find by descricao and between dates.")
-	public void successWhenFindByDescricaoAndBetweenDates() {
+		predicate = qExpenditure.valor.between(5, 15);
+		result = repository.findAll(predicate);
 
-		int sizeExpected = 1;
+		sizeExpected = 1;
+		assertThat(result).hasSize(sizeExpected);
 
-		Income entity = new Income(null, "Test", BigDecimal.ZERO, parse("03/08/2022"));
-		entityManager.persist(entity);
+		predicate = qExpenditure.data.between(parse("01/01/2022"), parse("01/12/2022"));
+		result = repository.findAll(predicate);
 
-		LocalDate start = parse("03/08/2022").minusDays(1);
-		LocalDate end = parse("03/08/2022").plusDays(1);
+		sizeExpected = 2;
+		assertThat(result).hasSize(sizeExpected);
 
-		List<Income> all = repository.findAllByDescricaoContainingIgnoreCaseAndDataBetween("Test", start, end);
+		predicate = qExpenditure.data.between(parse("01/01/2022"), parse("01/04/2022"));
+		result = repository.findAll(predicate);
 
-		assertThat(all).hasSize(sizeExpected);
-
-	}
-
-	@Test
-	@DisplayName("Should return entities empty list when find by descricao and between dates.")
-	public void returnEmptyWhenFindByDescricaoAndBetweenDates() {
-
-		Income entity = new Income(null, "Test", BigDecimal.ZERO, parse("03/08/2022"));
-		entityManager.persist(entity);
-
-		LocalDate start = parse("03/08/2022").plusDays(1);
-		LocalDate end = parse("03/08/2022").plusDays(5);
-
-		List<Income> all = repository.findAllByDescricaoContainingIgnoreCaseAndDataBetween("Test", start, end);
-
-		assertThat(all).isEmpty();
-
-	}
-
-	@Test
-	@DisplayName("Should return amount when find between dates.")
-	public void returnAmountWhenFindBetweenDates() {
-
-		entityManager.persist(new Income(null, "Test", BigDecimal.ONE, parse("03/08/2022")));
-		entityManager.persist(new Income(null, "Test 2", BigDecimal.TEN, parse("06/08/2022")));
-		entityManager.persist(new Income(null, "Test 3", BigDecimal.TEN, parse("09/08/2022")));
-		entityManager.persist(new Income(null, "Test 4", BigDecimal.ONE, parse("09/09/2022")));
-
-		YearMonth yearMonth = YearMonth.of(2022, Month.AUGUST);
-		LocalDate start = yearMonth.atDay(1);
-		LocalDate end = yearMonth.atEndOfMonth();
-
-		BigDecimal amount = repository.getAmountBetweenDate(start, end);
-
-		assertThat(amount).isEqualByComparingTo(BigDecimal.valueOf(21));
+		sizeExpected = 1;
+		assertThat(result).hasSize(sizeExpected);
 
 	}
 

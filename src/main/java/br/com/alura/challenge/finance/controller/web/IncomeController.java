@@ -35,26 +35,26 @@ public class IncomeController extends AbstractFinanceController<Income, IncomeDT
 	@Override
 	public ResponseEntity<?> all(
 			@QuerydslPredicate(root = Income.class, bindings = IncomeDTO.class) Predicate predicate) {
-		
+
 		CollectionModel<EntityModel<IncomeDTO>> collectionModel = findAll(predicate);
 
 		if (!collectionModel.iterator().hasNext()) {
 			return ResponseEntity.noContent().build();
 		}
-		
+
 		return ResponseEntity.ok(collectionModel);
 
 	}
 
 	@Override
 	public ResponseEntity<?> byYearAndMonth(int year, Month month) {
-		
+
 		CollectionModel<EntityModel<IncomeDTO>> collectionModel = allWithYearAndMonth(year, month);
 
 		if (!collectionModel.iterator().hasNext()) {
 			return ResponseEntity.noContent().build();
 		}
-		
+
 		return ResponseEntity.ok(collectionModel);
 	}
 

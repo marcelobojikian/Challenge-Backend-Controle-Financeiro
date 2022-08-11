@@ -28,17 +28,18 @@ import br.com.alura.challenge.finance.model.FinanceEntity;
 
 @RestController
 @RequestMapping("/api/finance")
-public interface FinanceController<T extends FinanceEntity, DTO extends FinanceDTO> extends RepresentationModelAssembler<DTO, EntityModel<DTO>>{
+public interface FinanceController<T extends FinanceEntity, DTO extends FinanceDTO>
+		extends RepresentationModelAssembler<DTO, EntityModel<DTO>> {
 
 	@GetMapping
 	ResponseEntity<?> all(Predicate predicate);
 
-	@GetMapping("/{id}")	
+	@GetMapping("/{id}")
 	EntityModel<DTO> one(@PathVariable Long id);
-	
+
 	@GetMapping("/{year}/{month}")
 	ResponseEntity<?> byYearAndMonth(@PathVariable int year, @PathVariable Month month);
-	
+
 	@PostMapping
 	ResponseEntity<?> createFinance(@RequestBody @Valid DTO dto);
 
@@ -51,7 +52,7 @@ public interface FinanceController<T extends FinanceEntity, DTO extends FinanceD
 	Link linkId(Long Id);
 
 	Link linkAll(Predicate predicate);
-	
+
 	default List<EntityModel<DTO>> toCollections(List<DTO> finances) {
 		return finances.stream().map(this::toModel).collect(Collectors.toList());
 	}

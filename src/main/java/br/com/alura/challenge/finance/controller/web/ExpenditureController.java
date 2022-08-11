@@ -35,26 +35,26 @@ public class ExpenditureController extends AbstractFinanceController<Expenditure
 	@Override
 	public ResponseEntity<?> all(
 			@QuerydslPredicate(root = Expenditure.class, bindings = ExpenditureDTO.class) Predicate predicate) {
-		
+
 		CollectionModel<EntityModel<ExpenditureDTO>> collectionModel = findAll(predicate);
 
 		if (!collectionModel.iterator().hasNext()) {
 			return ResponseEntity.noContent().build();
 		}
-		
+
 		return ResponseEntity.ok(collectionModel);
 
 	}
 
 	@Override
 	public ResponseEntity<?> byYearAndMonth(int year, Month month) {
-		
+
 		CollectionModel<EntityModel<ExpenditureDTO>> collectionModel = allWithYearAndMonth(year, month);
 
 		if (!collectionModel.iterator().hasNext()) {
 			return ResponseEntity.noContent().build();
 		}
-		
+
 		return ResponseEntity.ok(collectionModel);
 	}
 

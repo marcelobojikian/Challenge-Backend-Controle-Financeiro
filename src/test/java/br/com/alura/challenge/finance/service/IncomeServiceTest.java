@@ -168,8 +168,8 @@ class IncomeServiceTest {
 		public void shouldReturnExceptionWhenAlreadyExistWithSameMonth() {
 
 			given(repository.findAllByDescricaoContainingIgnoreCaseAndDataBetween(any(String.class),
-					any(LocalDate.class), any(LocalDate.class))).willReturn(
-							Arrays.asList(new Income(1l, "Test", BigDecimal.valueOf(23), toDate("05/08/2022"))));
+					any(LocalDate.class), any(LocalDate.class)))
+					.willReturn(Arrays.asList(new Income(1l, "Test", BigDecimal.valueOf(23), toDate("05/08/2022"))));
 
 			Income entity = new Income(null, "Test", BigDecimal.valueOf(23), toDate("03/08/2022"));
 
