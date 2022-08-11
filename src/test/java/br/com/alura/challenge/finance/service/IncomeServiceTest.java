@@ -14,11 +14,14 @@ import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -30,6 +33,23 @@ import br.com.alura.challenge.finance.exception.BusinessException;
 import br.com.alura.challenge.finance.exception.EntityNotFoundException;
 import br.com.alura.challenge.finance.model.Income;
 import br.com.alura.challenge.finance.repository.IncomeRepository;
+
+class IncomeParams {
+
+	static Stream<List<Income>> list() {
+		return Stream.of(Arrays.asList(new Income(1l, "Test", BigDecimal.valueOf(23), toDate("03/08/2022")),
+				new Income(2l, "Test 2", BigDecimal.valueOf(44), toDate("11/07/2022"))));
+	}
+
+	static Stream<Income> one() {
+		return Stream.of(new Income(1l, "Test", BigDecimal.valueOf(23), toDate("03/08/2022")));
+	}
+
+	static LocalDate toDate(String date) {
+		return LocalDate.parse(date, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+	}
+
+}
 
 @ExtendWith(MockitoExtension.class)
 class IncomeServiceTest {
@@ -44,33 +64,29 @@ class IncomeServiceTest {
 	@DisplayName("Find All ")
 	class FindAll {
 
-		@Test
 		@DisplayName("Should find all")
-		public void shouldFind() {
+		@ParameterizedTest
+		@MethodSource("br.com.alura.challenge.finance.service.IncomeParams#list")
+		public void shouldFind(List<Income> expected) {
 
-			Income expected = new Income(1l, "Test", BigDecimal.valueOf(23), toDate("03/08/2022"));
-			Income secondExpected = new Income(2l, "Test 2", BigDecimal.valueOf(44), toDate("11/07/2022"));
-
-			given(repository.findAll()).willReturn(Arrays.asList(expected, secondExpected));
+			given(repository.findAll()).willReturn(expected);
 
 			List<Income> result = service.findAll();
 
-			assertThat(result).contains(expected, secondExpected);
+			assertThat(result).contains(expected.toArray(new Income[expected.size()]));
 
 		}
 
-		@Test
 		@DisplayName("Should find all with Predicate")
-		public void shouldFindWithPredicate() {
+		@ParameterizedTest
+		@MethodSource("br.com.alura.challenge.finance.service.IncomeParams#list")
+		public void shouldFindWithPredicate(List<Income> expected) {
 
-			Income expected = new Income(1l, "Test", BigDecimal.valueOf(23), toDate("03/08/2022"));
-			Income secondExpected = new Income(2l, "Test 2", BigDecimal.valueOf(44), toDate("11/07/2022"));
-
-			given(repository.findAll(any(Predicate.class))).willReturn(Arrays.asList(expected, secondExpected));
+			given(repository.findAll(any(Predicate.class))).willReturn(expected);
 
 			Iterable<Income> result = service.findAll(new BooleanBuilder());
 
-			assertThat(result).contains(expected, secondExpected);
+			assertThat(result).contains(expected.toArray(new Income[expected.size()]));
 
 		}
 
@@ -91,11 +107,10 @@ class IncomeServiceTest {
 	@DisplayName("Find by ID")
 	class FindById {
 
-		@Test
 		@DisplayName("Should find by id")
-		public void shouldFind() {
-
-			Income expected = new Income(1l, "Test", BigDecimal.valueOf(23), toDate("03/08/2022"));
+		@ParameterizedTest
+		@MethodSource("br.com.alura.challenge.finance.service.IncomeParams#one")
+		public void shouldFind(Income expected) {
 
 			given(repository.findById(anyLong())).willReturn(Optional.of(expected));
 
@@ -123,18 +138,16 @@ class IncomeServiceTest {
 	@DisplayName("Create")
 	class Create {
 
-		@Test
 		@DisplayName("Should create")
-		public void shouldCreate() {
-
-			Income expected = new Income(1l, "Test", BigDecimal.valueOf(23), toDate("03/08/2022"));
+		@ParameterizedTest
+		@MethodSource("br.com.alura.challenge.finance.service.IncomeParams#one")
+		public void shouldCreate(Income expected) {
 
 			given(repository.findAllByDescricaoContainingIgnoreCaseAndDataBetween(any(String.class),
 					any(LocalDate.class), any(LocalDate.class))).willReturn(Arrays.asList());
 			given(repository.save(any(Income.class))).willReturn(expected);
 
-			Income entity = new Income(null, "Test", BigDecimal.valueOf(23), toDate("03/08/2022"));
-			Income result = service.save(entity);
+			Income result = service.save(expected);
 
 			assertThat(result.getId()).isEqualTo(expected.getId());
 			assertThat(result.getDescricao()).isEqualTo(expected.getDescricao());
@@ -143,18 +156,16 @@ class IncomeServiceTest {
 
 		}
 
-		@Test
 		@DisplayName("Should create when same name and different month")
-		public void shouldCreateWhenSameNameButDifferentMonth() {
-
-			Income expected = new Income(1l, "Test", BigDecimal.valueOf(23), toDate("03/09/2022"));
+		@ParameterizedTest
+		@MethodSource("br.com.alura.challenge.finance.service.IncomeParams#one")
+		public void shouldCreateWhenSameNameButDifferentMonth(Income expected) {
 
 			given(repository.findAllByDescricaoContainingIgnoreCaseAndDataBetween(any(String.class),
 					any(LocalDate.class), any(LocalDate.class))).willReturn(Arrays.asList());
 			given(repository.save(any(Income.class))).willReturn(expected);
 
-			Income entity = new Income(null, "Test", BigDecimal.valueOf(23), toDate("03/08/2022"));
-			Income result = service.save(entity);
+			Income result = service.save(expected);
 
 			assertThat(result.getId()).isEqualTo(expected.getId());
 			assertThat(result.getDescricao()).isEqualTo(expected.getDescricao());
@@ -163,18 +174,16 @@ class IncomeServiceTest {
 
 		}
 
-		@Test
 		@DisplayName("Should throw exception when same name and month")
-		public void shouldReturnExceptionWhenAlreadyExistWithSameMonth() {
+		@ParameterizedTest
+		@MethodSource("br.com.alura.challenge.finance.service.IncomeParams#one")
+		public void shouldReturnExceptionWhenAlreadyExistWithSameMonth(Income expected) {
 
 			given(repository.findAllByDescricaoContainingIgnoreCaseAndDataBetween(any(String.class),
-					any(LocalDate.class), any(LocalDate.class)))
-					.willReturn(Arrays.asList(new Income(1l, "Test", BigDecimal.valueOf(23), toDate("05/08/2022"))));
-
-			Income entity = new Income(null, "Test", BigDecimal.valueOf(23), toDate("03/08/2022"));
+					any(LocalDate.class), any(LocalDate.class))).willReturn(Arrays.asList(expected));
 
 			assertThrows(BusinessException.class, () -> {
-				service.save(entity);
+				service.save(expected);
 			});
 
 		}
@@ -185,11 +194,10 @@ class IncomeServiceTest {
 	@DisplayName("Delete")
 	class Delete {
 
-		@Test
 		@DisplayName("Should delete")
-		public void shouldDelete() {
-
-			Income expected = new Income(1l, "Test", BigDecimal.valueOf(23), toDate("03/08/2022"));
+		@ParameterizedTest
+		@MethodSource("br.com.alura.challenge.finance.service.IncomeParams#one")
+		public void shouldDelete(Income expected) {
 
 			given(repository.findById(anyLong())).willReturn(Optional.of(expected));
 
@@ -211,10 +219,6 @@ class IncomeServiceTest {
 
 		}
 
-	}
-
-	LocalDate toDate(String date) {
-		return LocalDate.parse(date, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
 	}
 
 }

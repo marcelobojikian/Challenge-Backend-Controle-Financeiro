@@ -15,11 +15,14 @@ import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -32,6 +35,23 @@ import br.com.alura.challenge.finance.exception.EntityNotFoundException;
 import br.com.alura.challenge.finance.model.Expenditure;
 import br.com.alura.challenge.finance.model.Expenditure.Categoria;
 import br.com.alura.challenge.finance.repository.ExpenditureRepository;
+
+class ExpenditureParams {
+
+	static Stream<List<Expenditure>> list() {
+		return Stream.of(Arrays.asList(new Expenditure(1l, "Test", BigDecimal.valueOf(23), toDate("03/08/2022")),
+				new Expenditure(2l, "Test 2", BigDecimal.valueOf(44), toDate("11/07/2022"))));
+	}
+
+	static Stream<Expenditure> one() {
+		return Stream.of(new Expenditure(1l, "Test", BigDecimal.valueOf(23), toDate("03/08/2022")));
+	}
+
+	static LocalDate toDate(String date) {
+		return LocalDate.parse(date, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+	}
+
+}
 
 @ExtendWith(MockitoExtension.class)
 class ExpenditureServiceTest {
@@ -46,33 +66,29 @@ class ExpenditureServiceTest {
 	@DisplayName("Find All")
 	class FindAll {
 
-		@Test
 		@DisplayName("Should find all")
-		public void shouldFind() {
+		@ParameterizedTest
+		@MethodSource("br.com.alura.challenge.finance.service.ExpenditureParams#list")
+		public void shouldFind(List<Expenditure> expected) {
 
-			Expenditure expected = new Expenditure(1l, "Test", BigDecimal.valueOf(23), toDate("03/08/2022"));
-			Expenditure secondExpected = new Expenditure(2l, "Test 2", BigDecimal.valueOf(44), toDate("11/07/2022"));
-
-			given(repository.findAll()).willReturn(Arrays.asList(expected, secondExpected));
+			given(repository.findAll()).willReturn(expected);
 
 			List<Expenditure> result = service.findAll();
 
-			assertThat(result).contains(expected, secondExpected);
+			assertThat(result).contains(expected.toArray(new Expenditure[expected.size()]));
 
 		}
 
-		@Test
 		@DisplayName("Should find all with Predicate")
-		public void shouldFindWithPredicate() {
+		@ParameterizedTest
+		@MethodSource("br.com.alura.challenge.finance.service.ExpenditureParams#list")
+		public void shouldFindWithPredicate(List<Expenditure> expected) {
 
-			Expenditure expected = new Expenditure(1l, "Test", BigDecimal.valueOf(23), toDate("03/08/2022"));
-			Expenditure secondExpected = new Expenditure(2l, "Test 2", BigDecimal.valueOf(44), toDate("11/07/2022"));
-
-			given(repository.findAll(any(Predicate.class))).willReturn(Arrays.asList(expected, secondExpected));
+			given(repository.findAll(any(Predicate.class))).willReturn(expected);
 
 			Iterable<Expenditure> result = service.findAll(new BooleanBuilder());
 
-			assertThat(result).contains(expected, secondExpected);
+			assertThat(result).contains(expected.toArray(new Expenditure[expected.size()]));
 
 		}
 
@@ -93,11 +109,10 @@ class ExpenditureServiceTest {
 	@DisplayName("Find by ID")
 	class FindById {
 
-		@Test
 		@DisplayName("Should find by id")
-		public void shouldFind() {
-
-			Expenditure expected = new Expenditure(1l, "Test", BigDecimal.valueOf(23), toDate("03/08/2022"));
+		@ParameterizedTest
+		@MethodSource("br.com.alura.challenge.finance.service.ExpenditureParams#one")
+		public void shouldFind(Expenditure expected) {
 
 			given(repository.findById(anyLong())).willReturn(Optional.of(expected));
 
@@ -130,18 +145,16 @@ class ExpenditureServiceTest {
 	@DisplayName("Create")
 	class Create {
 
-		@Test
 		@DisplayName("Should create")
-		public void shouldCreate() {
-
-			Expenditure expected = new Expenditure(1l, "Test", BigDecimal.valueOf(23), toDate("03/08/2022"));
+		@ParameterizedTest
+		@MethodSource("br.com.alura.challenge.finance.service.ExpenditureParams#one")
+		public void shouldCreate(Expenditure expected) {
 
 			given(repository.findAllByDescricaoContainingIgnoreCaseAndDataBetween(any(String.class),
 					any(LocalDate.class), any(LocalDate.class))).willReturn(Arrays.asList());
 			given(repository.save(any(Expenditure.class))).willReturn(expected);
 
-			Expenditure entity = new Expenditure(null, "Test", BigDecimal.valueOf(23), toDate("03/08/2022"));
-			Expenditure result = service.save(entity);
+			Expenditure result = service.save(expected);
 
 			assertThat(result.getId()).isEqualTo(expected.getId());
 			assertThat(result.getDescricao()).isEqualTo(expected.getDescricao());
@@ -151,18 +164,16 @@ class ExpenditureServiceTest {
 
 		}
 
-		@Test
 		@DisplayName("Should create when same name and different month")
-		public void shouldCreateWhenSameNameAndDifferentMonth() {
-
-			Expenditure expected = new Expenditure(1l, "Test", BigDecimal.valueOf(23), toDate("03/09/2022"));
+		@ParameterizedTest
+		@MethodSource("br.com.alura.challenge.finance.service.ExpenditureParams#one")
+		public void shouldCreateWhenSameNameAndDifferentMonth(Expenditure expected) {
 
 			given(repository.findAllByDescricaoContainingIgnoreCaseAndDataBetween(any(String.class),
 					any(LocalDate.class), any(LocalDate.class))).willReturn(Arrays.asList());
 			given(repository.save(any(Expenditure.class))).willReturn(expected);
 
-			Expenditure entity = new Expenditure(null, "Test", BigDecimal.valueOf(23), toDate("03/08/2022"));
-			Expenditure result = service.save(entity);
+			Expenditure result = service.save(expected);
 
 			assertThat(result.getId()).isEqualTo(expected.getId());
 			assertThat(result.getDescricao()).isEqualTo(expected.getDescricao());
@@ -172,18 +183,16 @@ class ExpenditureServiceTest {
 
 		}
 
-		@Test
 		@DisplayName("Should throw exception when same name and month")
-		public void shouldReturnExceptionWhenAlreadyExistWithSameMonth() {
+		@ParameterizedTest
+		@MethodSource("br.com.alura.challenge.finance.service.ExpenditureParams#one")
+		public void shouldReturnExceptionWhenAlreadyExistWithSameMonth(Expenditure expected) {
 
 			given(repository.findAllByDescricaoContainingIgnoreCaseAndDataBetween(any(String.class),
-					any(LocalDate.class), any(LocalDate.class))).willReturn(
-							Arrays.asList(new Expenditure(1l, "Test", BigDecimal.valueOf(23), toDate("05/08/2022"))));
-
-			Expenditure entity = new Expenditure(null, "Test", BigDecimal.valueOf(23), toDate("03/08/2022"));
+					any(LocalDate.class), any(LocalDate.class))).willReturn(Arrays.asList(expected));
 
 			Exception exception = assertThrows(BusinessException.class, () -> {
-				service.save(entity);
+				service.save(expected);
 			});
 
 			String expectedMessage = "There is this finance for this month";
@@ -199,11 +208,10 @@ class ExpenditureServiceTest {
 	@DisplayName("Delete")
 	class Delete {
 
-		@Test
 		@DisplayName("Should delete")
-		public void shouldDelete() {
-
-			Expenditure expected = new Expenditure(1l, "Test", BigDecimal.valueOf(23), toDate("03/08/2022"));
+		@ParameterizedTest
+		@MethodSource("br.com.alura.challenge.finance.service.ExpenditureParams#one")
+		public void shouldDelete(Expenditure expected) {
 
 			given(repository.findById(anyLong())).willReturn(Optional.of(expected));
 
@@ -230,10 +238,6 @@ class ExpenditureServiceTest {
 
 		}
 
-	}
-
-	LocalDate toDate(String date) {
-		return LocalDate.parse(date, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
 	}
 
 }

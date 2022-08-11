@@ -6,13 +6,15 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.converter.ConvertWith;
-import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
@@ -20,8 +22,39 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import br.com.alura.challenge.finance.model.Expenditure;
 import br.com.alura.challenge.finance.model.FinanceEntity;
 import br.com.alura.challenge.finance.model.Income;
-import br.com.alura.challenge.finance.parameter.FinanceConverter;
-import br.com.alura.challenge.finance.parameter.ListFinanceConverter;
+
+class FinanceParams {
+
+	static Stream<FinanceEntity> persist() {
+		return Stream.of(new Expenditure(null, "Test", BigDecimal.ZERO, toDate("03/08/2022")),
+				new Income(null, "Test", BigDecimal.ZERO, toDate("03/08/2022")));
+	}
+
+	static Stream<List<FinanceEntity>> filterDescDate() {
+		return Stream.of(Arrays.asList(new Expenditure(null, "Test", BigDecimal.ZERO, toDate("03/08/2022")),
+				new Expenditure(null, "Test 2", BigDecimal.ZERO, toDate("12/08/2022")),
+				new Expenditure(null, "Test 3", BigDecimal.ZERO, toDate("23/12/2022")),
+				new Income(null, "Test", BigDecimal.ZERO, toDate("03/08/2022")),
+				new Income(null, "Test 2", BigDecimal.TEN, toDate("12/08/2022")),
+				new Income(null, "Test 3", BigDecimal.TEN, toDate("11/08/2022"))));
+	}
+
+	static Stream<List<FinanceEntity>> amountFilterDate() {
+		return Stream.of(Arrays.asList(new Expenditure(null, "Test", BigDecimal.ONE, toDate("03/08/2022")),
+				new Expenditure(null, "Test 2", BigDecimal.TEN, toDate("06/08/2022")),
+				new Expenditure(null, "Test 3", BigDecimal.TEN, toDate("09/08/2022")),
+				new Expenditure(null, "Test 4", BigDecimal.ONE, toDate("09/09/2022")),
+				new Income(null, "Test", BigDecimal.ONE, toDate("03/08/2022")),
+				new Income(null, "Test 2", BigDecimal.TEN, toDate("06/08/2022")),
+				new Income(null, "Test 3", BigDecimal.TEN, toDate("09/08/2022")),
+				new Income(null, "Test 4", BigDecimal.ONE, toDate("09/09/2022"))));
+	}
+
+	static LocalDate toDate(String date) {
+		return LocalDate.parse(date, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+	}
+
+}
 
 @DataJpaTest
 class FinanceRepositoryTest {
@@ -37,8 +70,8 @@ class FinanceRepositoryTest {
 
 	@DisplayName("Should persist FinanceEntity")
 	@ParameterizedTest
-	@CsvSource({ "expenditure::Test:0:03/08/2022", "income::Test:0:03/08/2022", })
-	public void shouldPersistFinance(@ConvertWith(FinanceConverter.class) FinanceEntity entity) {
+	@MethodSource("br.com.alura.challenge.finance.repository.FinanceParams#persist")
+	public void shouldPersistFinance(FinanceEntity entity) {
 		FinanceEntity persist = entityManager.persist(entity);
 		assertThat(persist).isNotNull();
 		assertThat(persist.getId()).isNotNull();
@@ -46,10 +79,8 @@ class FinanceRepositoryTest {
 
 	@DisplayName("Should filter by description and between dates.")
 	@ParameterizedTest
-	@CsvSource({ "expenditure::Test:0:03/08/2022;expenditure::Test 2:0:12/08/2022;expenditure::Test 3:0:23/12/2022;"
-			+ "income::Test:0:03/08/2022;income::Test 2:10:12/08/2022;income::Test 3:0:11/08/2022" })
-	public void shouldFilterByDescriptionAndBetweenDates(
-			@ConvertWith(ListFinanceConverter.class) List<FinanceEntity> entities) {
+	@MethodSource("br.com.alura.challenge.finance.repository.FinanceParams#filterDescDate")
+	public void shouldFilterByDescriptionAndBetweenDates(List<FinanceEntity> entities) {
 		for (FinanceEntity finance : entities) {
 			entityManager.persist(finance);
 		}
@@ -88,11 +119,8 @@ class FinanceRepositoryTest {
 
 	@DisplayName("Should return amount with filter by between dates.")
 	@ParameterizedTest
-	@CsvSource({
-			"expenditure::Test:1:03/08/2022;expenditure::Test 2:10:06/08/2022;expenditure::Test 3:10:09/08/2022;expenditure::Test 4:1:09/09/2022;"
-					+ "income::Test:1:03/08/2022;income::Test 2:10:06/08/2022;income::Test 3:10:09/08/2022;income::Test 4:1:09/09/2022" })
-	public void shouldReturnAmountWithFilterByBetweenDates(
-			@ConvertWith(ListFinanceConverter.class) List<FinanceEntity> entities) {
+	@MethodSource("br.com.alura.challenge.finance.repository.FinanceParams#amountFilterDate")
+	public void shouldReturnAmountWithFilterByBetweenDates(List<FinanceEntity> entities) {
 		for (FinanceEntity finance : entities) {
 			entityManager.persist(finance);
 		}

@@ -7,13 +7,14 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.converter.ConvertWith;
-import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
@@ -26,8 +27,36 @@ import br.com.alura.challenge.finance.model.Expenditure;
 import br.com.alura.challenge.finance.model.Expenditure.Categoria;
 import br.com.alura.challenge.finance.model.FinanceEntity;
 import br.com.alura.challenge.finance.model.QExpenditure;
-import br.com.alura.challenge.finance.parameter.FinanceConverter;
-import br.com.alura.challenge.finance.parameter.ListFinanceConverter;
+
+class ExpenditureParams {
+
+	static Stream<Expenditure> categoryDefault() {
+		return Stream.of(new Expenditure(null, "Test", BigDecimal.ZERO, toDate("03/08/2022")),
+				new Expenditure(null, "Test 2", BigDecimal.ZERO, toDate("03/08/2022"), Categoria.OUTRAS));
+	}
+
+	static Stream<Expenditure> categoryCustomized() {
+		return Stream.of(new Expenditure(null, "Test", BigDecimal.ZERO, toDate("03/08/2022"), Categoria.ALIMENTACAO));
+	}
+
+	static Stream<List<Expenditure>> betweenDate() {
+		return Stream
+				.of(Arrays.asList(new Expenditure(null, "Test", BigDecimal.ONE, toDate("03/08/2022"), Categoria.LAZER),
+						new Expenditure(null, "Test 2", BigDecimal.TEN, toDate("06/08/2022"), Categoria.LAZER),
+						new Expenditure(null, "Test 3", BigDecimal.TEN, toDate("09/08/2022"), Categoria.ALIMENTACAO),
+						new Expenditure(null, "Test 4", BigDecimal.TEN, toDate("09/09/2022"))));
+	}
+
+	static Stream<List<Expenditure>> findPredicate() {
+		return Stream.of(Arrays.asList(new Expenditure(null, "Test", BigDecimal.ONE, toDate("03/08/2022")),
+				new Expenditure(null, "Test 2", BigDecimal.TEN, toDate("01/02/2022"))));
+	}
+
+	static LocalDate toDate(String date) {
+		return LocalDate.parse(date, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+	}
+
+}
 
 @DataJpaTest
 class ExpenditureRepositoryTest {
@@ -40,8 +69,8 @@ class ExpenditureRepositoryTest {
 
 	@DisplayName("Should persist with Category default")
 	@ParameterizedTest
-	@CsvSource({ "expenditure::Test:0:03/08/2022", "expenditure::Test:0:03/08/2022:OUTRAS" })
-	public void successWhenPersistEntity(@ConvertWith(FinanceConverter.class) Expenditure entity) {
+	@MethodSource("br.com.alura.challenge.finance.repository.ExpenditureParams#categoryDefault")
+	public void successWhenPersistEntity(Expenditure entity) {
 		entityManager.persist(entity);
 
 		List<Expenditure> all = repository.findAll();
@@ -54,8 +83,8 @@ class ExpenditureRepositoryTest {
 
 	@DisplayName("Should persist with Category customized")
 	@ParameterizedTest
-	@CsvSource({ "expenditure::Test:0:03/08/2022:ALIMENTACAO" })
-	public void successWhenPersistEntityWithCategory(@ConvertWith(FinanceConverter.class) Expenditure entity) {
+	@MethodSource("br.com.alura.challenge.finance.repository.ExpenditureParams#categoryCustomized")
+	public void successWhenPersistEntityWithCategory(Expenditure entity) {
 		entityManager.persist(entity);
 
 		List<Expenditure> all = repository.findAll();
@@ -68,10 +97,8 @@ class ExpenditureRepositoryTest {
 
 	@DisplayName("Should return categories list when find between dates.")
 	@ParameterizedTest
-	@CsvSource({
-			"expenditure::Test:1:03/08/2022:LAZER;expenditure::Test 2:10:06/08/2022:LAZER;expenditure::Test 3:10:09/08/2022:ALIMENTACAO;expenditure::Test 4:1:09/09/2022" })
-	public void returnCategoriesWhenFindBetweenDates(
-			@ConvertWith(ListFinanceConverter.class) List<FinanceEntity> entities) {
+	@MethodSource("br.com.alura.challenge.finance.repository.ExpenditureParams#betweenDate")
+	public void returnCategoriesWhenFindBetweenDates(List<FinanceEntity> entities) {
 		for (FinanceEntity finance : entities) {
 			entityManager.persist(finance);
 		}
@@ -99,8 +126,8 @@ class ExpenditureRepositoryTest {
 
 	@DisplayName("Should return entities when find by predicate.")
 	@ParameterizedTest
-	@CsvSource({ "expenditure::Test:0:03/08/2022;expenditure::Test2:10:01/02/2022" })
-	public void successWhenFindByPredicate(@ConvertWith(ListFinanceConverter.class) List<FinanceEntity> entities) {
+	@MethodSource("br.com.alura.challenge.finance.repository.ExpenditureParams#findPredicate")
+	public void successWhenFindByPredicate(List<FinanceEntity> entities) {
 		for (FinanceEntity finance : entities) {
 			entityManager.persist(finance);
 		}
@@ -125,22 +152,20 @@ class ExpenditureRepositoryTest {
 		sizeExpected = 1;
 		assertThat(result).hasSize(sizeExpected);
 
-		predicate = qExpenditure.data.between(parse("01/01/2022"), parse("01/12/2022"));
+		predicate = qExpenditure.data.between(ExpenditureParams.toDate("01/01/2022"),
+				ExpenditureParams.toDate("01/12/2022"));
 		result = repository.findAll(predicate);
 
 		sizeExpected = 2;
 		assertThat(result).hasSize(sizeExpected);
 
-		predicate = qExpenditure.data.between(parse("01/01/2022"), parse("01/04/2022"));
+		predicate = qExpenditure.data.between(ExpenditureParams.toDate("01/01/2022"),
+				ExpenditureParams.toDate("01/04/2022"));
 		result = repository.findAll(predicate);
 
 		sizeExpected = 1;
 		assertThat(result).hasSize(sizeExpected);
 
-	}
-
-	LocalDate parse(String data) {
-		return LocalDate.parse(data, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
 	}
 
 }
