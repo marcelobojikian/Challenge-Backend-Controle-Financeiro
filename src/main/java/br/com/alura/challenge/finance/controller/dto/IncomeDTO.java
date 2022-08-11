@@ -11,10 +11,10 @@ import org.springframework.hateoas.server.core.Relation;
 import com.querydsl.core.types.dsl.StringExpression;
 import com.querydsl.core.types.dsl.StringPath;
 
-import br.com.alura.challenge.finance.controller.web.IncomeController;
+import br.com.alura.challenge.finance.controller.web.hateoas.IncomeReference;
 import br.com.alura.challenge.finance.model.QIncome;
 
-@Relation(collectionRelation = IncomeController.NAME_COLLECTION_RELATION, itemRelation = "income")
+@Relation(collectionRelation = IncomeReference.NAME_COLLECTION_RELATION, itemRelation = "income")
 public class IncomeDTO extends FinanceDTO implements QuerydslBinderCustomizer<QIncome> {
 
 	public IncomeDTO() {

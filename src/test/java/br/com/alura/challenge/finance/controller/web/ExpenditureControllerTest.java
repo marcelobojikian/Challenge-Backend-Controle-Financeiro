@@ -4,12 +4,10 @@ import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.Month;
@@ -20,7 +18,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -35,17 +32,20 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.querydsl.core.types.Predicate;
 
+import br.com.alura.challenge.finance.config.ApplicationConfig;
 import br.com.alura.challenge.finance.config.DateFormatConfig;
 import br.com.alura.challenge.finance.controller.dto.ExpenditureDTO;
+import br.com.alura.challenge.finance.controller.dto.mapper.ExpenditureMapperConverter;
+import br.com.alura.challenge.finance.controller.web.hateoas.ExpenditureReference;
 import br.com.alura.challenge.finance.exception.EntityNotFoundException;
 import br.com.alura.challenge.finance.model.Expenditure;
 import br.com.alura.challenge.finance.model.Expenditure.Categoria;
 import br.com.alura.challenge.finance.service.ExpenditureService;
 
 @ExtendWith(SpringExtension.class)
-@WebMvcTest(controllers = { ExpenditureController.class })
+@WebMvcTest(controllers = { ExpenditureController.class, ExpenditureReference.class })
 @AutoConfigureMockMvc
-@Import(DateFormatConfig.class)
+@Import({ DateFormatConfig.class, ApplicationConfig.class })
 class ExpenditureControllerTest {
 
 	static final String URL_API = "/api/expenditures";
@@ -54,13 +54,16 @@ class ExpenditureControllerTest {
 	ObjectMapper mapper;
 
 	@Autowired
+	ExpenditureReference ref;
+
+	@Autowired
+	ExpenditureMapperConverter converter;
+
+	@Autowired
 	MockMvc mockMvc;
 
 	@MockBean
 	ExpenditureService service;
-
-	@MockBean
-	ModelMapper modelMapper;
 
 	@Nested
 	@DisplayName("Method GET by MONTH")
@@ -74,7 +77,7 @@ class ExpenditureControllerTest {
 			ExpenditureDTO expectedDTO = new ExpenditureDTO(1l, "Test", BigDecimal.valueOf(23), toDate("03/08/2022"));
 
 			given(service.findAll(any(Predicate.class))).willReturn(Arrays.asList(expected));
-			given(modelMapper.map(any(Iterable.class), any(Type.class))).willReturn(Arrays.asList(expectedDTO));
+//			given(modelMapper.map(any(Iterable.class), any(Type.class))).willReturn(Arrays.asList(expectedDTO));
 
 			// @formatter:off
 	        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
@@ -98,7 +101,7 @@ class ExpenditureControllerTest {
 		public void shouldNoContent() throws Exception {
 
 			given(service.findAll(any(Predicate.class))).willReturn(Arrays.asList());
-			given(modelMapper.map(any(Object.class), any(Type.class))).willReturn(Arrays.asList());
+//			given(modelMapper.map(any(Object.class), any(Type.class))).willReturn(Arrays.asList());
 
 			// @formatter:off
 			MockHttpServletRequestBuilder request = MockMvcRequestBuilders
@@ -130,8 +133,8 @@ class ExpenditureControllerTest {
 					toDate("11/07/2022"));
 
 			given(service.findAll(any(Predicate.class))).willReturn(Arrays.asList(expected, secondExpected));
-			given(modelMapper.map(any(Iterable.class), any(Type.class)))
-					.willReturn(Arrays.asList(expectedDTO, secondExpectedDTO));
+//			given(modelMapper.map(any(Iterable.class), any(Type.class)))
+//					.willReturn(Arrays.asList(expectedDTO, secondExpectedDTO));
 
 			// @formatter:off
 	        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
@@ -155,7 +158,7 @@ class ExpenditureControllerTest {
 		public void shouldNoContent() throws Exception {
 
 			given(service.findAll(any(Predicate.class))).willReturn(Arrays.asList());
-			given(modelMapper.map(any(Object.class), any(Type.class))).willReturn(Arrays.asList());
+//			given(modelMapper.map(any(Object.class), any(Type.class))).willReturn(Arrays.asList());
 
 			// @formatter:off
 			MockHttpServletRequestBuilder request = MockMvcRequestBuilders
@@ -183,7 +186,7 @@ class ExpenditureControllerTest {
 
 			Expenditure savedEntity = new Expenditure(1l, "Teste", BigDecimal.ZERO, toDate("03/09/2022"));
 			given(service.findById(any(Long.class))).willReturn(savedEntity);
-			given(modelMapper.map(any(Expenditure.class), eq(ExpenditureDTO.class))).willReturn(expectedDTO);
+//			given(modelMapper.map(any(Expenditure.class), eq(ExpenditureDTO.class))).willReturn(expectedDTO);
 
 			// @formatter:off
 	        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
@@ -238,8 +241,8 @@ class ExpenditureControllerTest {
 			ExpenditureDTO expectedDTO = new ExpenditureDTO(1l, "Teste", BigDecimal.ZERO, toDate("03/09/2022"));
 			Expenditure savedEntity = new Expenditure(1l, "Teste", BigDecimal.ZERO, toDate("03/09/2022"));
 
-			given(modelMapper.map(any(), eq(Expenditure.class))).willReturn(savedEntity);
-			given(modelMapper.map(any(), eq(ExpenditureDTO.class))).willReturn(expectedDTO);
+//			given(modelMapper.map(any(), eq(Expenditure.class))).willReturn(savedEntity);
+//			given(modelMapper.map(any(), eq(ExpenditureDTO.class))).willReturn(expectedDTO);
 			given(service.save(any(Expenditure.class))).willReturn(savedEntity);
 
 			ExpenditureDTO entity = new ExpenditureDTO(null, "Teste", BigDecimal.ZERO, LocalDate.now());
@@ -272,8 +275,8 @@ class ExpenditureControllerTest {
 			Expenditure savedEntity = new Expenditure(1l, "Teste", BigDecimal.ZERO, toDate("03/09/2022"),
 					Categoria.IMPREVISTOS);
 
-			given(modelMapper.map(any(), eq(Expenditure.class))).willReturn(savedEntity);
-			given(modelMapper.map(any(), eq(ExpenditureDTO.class))).willReturn(expectedDTO);
+//			given(modelMapper.map(any(), eq(Expenditure.class))).willReturn(savedEntity);
+//			given(modelMapper.map(any(), eq(ExpenditureDTO.class))).willReturn(expectedDTO);
 			given(service.save(any(Expenditure.class))).willReturn(savedEntity);
 
 			ExpenditureDTO entity = new ExpenditureDTO(null, "Teste", BigDecimal.ZERO, LocalDate.now());
@@ -312,7 +315,7 @@ class ExpenditureControllerTest {
 
 			given(service.findById(any(Long.class))).willReturn(entityExpected);
 			given(service.save(any(Expenditure.class))).willReturn(entityExpected);
-			given(modelMapper.map(any(), eq(ExpenditureDTO.class))).willReturn(expectedDTO);
+//			given(modelMapper.map(any(), eq(ExpenditureDTO.class))).willReturn(expectedDTO);
 
 			ExpenditureDTO entity = new ExpenditureDTO(1l, "Teste 2", BigDecimal.ONE, toDate("10/09/2022"));
 			String json = mapper.writeValueAsString(entity);

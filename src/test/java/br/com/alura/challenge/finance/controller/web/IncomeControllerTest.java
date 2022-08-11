@@ -4,12 +4,10 @@ import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.Month;
@@ -20,7 +18,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -35,16 +32,19 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.querydsl.core.types.Predicate;
 
+import br.com.alura.challenge.finance.config.ApplicationConfig;
 import br.com.alura.challenge.finance.config.DateFormatConfig;
 import br.com.alura.challenge.finance.controller.dto.IncomeDTO;
+import br.com.alura.challenge.finance.controller.dto.mapper.IncomeMapperConverter;
+import br.com.alura.challenge.finance.controller.web.hateoas.IncomeReference;
 import br.com.alura.challenge.finance.exception.EntityNotFoundException;
 import br.com.alura.challenge.finance.model.Income;
 import br.com.alura.challenge.finance.service.IncomeService;
 
 @ExtendWith(SpringExtension.class)
-@WebMvcTest(controllers = { IncomeController.class })
+@WebMvcTest(controllers = { IncomeController.class, IncomeReference.class })
 @AutoConfigureMockMvc
-@Import(DateFormatConfig.class)
+@Import({ DateFormatConfig.class, ApplicationConfig.class })
 class IncomeControllerTest {
 
 	static final String URL_API = "/api/incomes";
@@ -53,13 +53,16 @@ class IncomeControllerTest {
 	ObjectMapper mapper;
 
 	@Autowired
+	IncomeReference ref;
+
+	@Autowired
+	IncomeMapperConverter converter;
+
+	@Autowired
 	MockMvc mockMvc;
 
 	@MockBean
 	IncomeService service;
-
-	@MockBean
-	ModelMapper modelMapper;
 
 	@Nested
 	@DisplayName("Method GET by MONTH")
@@ -74,7 +77,7 @@ class IncomeControllerTest {
 			IncomeDTO expectedDTO = new IncomeDTO(1l, "Test", BigDecimal.valueOf(23), toDate("03/08/2022"));
 
 			given(service.findAll(any(Predicate.class))).willReturn(Arrays.asList(expected));
-			given(modelMapper.map(any(Object.class), any(Type.class))).willReturn(Arrays.asList(expectedDTO));
+//			given(modelMapper.map(any(Object.class), any(Type.class))).willReturn(Arrays.asList(expectedDTO));
 
 			// @formatter:off
 	        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
@@ -98,7 +101,7 @@ class IncomeControllerTest {
 		public void shouldNoContent() throws Exception {
 
 			given(service.findAll(any(Predicate.class))).willReturn(Arrays.asList());
-			given(modelMapper.map(any(Object.class), any(Type.class))).willReturn(Arrays.asList());
+//			given(modelMapper.map(any(Object.class), any(Type.class))).willReturn(Arrays.asList());
 
 			// @formatter:off
 			MockHttpServletRequestBuilder request = MockMvcRequestBuilders
@@ -129,8 +132,8 @@ class IncomeControllerTest {
 			IncomeDTO secondExpectedDTO = new IncomeDTO(2l, "Test 2", BigDecimal.valueOf(44), toDate("11/07/2022"));
 
 			given(service.findAll(any(Predicate.class))).willReturn(Arrays.asList(expected, secondExpected));
-			given(modelMapper.map(any(Object.class), any(Type.class)))
-					.willReturn(Arrays.asList(expectedDTO, secondExpectedDTO));
+//			given(modelMapper.map(any(Object.class), any(Type.class)))
+//					.willReturn(Arrays.asList(expectedDTO, secondExpectedDTO));
 
 			// @formatter:off
 	        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
@@ -153,7 +156,7 @@ class IncomeControllerTest {
 		public void shouldNoContent() throws Exception {
 
 			given(service.findAll(any(Predicate.class))).willReturn(Arrays.asList());
-			given(modelMapper.map(any(Object.class), any(Type.class))).willReturn(Arrays.asList());
+//			given(modelMapper.map(any(Object.class), any(Type.class))).willReturn(Arrays.asList());
 
 			// @formatter:off
 			MockHttpServletRequestBuilder request = MockMvcRequestBuilders
@@ -181,7 +184,7 @@ class IncomeControllerTest {
 
 			Income savedEntity = new Income(1l, "Teste", BigDecimal.ZERO, toDate("03/09/2022"));
 			given(service.findById(any(Long.class))).willReturn(savedEntity);
-			given(modelMapper.map(any(Income.class), eq(IncomeDTO.class))).willReturn(expectedDTO);
+//			given(modelMapper.map(any(Income.class), eq(IncomeDTO.class))).willReturn(expectedDTO);
 
 			// @formatter:off
 	        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
@@ -235,8 +238,8 @@ class IncomeControllerTest {
 			IncomeDTO expectedDTO = new IncomeDTO(1l, "Teste", BigDecimal.ZERO, toDate("03/09/2022"));
 			Income savedEntity = new Income(1l, "Teste", BigDecimal.ZERO, toDate("03/09/2022"));
 
-			given(modelMapper.map(any(), eq(Income.class))).willReturn(savedEntity);
-			given(modelMapper.map(any(), eq(IncomeDTO.class))).willReturn(expectedDTO);
+//			given(modelMapper.map(any(), eq(Income.class))).willReturn(savedEntity);
+//			given(modelMapper.map(any(), eq(IncomeDTO.class))).willReturn(expectedDTO);
 			given(service.save(any(Income.class))).willReturn(savedEntity);
 
 			IncomeDTO entity = new IncomeDTO(null, "Teste", BigDecimal.ZERO, LocalDate.now());
@@ -274,7 +277,7 @@ class IncomeControllerTest {
 
 			given(service.findById(any(Long.class))).willReturn(entityExpected);
 			given(service.save(any(Income.class))).willReturn(entityExpected);
-			given(modelMapper.map(any(), eq(IncomeDTO.class))).willReturn(expectedDTO);
+//			given(modelMapper.map(any(), eq(IncomeDTO.class))).willReturn(expectedDTO);
 
 			IncomeDTO entity = new IncomeDTO(1l, "Teste 2", BigDecimal.ONE, toDate("10/09/2022"));
 			String json = mapper.writeValueAsString(entity);

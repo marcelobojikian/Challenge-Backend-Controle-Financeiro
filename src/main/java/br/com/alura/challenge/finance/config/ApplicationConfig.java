@@ -7,6 +7,8 @@ import org.springframework.context.annotation.Configuration;
 
 import br.com.alura.challenge.finance.controller.dto.ExpenditureDTO;
 import br.com.alura.challenge.finance.controller.dto.IncomeDTO;
+import br.com.alura.challenge.finance.controller.dto.mapper.ExpenditureMapperConverter;
+import br.com.alura.challenge.finance.controller.dto.mapper.IncomeMapperConverter;
 import br.com.alura.challenge.finance.model.Expenditure;
 import br.com.alura.challenge.finance.model.Income;
 
@@ -26,6 +28,16 @@ public class ApplicationConfig {
 		typeMapIncome.addMappings(mapper -> mapper.skip(Income::setId));
 
 		return modelMapper;
+	}
+
+	@Bean
+	public IncomeMapperConverter incomeModelMapper(ModelMapper modelMapper) {
+		return new IncomeMapperConverter(modelMapper);
+	}
+
+	@Bean
+	public ExpenditureMapperConverter expenditureModelMapper(ModelMapper modelMapper) {
+		return new ExpenditureMapperConverter(modelMapper);
 	}
 
 }
