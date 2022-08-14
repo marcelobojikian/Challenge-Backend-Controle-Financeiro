@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
 import java.util.List;
 
+import com.querydsl.core.types.Predicate;
+
 import br.com.alura.challenge.finance.exception.BusinessException;
 import br.com.alura.challenge.finance.exception.EntityNotFoundException;
 import br.com.alura.challenge.finance.model.FinanceEntity;
@@ -20,6 +22,14 @@ public abstract class FinanceDefaultService<T extends FinanceEntity> implements 
 
 	public List<T> findAll() {
 		return repository.findAll();
+	}
+
+	public Iterable<T> findAll(Predicate predicate) {
+		return repository.findAll(predicate);
+	}
+
+	public Iterable<T> findBetweenDate(LocalDate startDate, LocalDate endDate) {
+		return repository.findAllByDataBetween(startDate, endDate);
 	}
 
 	public T findById(Long id) {
@@ -40,24 +50,6 @@ public abstract class FinanceDefaultService<T extends FinanceEntity> implements 
 		}
 
 		return repository.save(entity);
-	}
-
-	public T update(Long id, T entity) {
-
-		T entityDB = repository.findById(id).orElseThrow(() -> new EntityNotFoundException("Entity not found"));
-
-		boolean sameMonth = entityDB.isSameMonth(entity);
-
-		entityDB.setDescricao(entity.getDescricao());
-		entityDB.setValor(entity.getValor());
-		entityDB.setData(entity.getData());
-
-		if (sameMonth) {
-			return repository.save(entityDB);
-		}
-
-		return save(entityDB);
-
 	}
 
 	public void delete(Long id) {

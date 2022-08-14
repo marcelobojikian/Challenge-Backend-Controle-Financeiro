@@ -22,7 +22,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 @Configuration
 public class DateFormatConfig {
 
-	private String pattern = "dd/MM/yyyy";
+	private final static String DATE_PATTERN = "dd/MM/yyyy";
 
 	@Bean
 	@Primary
@@ -41,7 +41,7 @@ public class DateFormatConfig {
 	public class LocalDateSerializer extends JsonSerializer<LocalDate> {
 		@Override
 		public void serialize(LocalDate value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
-			gen.writeString(value.format(DateTimeFormatter.ofPattern(pattern)));
+			gen.writeString(value.format(DateTimeFormatter.ofPattern(DATE_PATTERN)));
 		}
 	}
 
@@ -49,7 +49,7 @@ public class DateFormatConfig {
 		@Override
 		public LocalDate deserialize(JsonParser jsonParser, DeserializationContext deserializationContext)
 				throws IOException {
-			return LocalDate.parse(jsonParser.getValueAsString(), DateTimeFormatter.ofPattern(pattern));
+			return LocalDate.parse(jsonParser.getValueAsString(), DateTimeFormatter.ofPattern(DATE_PATTERN));
 		}
 	}
 

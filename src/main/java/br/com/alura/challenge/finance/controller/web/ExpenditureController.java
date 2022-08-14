@@ -1,82 +1,80 @@
 package br.com.alura.challenge.finance.controller.web;
 
-import java.util.List;
+import java.time.Month;
 
-import javax.validation.Valid;
-
-import org.modelmapper.ModelMapper;
+import org.springframework.data.querydsl.binding.QuerydslPredicate;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.alura.challenge.finance.controller.dto.FinanceDTO;
-import br.com.alura.challenge.finance.controller.hateos.ExpenditureModelAssembler;
+import com.querydsl.core.types.Predicate;
+
+import br.com.alura.challenge.finance.controller.dto.ExpenditureDTO;
+import br.com.alura.challenge.finance.controller.manager.FinanceControllerManager;
 import br.com.alura.challenge.finance.model.Expenditure;
-import br.com.alura.challenge.finance.service.ExpenditureService;
 
 @RestController
 @RequestMapping("/api/expenditures")
-public class ExpenditureController {
+public class ExpenditureController implements FinanceController<Expenditure, ExpenditureDTO> {
 
-	private final ExpenditureModelAssembler assembler;
+	FinanceControllerManager<Expenditure, ExpenditureDTO> controllerManager;
 
-	private final FinanceController<Expenditure> service;
-
-	private final ModelMapper modelMapper;
-
-	public ExpenditureController(ExpenditureService service, ModelMapper modelMapper,
-			ExpenditureModelAssembler assembler) {
-		this.service = new FinanceController<Expenditure>(service, modelMapper);
-		this.modelMapper = modelMapper;
-		this.assembler = assembler;
+	public ExpenditureController(FinanceControllerManager<Expenditure, ExpenditureDTO> controllerManager) {
+		this.controllerManager = controllerManager;
 	}
 
-	@GetMapping
-	public ResponseEntity<?> findAll() {
-		List<FinanceDTO> finances = service.findAll();
+	@Override
+	public ResponseEntity<?> all(
+			@QuerydslPredicate(root = Expenditure.class, bindings = ExpenditureDTO.class) Predicate predicate) {
 
-		if (finances.isEmpty()) {
+		CollectionModel<EntityModel<ExpenditureDTO>> collectionModel = controllerManager.findAll(predicate);
+
+		if (!collectionModel.iterator().hasNext()) {
 			return ResponseEntity.noContent().build();
 		}
 
-		CollectionModel<EntityModel<FinanceDTO>> collectionModel = assembler.toCollectionModel(finances);
+		return ResponseEntity.ok(collectionModel);
+
+	}
+
+	@Override
+	public ResponseEntity<?> byYearAndMonth(int year, Month month) {
+
+		CollectionModel<EntityModel<ExpenditureDTO>> collectionModel = controllerManager.allWithYearAndMonth(year,
+				month);
+
+		if (!collectionModel.iterator().hasNext()) {
+			return ResponseEntity.noContent().build();
+		}
 
 		return ResponseEntity.ok(collectionModel);
 	}
 
-	@GetMapping("/{id}")
-	public EntityModel<FinanceDTO> findById(@PathVariable Long id) {
-		FinanceDTO entity = service.findById(id);
-		return assembler.toModel(entity);
-	}
-
-	@PostMapping
-	public ResponseEntity<?> create(@RequestBody @Valid FinanceDTO dto) {
-		Expenditure entity = modelMapper.map(dto, Expenditure.class);
-		EntityModel<FinanceDTO> entityModel = assembler.toModel(service.create(entity));
-		return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(entityModel);
-	}
-
-	@PutMapping("/{id}")
-	public ResponseEntity<?> update(@PathVariable Long id, @RequestBody @Valid FinanceDTO dto) {
-		Expenditure entity = modelMapper.map(dto, Expenditure.class);
-		EntityModel<FinanceDTO> entityModel = assembler.toModel(service.update(id, entity));
+	@Override
+	public ResponseEntity<?> one(Long id) {
+		EntityModel<ExpenditureDTO> entityModel = controllerManager.findById(id);
 		return ResponseEntity.ok(entityModel);
 	}
 
-	@DeleteMapping("/{id}")
-	public ResponseEntity<?> delete(@PathVariable Long id) {
-		service.delete(id);
-		return ResponseEntity.noContent().build();
+	@Override
+	public ResponseEntity<?> createFinance(ExpenditureDTO dto) {
+		EntityModel<ExpenditureDTO> entityModel = controllerManager.create(dto);
+		return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(entityModel);
+	}
+
+	@Override
+	public ResponseEntity<?> updateFinance(Long id, ExpenditureDTO dto) {
+		EntityModel<ExpenditureDTO> entityModel = controllerManager.update(id, dto);
+		return ResponseEntity.ok(entityModel);
+	}
+
+	@Override
+	public ResponseEntity<?> deleteFinance(Long id) {
+		controllerManager.remove(id);
+		return ResponseEntity.ok().build();
 	}
 
 }

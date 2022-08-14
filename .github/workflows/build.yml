@@ -4,6 +4,7 @@ on:
     branches:
       - main
       - semana1
+      - semana2
   pull_request:
     types: [opened, synchronize, reopened]
 jobs:
