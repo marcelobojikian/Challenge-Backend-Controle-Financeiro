@@ -13,11 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.querydsl.core.types.Predicate;
 
 import br.com.alura.challenge.finance.controller.dto.IncomeDTO;
-import br.com.alura.challenge.finance.controller.dto.mapper.IncomeMapperConverter;
 import br.com.alura.challenge.finance.controller.manager.FinanceControllerManager;
-import br.com.alura.challenge.finance.controller.web.hateoas.IncomeReference;
 import br.com.alura.challenge.finance.model.Income;
-import br.com.alura.challenge.finance.service.IncomeService;
 
 @RestController
 @RequestMapping("/api/incomes")
@@ -25,8 +22,8 @@ public class IncomeController implements FinanceController<Income, IncomeDTO> {
 
 	FinanceControllerManager<Income, IncomeDTO> controllerManager;
 
-	public IncomeController(IncomeService service, IncomeMapperConverter converter, IncomeReference ref) {
-		controllerManager = new FinanceControllerManager<>(service, converter, ref);
+	public IncomeController(FinanceControllerManager<Income, IncomeDTO> controllerManager) {
+		this.controllerManager = controllerManager;
 	}
 
 	@Override
@@ -56,8 +53,9 @@ public class IncomeController implements FinanceController<Income, IncomeDTO> {
 	}
 
 	@Override
-	public EntityModel<IncomeDTO> one(Long id) {
-		return controllerManager.findById(id);
+	public ResponseEntity<?> one(Long id) {
+		EntityModel<IncomeDTO> entityModel = controllerManager.findById(id);
+		return ResponseEntity.ok(entityModel);
 	}
 
 	@Override
@@ -75,7 +73,7 @@ public class IncomeController implements FinanceController<Income, IncomeDTO> {
 	@Override
 	public ResponseEntity<?> deleteFinance(Long id) {
 		controllerManager.remove(id);
-		return ResponseEntity.noContent().build();
+		return ResponseEntity.ok().build();
 	}
 
 }

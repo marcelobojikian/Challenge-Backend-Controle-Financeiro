@@ -12,10 +12,11 @@ import org.springframework.core.convert.converter.GenericConverter;
 
 public class MonthConverter implements GenericConverter {
 
+	static final ConvertiblePair[] pairs = new ConvertiblePair[] { new ConvertiblePair(Number.class, Month.class),
+			new ConvertiblePair(String.class, Month.class) };
+
 	@Override
 	public Set<ConvertiblePair> getConvertibleTypes() {
-		ConvertiblePair[] pairs = new ConvertiblePair[] { new ConvertiblePair(Number.class, Month.class),
-				new ConvertiblePair(String.class, Month.class) };
 		return new HashSet<>(Arrays.asList(pairs));
 	}
 

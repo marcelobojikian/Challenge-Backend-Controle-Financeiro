@@ -13,11 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.querydsl.core.types.Predicate;
 
 import br.com.alura.challenge.finance.controller.dto.ExpenditureDTO;
-import br.com.alura.challenge.finance.controller.dto.mapper.ExpenditureMapperConverter;
 import br.com.alura.challenge.finance.controller.manager.FinanceControllerManager;
-import br.com.alura.challenge.finance.controller.web.hateoas.ExpenditureReference;
 import br.com.alura.challenge.finance.model.Expenditure;
-import br.com.alura.challenge.finance.service.ExpenditureService;
 
 @RestController
 @RequestMapping("/api/expenditures")
@@ -25,9 +22,8 @@ public class ExpenditureController implements FinanceController<Expenditure, Exp
 
 	FinanceControllerManager<Expenditure, ExpenditureDTO> controllerManager;
 
-	public ExpenditureController(ExpenditureService service, ExpenditureMapperConverter converter,
-			ExpenditureReference ref) {
-		controllerManager = new FinanceControllerManager<>(service, converter, ref);
+	public ExpenditureController(FinanceControllerManager<Expenditure, ExpenditureDTO> controllerManager) {
+		this.controllerManager = controllerManager;
 	}
 
 	@Override
@@ -58,8 +54,9 @@ public class ExpenditureController implements FinanceController<Expenditure, Exp
 	}
 
 	@Override
-	public EntityModel<ExpenditureDTO> one(Long id) {
-		return controllerManager.findById(id);
+	public ResponseEntity<?> one(Long id) {
+		EntityModel<ExpenditureDTO> entityModel = controllerManager.findById(id);
+		return ResponseEntity.ok(entityModel);
 	}
 
 	@Override
@@ -77,7 +74,7 @@ public class ExpenditureController implements FinanceController<Expenditure, Exp
 	@Override
 	public ResponseEntity<?> deleteFinance(Long id) {
 		controllerManager.remove(id);
-		return ResponseEntity.noContent().build();
+		return ResponseEntity.ok().build();
 	}
 
 }

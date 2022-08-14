@@ -28,6 +28,10 @@ public abstract class FinanceDefaultService<T extends FinanceEntity> implements 
 		return repository.findAll(predicate);
 	}
 
+	public Iterable<T> findBetweenDate(LocalDate startDate, LocalDate endDate) {
+		return repository.findAllByDataBetween(startDate, endDate);
+	}
+
 	public T findById(Long id) {
 		return repository.findById(id).orElseThrow(() -> new EntityNotFoundException("Entity not found"));
 	}

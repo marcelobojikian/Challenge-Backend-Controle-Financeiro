@@ -15,7 +15,6 @@ import br.com.alura.challenge.finance.controller.dto.FinanceDTO;
 import br.com.alura.challenge.finance.controller.dto.mapper.FinanceMapperConverter;
 import br.com.alura.challenge.finance.controller.web.hateoas.SimpleReference;
 import br.com.alura.challenge.finance.model.FinanceEntity;
-import br.com.alura.challenge.finance.model.QExpenditure;
 import br.com.alura.challenge.finance.service.FinanceService;
 
 public class FinanceControllerManager<T extends FinanceEntity, DTO extends FinanceDTO> {
@@ -55,17 +54,14 @@ public class FinanceControllerManager<T extends FinanceEntity, DTO extends Finan
 		LocalDate firstDayOfMonth = LocalDate.of(year, month, 1);
 		LocalDate lastDayOfMonth = LocalDate.of(year, month, month.maxLength());
 
-		QExpenditure expenditure = QExpenditure.expenditure;
-		Predicate predicate = expenditure.data.between(firstDayOfMonth, lastDayOfMonth);
-
-		Iterable<T> entities = service.findAll(predicate);
+		Iterable<T> entities = service.findBetweenDate(firstDayOfMonth, lastDayOfMonth);
 		List<DTO> finances = converter.toDtoList(entities);
 
 		if (finances.isEmpty()) {
 			return ref.toCollectionModel(Arrays.asList());
 		}
 
-		return ref.toCollectionModel(finances);
+		return ref.toCollectionModelByYearAndMonth(finances, year, month);
 
 	}
 

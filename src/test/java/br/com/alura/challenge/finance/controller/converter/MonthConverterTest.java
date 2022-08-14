@@ -5,12 +5,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.time.Month;
+import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.convert.TypeDescriptor;
+import org.springframework.core.convert.converter.GenericConverter.ConvertiblePair;
 
 @ExtendWith(MockitoExtension.class)
 class MonthConverterTest {
@@ -22,6 +24,16 @@ class MonthConverterTest {
 
 	@Mock
 	TypeDescriptor targetType;
+
+	@Test
+	void shouldConvertStrictValue() {
+
+		Set<ConvertiblePair> convertibleTypes = converter.getConvertibleTypes();
+
+		assertThat(convertibleTypes.contains(new ConvertiblePair(Number.class, Month.class))).isTrue();
+		assertThat(convertibleTypes.contains(new ConvertiblePair(String.class, Month.class))).isTrue();
+
+	}
 
 	@Test
 	void shoulConvertMonthObject() {

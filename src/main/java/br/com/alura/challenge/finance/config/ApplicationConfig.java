@@ -9,8 +9,13 @@ import br.com.alura.challenge.finance.controller.dto.ExpenditureDTO;
 import br.com.alura.challenge.finance.controller.dto.IncomeDTO;
 import br.com.alura.challenge.finance.controller.dto.mapper.ExpenditureMapperConverter;
 import br.com.alura.challenge.finance.controller.dto.mapper.IncomeMapperConverter;
+import br.com.alura.challenge.finance.controller.manager.FinanceControllerManager;
+import br.com.alura.challenge.finance.controller.web.hateoas.ExpenditureReference;
+import br.com.alura.challenge.finance.controller.web.hateoas.IncomeReference;
 import br.com.alura.challenge.finance.model.Expenditure;
 import br.com.alura.challenge.finance.model.Income;
+import br.com.alura.challenge.finance.service.ExpenditureService;
+import br.com.alura.challenge.finance.service.IncomeService;
 
 @Configuration
 public class ApplicationConfig {
@@ -38,6 +43,17 @@ public class ApplicationConfig {
 	@Bean
 	public ExpenditureMapperConverter expenditureModelMapper(ModelMapper modelMapper) {
 		return new ExpenditureMapperConverter(modelMapper);
+	}
+
+	@Bean
+	public FinanceControllerManager<Income, IncomeDTO> incomeControllerManager(IncomeService service,
+			IncomeMapperConverter converter, IncomeReference ref) {
+		return new FinanceControllerManager<>(service, converter, ref);
+	}
+
+	@Bean
+	public FinanceControllerManager<Expenditure, ExpenditureDTO> expenditureControllerManager(ExpenditureService service, ExpenditureMapperConverter converter, ExpenditureReference ref){
+		return new FinanceControllerManager<>(service, converter, ref);
 	}
 
 }

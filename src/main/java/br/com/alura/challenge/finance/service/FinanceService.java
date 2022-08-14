@@ -1,5 +1,6 @@
 package br.com.alura.challenge.finance.service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import com.querydsl.core.types.Predicate;
@@ -11,6 +12,8 @@ public interface FinanceService<T extends FinanceEntity> {
 	public List<T> findAll();
 
 	public Iterable<T> findAll(Predicate predicate);
+
+	public Iterable<T> findBetweenDate(LocalDate startDate, LocalDate endDate);
 
 	public T findById(Long id);
 

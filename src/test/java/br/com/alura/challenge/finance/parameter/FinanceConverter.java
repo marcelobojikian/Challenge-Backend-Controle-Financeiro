@@ -28,13 +28,13 @@ public class FinanceConverter implements ArgumentConverter {
 				id = Long.parseLong(parts[1]);
 			}
 
-			String description = parts[2];
-			BigDecimal amount = new BigDecimal(parts[3]);
-			LocalDate date = parse(parts[4]);
+			String description = parts[2].trim();
+			BigDecimal amount = new BigDecimal(parts[3].trim());
+			LocalDate date = parse(parts[4].trim());
 
 			if (instance.equals("expenditure")) {
 				if (parts.length == 6) {
-					Categoria category = Categoria.valueOf(parts[5]);
+					Categoria category = Categoria.valueOf(parts[5].trim());
 					return new Expenditure(id, description, amount, date, category);
 				}
 				return new Expenditure(id, description, amount, date);

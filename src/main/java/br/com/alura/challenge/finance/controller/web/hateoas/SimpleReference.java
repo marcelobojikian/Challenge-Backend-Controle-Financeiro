@@ -1,5 +1,6 @@
 package br.com.alura.challenge.finance.controller.web.hateoas;
 
+import java.time.Month;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,6 +20,8 @@ public interface SimpleReference<T extends FinanceDTO> extends RepresentationMod
 
 	Link linkAll(Predicate predicate);
 
+	Link linkByYearAndMonth(int year, Month month);
+
 	default EntityModel<T> toModel(T entity) {
 		return EntityModel.of(entity, linkId(entity.getId()), linkAll(new BooleanBuilder()));
 	}
@@ -29,6 +32,10 @@ public interface SimpleReference<T extends FinanceDTO> extends RepresentationMod
 
 	default CollectionModel<EntityModel<T>> toCollectionModel(List<T> entities) {
 		return CollectionModel.of(toCollections(entities), linkAll(new BooleanBuilder()).withSelfRel());
+	}
+
+	default CollectionModel<EntityModel<T>> toCollectionModelByYearAndMonth(List<T> entities, int year, Month month) {
+		return CollectionModel.of(toCollections(entities), linkAll(new BooleanBuilder()), linkByYearAndMonth(year, month).withSelfRel());
 	}
 
 }

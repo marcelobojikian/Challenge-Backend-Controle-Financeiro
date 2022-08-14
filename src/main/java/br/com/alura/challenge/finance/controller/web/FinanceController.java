@@ -4,7 +4,6 @@ import java.time.Month;
 
 import javax.validation.Valid;
 
-import org.springframework.hateoas.EntityModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,7 +27,7 @@ public interface FinanceController<T extends FinanceEntity, DTO extends FinanceD
 	ResponseEntity<?> all(Predicate predicate);
 
 	@GetMapping("/{id}")
-	EntityModel<DTO> one(@PathVariable Long id);
+	ResponseEntity<?> one(@PathVariable Long id);
 
 	@GetMapping("/{year}/{month}")
 	ResponseEntity<?> byYearAndMonth(@PathVariable int year, @PathVariable Month month);

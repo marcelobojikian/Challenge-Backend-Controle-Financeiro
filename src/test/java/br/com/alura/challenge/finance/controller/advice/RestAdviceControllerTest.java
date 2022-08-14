@@ -96,6 +96,44 @@ class RestAdviceControllerTest {
 	}
 
 	@Test
+	@DisplayName("Should throw Media type Error")
+	public void shouldThrowHttpMediaTypeNotSupportedException() throws Exception {
+
+		// @formatter:off
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .post(URL_API_BEAN_INVALID)
+                .contentType(MediaType.TEXT_PLAIN_VALUE+";charset=ISO-8859-1")
+                .accept(MediaType.APPLICATION_JSON);
+        
+        mockMvc.perform(request)
+				.andExpect(status().isBadRequest())
+				.andExpect(jsonPath("$.message", is("Media type Error")))
+				.andExpect(jsonPath("$.details", hasSize(1)))
+				.andExpect(jsonPath("$.details.[0]", is("Content type 'text/plain;charset=ISO-8859-1' not supported")));
+		// @formatter:on
+
+	}
+
+	@Test
+	@DisplayName("Should throw Request method error")
+	public void shouldThrowHttpRequestMethodNotSupportedException() throws Exception {
+
+		// @formatter:off
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .delete(URL_API_BEAN_INVALID)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON);
+        
+        mockMvc.perform(request)
+				.andExpect(status().isBadRequest())
+				.andExpect(jsonPath("$.message", is("Request method")))
+				.andExpect(jsonPath("$.details", hasSize(1)))
+				.andExpect(jsonPath("$.details.[0]", is("Request method 'DELETE' not supported")));
+		// @formatter:on
+
+	}
+
+	@Test
 	@DisplayName("Should throw not empty body error")
 	public void shouldThrowNotEmptyBodyError() throws Exception {
 
