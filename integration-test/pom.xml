@@ -10,8 +10,8 @@
 		<version>0.2.0-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>reports</artifactId>
-	<name>Reports de testes</name>
+	<artifactId>integration-test</artifactId>
+	<name>Testes de integracao</name>
 
 	<properties>
 	</properties>
@@ -24,30 +24,42 @@
 			<version>${project.version}</version>
 		</dependency>
 
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>integration-test</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-
 	</dependencies>
 
 	<build>
 		<plugins>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<excludes>
+						<exclude>**/*Standard*.*</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
+
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
 				<version>${jacoco.version}</version>
 				<executions>
 					<execution>
-						<id>report-aggregate</id>
-						<phase>verify</phase>
+						<id>jacoco-initialize</id>
 						<goals>
-							<goal>report-aggregate</goal>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>jacoco-site</id>
+						<phase>package</phase>
+						<goals>
+							<goal>report</goal>
 						</goals>
 					</execution>
 				</executions>
 			</plugin>
+
 		</plugins>
 	</build>
 
