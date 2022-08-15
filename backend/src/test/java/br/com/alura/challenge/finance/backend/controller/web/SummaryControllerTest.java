@@ -9,7 +9,6 @@ import java.time.Month;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -17,6 +16,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import br.com.alura.challenge.finance.backend.controller.dto.summary.GroupCategory;
@@ -52,7 +52,7 @@ class SummaryControllerTest {
 
 			ResponseEntity<?> result = controller.findByYearAndMonth(2022,Month.AUGUST);
 
-			assertThat(result.getStatusCodeValue()).isEqualTo(HttpStatus.SC_OK);
+			assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
 			assertThat(result.getBody()).isInstanceOf(SummaryDTO.class);
 			assertThat(result.getBody()).usingRecursiveComparison().isEqualTo(summaryExpected);
 			
@@ -71,7 +71,7 @@ class SummaryControllerTest {
 
 			ResponseEntity<?> result = controller.findByYearAndMonth(2022,Month.AUGUST);
 
-			assertThat(result.getStatusCodeValue()).isEqualTo(HttpStatus.SC_OK);
+			assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
 			assertThat(result.getBody()).isInstanceOf(SummaryDTO.class);
 			assertThat(result.getBody()).usingRecursiveComparison().isEqualTo(summaryExpected);
 			

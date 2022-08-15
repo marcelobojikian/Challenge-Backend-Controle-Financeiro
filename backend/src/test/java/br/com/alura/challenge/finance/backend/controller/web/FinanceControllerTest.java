@@ -14,13 +14,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import com.querydsl.core.BooleanBuilder;
@@ -57,7 +57,7 @@ abstract class FinanceControllerTest<T extends FinanceEntity, DTO extends Financ
 
 			ResponseEntity<?> result = getController().one(1l);
 
-			assertThat(result.getStatusCodeValue()).isEqualTo(HttpStatus.SC_OK);
+			assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
 			assertThat(result.getBody()).isInstanceOf(EntityModel.class);
 			assertThat(result.getBody()).isEqualTo(model);
 			
@@ -90,7 +90,7 @@ abstract class FinanceControllerTest<T extends FinanceEntity, DTO extends Financ
 
 			ResponseEntity<?> result = getController().all(new BooleanBuilder());
 
-			assertThat(result.getStatusCodeValue()).isEqualTo(HttpStatus.SC_OK);
+			assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
 			assertThat(result.getBody()).isInstanceOf(CollectionModel.class);
 			assertThat(result.getBody()).isEqualTo(collectionModel);
 
@@ -105,7 +105,7 @@ abstract class FinanceControllerTest<T extends FinanceEntity, DTO extends Financ
 
 			ResponseEntity<?> result = getController().all(new BooleanBuilder());
 
-			assertThat(result.getStatusCodeValue()).isEqualTo(HttpStatus.SC_NO_CONTENT);
+			assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
 			assertThat(result.getBody()).isNull();
 
 		}
@@ -127,7 +127,7 @@ abstract class FinanceControllerTest<T extends FinanceEntity, DTO extends Financ
 
 			ResponseEntity<?> result = getController().byYearAndMonth(2022, Month.AUGUST);
 
-			assertThat(result.getStatusCodeValue()).isEqualTo(HttpStatus.SC_OK);
+			assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
 			assertThat(result.getBody()).isInstanceOf(CollectionModel.class);
 			assertThat(result.getBody()).isEqualTo(collectionModel);
 
@@ -143,7 +143,7 @@ abstract class FinanceControllerTest<T extends FinanceEntity, DTO extends Financ
 
 			ResponseEntity<?> result = getController().byYearAndMonth(2022, Month.JANUARY);
 
-			assertThat(result.getStatusCodeValue()).isEqualTo(HttpStatus.SC_NO_CONTENT);
+			assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
 			assertThat(result.getBody()).isNull();
 			
 		}
@@ -163,7 +163,7 @@ abstract class FinanceControllerTest<T extends FinanceEntity, DTO extends Financ
 
 			ResponseEntity<?> result = getController().createFinance(getInstanceDto());
 			
-			assertThat(result.getStatusCodeValue()).isEqualTo(HttpStatus.SC_CREATED);
+			assertThat(result.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 			assertThat(result.getHeaders()).containsKey(HttpHeaders.LOCATION);
 			assertThat(result.getBody()).isInstanceOf(EntityModel.class);
 			assertThat(result.getBody()).isEqualTo(model);
@@ -196,7 +196,7 @@ abstract class FinanceControllerTest<T extends FinanceEntity, DTO extends Financ
 
 			ResponseEntity<?> result = getController().updateFinance(1l, getInstanceDto());
 
-			assertThat(result.getStatusCodeValue()).isEqualTo(HttpStatus.SC_OK);
+			assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
 			assertThat(result.getBody()).isInstanceOf(EntityModel.class);
 			assertThat(result.getBody()).isEqualTo(model);
 
@@ -234,7 +234,7 @@ abstract class FinanceControllerTest<T extends FinanceEntity, DTO extends Financ
 
 			ResponseEntity<?> result = getController().deleteFinance(1l);
 
-			assertThat(result.getStatusCodeValue()).isEqualTo(HttpStatus.SC_OK);
+			assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
 
 		}
 
