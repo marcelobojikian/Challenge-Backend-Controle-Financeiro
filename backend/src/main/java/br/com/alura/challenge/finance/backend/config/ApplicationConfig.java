@@ -5,15 +5,15 @@ import org.modelmapper.TypeMap;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import br.com.alura.challenge.finance.backend.controller.dto.ExpenditureDTO;
-import br.com.alura.challenge.finance.backend.controller.dto.IncomeDTO;
-import br.com.alura.challenge.finance.backend.controller.dto.mapper.ExpenditureMapperConverter;
-import br.com.alura.challenge.finance.backend.controller.dto.mapper.IncomeMapperConverter;
-import br.com.alura.challenge.finance.backend.controller.manager.FinanceControllerManager;
-import br.com.alura.challenge.finance.backend.controller.web.hateoas.ExpenditureReference;
-import br.com.alura.challenge.finance.backend.controller.web.hateoas.IncomeReference;
 import br.com.alura.challenge.finance.backend.model.Expenditure;
 import br.com.alura.challenge.finance.backend.model.Income;
+import br.com.alura.challenge.finance.backend.rest.controller.hateoas.ExpenditureReference;
+import br.com.alura.challenge.finance.backend.rest.controller.hateoas.IncomeReference;
+import br.com.alura.challenge.finance.backend.rest.controller.manager.FinanceControllerManager;
+import br.com.alura.challenge.finance.backend.rest.controller.manager.mapper.ExpenditureMapperConverter;
+import br.com.alura.challenge.finance.backend.rest.controller.manager.mapper.IncomeMapperConverter;
+import br.com.alura.challenge.finance.backend.rest.dto.finance.ExpenditureDTO;
+import br.com.alura.challenge.finance.backend.rest.dto.finance.IncomeDTO;
 import br.com.alura.challenge.finance.backend.service.ExpenditureService;
 import br.com.alura.challenge.finance.backend.service.IncomeService;
 

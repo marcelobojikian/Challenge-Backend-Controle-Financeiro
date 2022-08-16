@@ -15,6 +15,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.core.convert.converter.GenericConverter.ConvertiblePair;
 
+import br.com.alura.challenge.finance.backend.rest.converter.MonthConverter;
+
 @Tag("controller")
 @ExtendWith(MockitoExtension.class)
 class MonthConverterTest {

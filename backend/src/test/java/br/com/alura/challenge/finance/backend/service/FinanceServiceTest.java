@@ -21,10 +21,10 @@ import org.junit.jupiter.api.Test;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 
-import br.com.alura.challenge.finance.backend.exception.BusinessException;
-import br.com.alura.challenge.finance.backend.exception.EntityNotFoundException;
 import br.com.alura.challenge.finance.backend.model.FinanceEntity;
 import br.com.alura.challenge.finance.backend.repository.FinanceRepository;
+import br.com.alura.challenge.finance.backend.rest.exception.BusinessException;
+import br.com.alura.challenge.finance.backend.rest.exception.EntityNotFoundException;
 
 abstract class FinanceServiceTest<T extends FinanceEntity> {
 

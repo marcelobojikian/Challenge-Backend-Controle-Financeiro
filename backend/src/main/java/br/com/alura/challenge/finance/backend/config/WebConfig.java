@@ -4,7 +4,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import br.com.alura.challenge.finance.backend.controller.converter.MonthConverter;
+import br.com.alura.challenge.finance.backend.rest.converter.MonthConverter;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {

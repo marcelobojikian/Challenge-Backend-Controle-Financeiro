@@ -23,9 +23,9 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 
-import br.com.alura.challenge.finance.backend.controller.dto.summary.GroupCategory;
 import br.com.alura.challenge.finance.backend.model.Expenditure;
 import br.com.alura.challenge.finance.backend.model.Expenditure.Categoria;
+import br.com.alura.challenge.finance.backend.rest.dto.summary.GroupCategory;
 import br.com.alura.challenge.finance.backend.model.FinanceEntity;
 import br.com.alura.challenge.finance.backend.model.QExpenditure;
 

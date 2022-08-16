@@ -21,10 +21,11 @@ import org.springframework.hateoas.EntityModel;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 
-import br.com.alura.challenge.finance.backend.controller.dto.FinanceDTO;
-import br.com.alura.challenge.finance.backend.controller.dto.mapper.FinanceMapperConverter;
-import br.com.alura.challenge.finance.backend.controller.web.hateoas.SimpleReference;
 import br.com.alura.challenge.finance.backend.model.FinanceEntity;
+import br.com.alura.challenge.finance.backend.rest.controller.hateoas.FinanceReference;
+import br.com.alura.challenge.finance.backend.rest.controller.manager.FinanceControllerManager;
+import br.com.alura.challenge.finance.backend.rest.controller.manager.mapper.FinanceMapperConverter;
+import br.com.alura.challenge.finance.backend.rest.dto.finance.FinanceDTO;
 import br.com.alura.challenge.finance.backend.service.FinanceService;
 
 abstract class FinanceControllerManagerTest<T extends FinanceEntity, DTO extends FinanceDTO> {
@@ -44,7 +45,7 @@ abstract class FinanceControllerManagerTest<T extends FinanceEntity, DTO extends
 	@Mock
 	FinanceMapperConverter<T, DTO> converter;
 	@Mock
-	SimpleReference<DTO> ref;
+	FinanceReference<DTO> ref;
 
 	@Nested
 	@DisplayName("Find By Id")

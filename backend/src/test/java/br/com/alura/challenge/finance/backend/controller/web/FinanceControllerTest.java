@@ -26,11 +26,12 @@ import org.springframework.http.ResponseEntity;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 
-import br.com.alura.challenge.finance.backend.controller.dto.FinanceDTO;
-import br.com.alura.challenge.finance.backend.controller.manager.FinanceControllerManager;
-import br.com.alura.challenge.finance.backend.exception.BusinessException;
-import br.com.alura.challenge.finance.backend.exception.EntityNotFoundException;
 import br.com.alura.challenge.finance.backend.model.FinanceEntity;
+import br.com.alura.challenge.finance.backend.rest.controller.manager.FinanceController;
+import br.com.alura.challenge.finance.backend.rest.controller.manager.FinanceControllerManager;
+import br.com.alura.challenge.finance.backend.rest.dto.finance.FinanceDTO;
+import br.com.alura.challenge.finance.backend.rest.exception.BusinessException;
+import br.com.alura.challenge.finance.backend.rest.exception.EntityNotFoundException;
 
 abstract class FinanceControllerTest<T extends FinanceEntity, DTO extends FinanceDTO> {
 

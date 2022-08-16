@@ -5,7 +5,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import br.com.alura.challenge.finance.backend.controller.dto.ExpenditureDTO;
+import br.com.alura.challenge.finance.backend.rest.controller.hateoas.ExpenditureReference;
+import br.com.alura.challenge.finance.backend.rest.controller.hateoas.FinanceReference;
+import br.com.alura.challenge.finance.backend.rest.dto.finance.ExpenditureDTO;
 
 @Tag("controller")
 @ExtendWith(MockitoExtension.class)
@@ -17,7 +19,7 @@ class ExpenditureReferenceTest extends SimpleReferenceTest<ExpenditureDTO> {
 	ExpenditureReference reference;
 
 	@Override
-	SimpleReference<ExpenditureDTO> getReference() {
+	FinanceReference<ExpenditureDTO> getReference() {
 		return reference;
 	}
 

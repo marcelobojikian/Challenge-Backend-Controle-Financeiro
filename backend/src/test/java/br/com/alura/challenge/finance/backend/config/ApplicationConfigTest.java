@@ -13,10 +13,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 
-import br.com.alura.challenge.finance.backend.controller.dto.ExpenditureDTO;
-import br.com.alura.challenge.finance.backend.controller.dto.IncomeDTO;
 import br.com.alura.challenge.finance.backend.model.Expenditure;
 import br.com.alura.challenge.finance.backend.model.Expenditure.Categoria;
+import br.com.alura.challenge.finance.backend.rest.dto.finance.ExpenditureDTO;
+import br.com.alura.challenge.finance.backend.rest.dto.finance.IncomeDTO;
 import br.com.alura.challenge.finance.backend.model.Income;
 
 @Tag("configuration")

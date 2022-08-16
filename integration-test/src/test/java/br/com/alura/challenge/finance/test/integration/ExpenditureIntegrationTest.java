@@ -26,8 +26,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import br.com.alura.challenge.finance.backend.ControleFinanceiroApplication;
-import br.com.alura.challenge.finance.backend.controller.web.hateoas.ExpenditureReference;
 import br.com.alura.challenge.finance.backend.model.Expenditure;
+import br.com.alura.challenge.finance.backend.rest.controller.hateoas.ExpenditureReference;
 import br.com.alura.challenge.finance.test.integration.converter.FinanceConverter;
 import br.com.alura.challenge.finance.test.integration.response.BusinessExceptionTest;
 import br.com.alura.challenge.finance.test.integration.response.FinanceListPostTest;

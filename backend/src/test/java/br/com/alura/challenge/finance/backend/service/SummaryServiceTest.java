@@ -19,11 +19,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import br.com.alura.challenge.finance.backend.controller.dto.summary.GroupCategory;
-import br.com.alura.challenge.finance.backend.controller.dto.summary.HeaderDTO;
 import br.com.alura.challenge.finance.backend.model.Expenditure.Categoria;
 import br.com.alura.challenge.finance.backend.repository.ExpenditureRepository;
 import br.com.alura.challenge.finance.backend.repository.IncomeRepository;
+import br.com.alura.challenge.finance.backend.rest.dto.summary.GroupCategory;
+import br.com.alura.challenge.finance.backend.rest.dto.summary.HeaderDTO;
 
 @Tag("service")
 @ExtendWith(MockitoExtension.class)

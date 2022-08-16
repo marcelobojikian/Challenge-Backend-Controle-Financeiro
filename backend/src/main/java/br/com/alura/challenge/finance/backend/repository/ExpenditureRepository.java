@@ -6,8 +6,8 @@ import java.util.List;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import br.com.alura.challenge.finance.backend.controller.dto.summary.GroupCategory;
 import br.com.alura.challenge.finance.backend.model.Expenditure;
+import br.com.alura.challenge.finance.backend.rest.dto.summary.GroupCategory;
 
 public interface ExpenditureRepository extends FinanceRepository<Expenditure> {
 

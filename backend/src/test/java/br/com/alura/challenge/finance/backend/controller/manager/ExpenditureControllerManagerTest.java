@@ -5,8 +5,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import br.com.alura.challenge.finance.backend.controller.dto.ExpenditureDTO;
 import br.com.alura.challenge.finance.backend.model.Expenditure;
+import br.com.alura.challenge.finance.backend.rest.controller.manager.FinanceControllerManager;
+import br.com.alura.challenge.finance.backend.rest.dto.finance.ExpenditureDTO;
 
 @Tag("controller")
 @ExtendWith(MockitoExtension.class)

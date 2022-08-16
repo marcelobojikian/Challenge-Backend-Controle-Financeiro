@@ -20,11 +20,12 @@ import org.springframework.web.util.UriComponentsBuilder;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 
-import br.com.alura.challenge.finance.backend.controller.dto.FinanceDTO;
+import br.com.alura.challenge.finance.backend.rest.controller.hateoas.FinanceReference;
+import br.com.alura.challenge.finance.backend.rest.dto.finance.FinanceDTO;
 
 abstract class SimpleReferenceTest<T extends FinanceDTO> {
 
-	abstract SimpleReference<T> getReference();
+	abstract FinanceReference<T> getReference();
 
 	abstract String getResource();
 

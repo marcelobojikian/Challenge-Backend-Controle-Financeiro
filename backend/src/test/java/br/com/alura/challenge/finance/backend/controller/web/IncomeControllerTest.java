@@ -6,10 +6,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import br.com.alura.challenge.finance.backend.controller.dto.IncomeDTO;
-import br.com.alura.challenge.finance.backend.controller.manager.FinanceControllerManager;
-import br.com.alura.challenge.finance.backend.controller.web.hateoas.ExpenditureReference;
 import br.com.alura.challenge.finance.backend.model.Income;
+import br.com.alura.challenge.finance.backend.rest.controller.IncomeController;
+import br.com.alura.challenge.finance.backend.rest.controller.hateoas.ExpenditureReference;
+import br.com.alura.challenge.finance.backend.rest.controller.manager.FinanceControllerManager;
+import br.com.alura.challenge.finance.backend.rest.dto.finance.IncomeDTO;
 
 @Tag("controller")
 @ExtendWith(MockitoExtension.class)

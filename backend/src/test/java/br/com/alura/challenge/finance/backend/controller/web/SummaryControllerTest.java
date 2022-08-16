@@ -20,10 +20,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import br.com.alura.challenge.finance.backend.controller.dto.summary.GroupCategory;
-import br.com.alura.challenge.finance.backend.controller.dto.summary.HeaderDTO;
-import br.com.alura.challenge.finance.backend.controller.dto.summary.SummaryDTO;
 import br.com.alura.challenge.finance.backend.model.Expenditure.Categoria;
+import br.com.alura.challenge.finance.backend.rest.controller.SummaryController;
+import br.com.alura.challenge.finance.backend.rest.dto.summary.GroupCategory;
+import br.com.alura.challenge.finance.backend.rest.dto.summary.HeaderDTO;
+import br.com.alura.challenge.finance.backend.rest.dto.summary.SummaryDTO;
 import br.com.alura.challenge.finance.backend.service.SummaryService;
 
 @Tag("controller")

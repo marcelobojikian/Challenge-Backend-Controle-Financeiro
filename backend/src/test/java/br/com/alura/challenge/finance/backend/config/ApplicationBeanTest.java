@@ -10,13 +10,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import br.com.alura.challenge.finance.backend.ControleFinanceiroApplication;
-import br.com.alura.challenge.finance.backend.controller.dto.ExpenditureDTO;
-import br.com.alura.challenge.finance.backend.controller.dto.IncomeDTO;
-import br.com.alura.challenge.finance.backend.controller.dto.mapper.ExpenditureMapperConverter;
-import br.com.alura.challenge.finance.backend.controller.dto.mapper.IncomeMapperConverter;
-import br.com.alura.challenge.finance.backend.controller.manager.FinanceControllerManager;
 import br.com.alura.challenge.finance.backend.model.Expenditure;
 import br.com.alura.challenge.finance.backend.model.Income;
+import br.com.alura.challenge.finance.backend.rest.controller.manager.FinanceControllerManager;
+import br.com.alura.challenge.finance.backend.rest.controller.manager.mapper.ExpenditureMapperConverter;
+import br.com.alura.challenge.finance.backend.rest.controller.manager.mapper.IncomeMapperConverter;
+import br.com.alura.challenge.finance.backend.rest.dto.finance.ExpenditureDTO;
+import br.com.alura.challenge.finance.backend.rest.dto.finance.IncomeDTO;
 
 @Tag("configuration")
 @SpringBootTest(classes = ControleFinanceiroApplication.class)

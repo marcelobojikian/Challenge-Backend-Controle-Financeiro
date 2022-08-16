@@ -8,10 +8,10 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import br.com.alura.challenge.finance.backend.controller.dto.summary.GroupCategory;
-import br.com.alura.challenge.finance.backend.controller.dto.summary.HeaderDTO;
 import br.com.alura.challenge.finance.backend.repository.ExpenditureRepository;
 import br.com.alura.challenge.finance.backend.repository.IncomeRepository;
+import br.com.alura.challenge.finance.backend.rest.dto.summary.GroupCategory;
+import br.com.alura.challenge.finance.backend.rest.dto.summary.HeaderDTO;
 
 @Service
 public class SummaryService {

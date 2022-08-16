@@ -38,13 +38,14 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import br.com.alura.challenge.finance.backend.config.DateFormatConfig;
-import br.com.alura.challenge.finance.backend.exception.BusinessException;
-import br.com.alura.challenge.finance.backend.exception.EntityNotFoundException;
+import br.com.alura.challenge.finance.backend.rest.exception.BusinessException;
+import br.com.alura.challenge.finance.backend.rest.exception.EntityNotFoundException;
+import br.com.alura.challenge.finance.backend.rest.handler.RestAdviceHandler;
 
 @Tag("controller")
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(SampleController.class)
-@ContextConfiguration(classes = { SampleController.class, RestAdviceController.class })
+@ContextConfiguration(classes = { SampleController.class, RestAdviceHandler.class })
 @AutoConfigureMockMvc
 @Import(DateFormatConfig.class)
 class RestAdviceControllerTest {
