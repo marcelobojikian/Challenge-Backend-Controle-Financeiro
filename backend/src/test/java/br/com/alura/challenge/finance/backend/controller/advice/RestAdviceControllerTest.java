@@ -15,6 +15,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +41,7 @@ import br.com.alura.challenge.finance.backend.config.DateFormatConfig;
 import br.com.alura.challenge.finance.backend.exception.BusinessException;
 import br.com.alura.challenge.finance.backend.exception.EntityNotFoundException;
 
+@Tag("controller")
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(SampleController.class)
 @ContextConfiguration(classes = { SampleController.class, RestAdviceController.class })

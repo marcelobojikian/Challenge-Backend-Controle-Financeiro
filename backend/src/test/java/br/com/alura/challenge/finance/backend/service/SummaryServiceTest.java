@@ -12,6 +12,7 @@ import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -24,6 +25,7 @@ import br.com.alura.challenge.finance.backend.model.Expenditure.Categoria;
 import br.com.alura.challenge.finance.backend.repository.ExpenditureRepository;
 import br.com.alura.challenge.finance.backend.repository.IncomeRepository;
 
+@Tag("service")
 @ExtendWith(MockitoExtension.class)
 class SummaryServiceTest {
 

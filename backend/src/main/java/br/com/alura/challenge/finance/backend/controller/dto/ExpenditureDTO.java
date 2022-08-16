@@ -25,11 +25,6 @@ public class ExpenditureDTO extends FinanceDTO implements QuerydslBinderCustomiz
 		this.categoria = Categoria.OUTRAS;
 	}
 
-	public ExpenditureDTO(Long id, String descricao, BigDecimal valor, LocalDate data) {
-		super(id, descricao, valor, data);
-		this.categoria = Categoria.OUTRAS;
-	}
-
 	public ExpenditureDTO(Long id, String descricao, BigDecimal valor, LocalDate data, Categoria categoria) {
 		super(id, descricao, valor, data);
 		this.categoria = categoria;

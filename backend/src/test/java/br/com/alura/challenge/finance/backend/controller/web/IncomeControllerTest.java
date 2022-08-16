@@ -1,5 +1,6 @@
 package br.com.alura.challenge.finance.backend.controller.web;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -10,6 +11,7 @@ import br.com.alura.challenge.finance.backend.controller.manager.FinanceControll
 import br.com.alura.challenge.finance.backend.controller.web.hateoas.ExpenditureReference;
 import br.com.alura.challenge.finance.backend.model.Income;
 
+@Tag("controller")
 @ExtendWith(MockitoExtension.class)
 class IncomeControllerTest extends FinanceControllerTest<Income, IncomeDTO> {
 

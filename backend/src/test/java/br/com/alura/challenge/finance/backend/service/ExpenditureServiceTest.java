@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -30,6 +31,7 @@ class ExpenditureParams {
 
 }
 
+@Tag("service")
 @ExtendWith(MockitoExtension.class)
 class ExpenditureServiceTest extends FinanceServiceTest<Expenditure> {
 

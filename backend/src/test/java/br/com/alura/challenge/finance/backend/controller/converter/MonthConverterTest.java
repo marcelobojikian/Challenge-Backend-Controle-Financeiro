@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 import java.time.Month;
 import java.util.Set;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -14,6 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.core.convert.converter.GenericConverter.ConvertiblePair;
 
+@Tag("controller")
 @ExtendWith(MockitoExtension.class)
 class MonthConverterTest {
 

@@ -7,6 +7,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -18,6 +19,7 @@ import br.com.alura.challenge.finance.backend.model.Expenditure;
 import br.com.alura.challenge.finance.backend.model.Expenditure.Categoria;
 import br.com.alura.challenge.finance.backend.model.Income;
 
+@Tag("configuration")
 @ExtendWith(MockitoExtension.class)
 class ApplicationConfigTest {
 

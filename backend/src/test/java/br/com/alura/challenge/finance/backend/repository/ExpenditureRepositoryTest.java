@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,7 +60,8 @@ class ExpenditureParams {
 }
 
 @DataJpaTest
-class ExpenditureRepositoryTest {
+@Tag("repository")
+public class ExpenditureRepositoryTest {
 
 	@Autowired
 	TestEntityManager entityManager;

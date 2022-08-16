@@ -2,6 +2,7 @@ package br.com.alura.challenge.finance.backend.config;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,6 +18,7 @@ import br.com.alura.challenge.finance.backend.controller.manager.FinanceControll
 import br.com.alura.challenge.finance.backend.model.Expenditure;
 import br.com.alura.challenge.finance.backend.model.Income;
 
+@Tag("configuration")
 @SpringBootTest(classes = ControleFinanceiroApplication.class)
 public class ApplicationBeanTest {
 
