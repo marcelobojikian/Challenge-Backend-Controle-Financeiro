@@ -42,41 +42,43 @@ class SummaryControllerTest {
 
 		@Test
 		void shouldGetWithCategorias() {
-			
+
 			HeaderDTO headerExpected = new HeaderDTO(BigDecimal.ONE, BigDecimal.TEN);
 			GroupCategory groupCategoryExpected = new GroupCategory(Categoria.ALIMENTACAO, BigDecimal.TEN);
-			
+
 			List<GroupCategory> listGroupCategoriaExpected = Arrays.asList(groupCategoryExpected);
 			SummaryDTO summaryExpected = new SummaryDTO(headerExpected, listGroupCategoriaExpected);
-			
-			given(service.findHeaderByMonth(any(Integer.class), any(Month.class))).willReturn(headerExpected);
-			given(service.findGroupCategoryByMonth(any(Integer.class), any(Month.class))).willReturn(listGroupCategoriaExpected);
 
-			ResponseEntity<?> result = controller.findByYearAndMonth(2022,Month.AUGUST);
+			given(service.findHeaderByMonth(any(Integer.class), any(Month.class))).willReturn(headerExpected);
+			given(service.findGroupCategoryByMonth(any(Integer.class), any(Month.class)))
+					.willReturn(listGroupCategoriaExpected);
+
+			ResponseEntity<?> result = controller.findByYearAndMonth(2022, Month.AUGUST);
 
 			assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
 			assertThat(result.getBody()).isInstanceOf(SummaryDTO.class);
 			assertThat(result.getBody()).usingRecursiveComparison().isEqualTo(summaryExpected);
-			
+
 		}
 
 		@Test
 		void shouldGetWithoutCategorias() {
-			
+
 			HeaderDTO headerExpected = new HeaderDTO();
 			List<GroupCategory> groupCategoriaExpected = Arrays.asList();
-			
-			SummaryDTO summaryExpected = new SummaryDTO(headerExpected, groupCategoriaExpected);
-			
-			given(service.findHeaderByMonth(any(Integer.class), any(Month.class))).willReturn(headerExpected);
-			given(service.findGroupCategoryByMonth(any(Integer.class), any(Month.class))).willReturn(groupCategoriaExpected);
 
-			ResponseEntity<?> result = controller.findByYearAndMonth(2022,Month.AUGUST);
+			SummaryDTO summaryExpected = new SummaryDTO(headerExpected, groupCategoriaExpected);
+
+			given(service.findHeaderByMonth(any(Integer.class), any(Month.class))).willReturn(headerExpected);
+			given(service.findGroupCategoryByMonth(any(Integer.class), any(Month.class)))
+					.willReturn(groupCategoriaExpected);
+
+			ResponseEntity<?> result = controller.findByYearAndMonth(2022, Month.AUGUST);
 
 			assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
 			assertThat(result.getBody()).isInstanceOf(SummaryDTO.class);
 			assertThat(result.getBody()).usingRecursiveComparison().isEqualTo(summaryExpected);
-			
+
 		}
 
 	}

@@ -60,7 +60,7 @@ abstract class FinanceControllerTest<T extends FinanceEntity, DTO extends Financ
 			assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
 			assertThat(result.getBody()).isInstanceOf(EntityModel.class);
 			assertThat(result.getBody()).isEqualTo(model);
-			
+
 		}
 
 		@Test
@@ -71,7 +71,7 @@ abstract class FinanceControllerTest<T extends FinanceEntity, DTO extends Financ
 			assertThrows(EntityNotFoundException.class, () -> {
 				getController().one(1l);
 			});
-			
+
 		}
 
 	}
@@ -98,7 +98,7 @@ abstract class FinanceControllerTest<T extends FinanceEntity, DTO extends Financ
 
 		@Test
 		void shouldGetAllNoContent() {
-			
+
 			CollectionModel<EntityModel<DTO>> collectionModel = collectionModel(Arrays.asList());
 
 			given(getManager().findAll(any(Predicate.class))).willReturn(collectionModel);
@@ -122,8 +122,7 @@ abstract class FinanceControllerTest<T extends FinanceEntity, DTO extends Financ
 			DTO entity = getInstanceDto();
 			List<DTO> entities = Arrays.asList(entity);
 			CollectionModel<EntityModel<DTO>> collectionModel = collectionModel(entities);
-			given(getManager().allWithYearAndMonth(any(Integer.class), any(Month.class)))
-					.willReturn(collectionModel);
+			given(getManager().allWithYearAndMonth(any(Integer.class), any(Month.class))).willReturn(collectionModel);
 
 			ResponseEntity<?> result = getController().byYearAndMonth(2022, Month.AUGUST);
 
@@ -135,17 +134,16 @@ abstract class FinanceControllerTest<T extends FinanceEntity, DTO extends Financ
 
 		@Test
 		void shouldGetByYearAndMonthNoContent() {
-			
+
 			CollectionModel<EntityModel<DTO>> collectionModel = collectionModel(Arrays.asList());
 
-			given(getManager().allWithYearAndMonth(any(Integer.class), any(Month.class)))
-					.willReturn(collectionModel);
+			given(getManager().allWithYearAndMonth(any(Integer.class), any(Month.class))).willReturn(collectionModel);
 
 			ResponseEntity<?> result = getController().byYearAndMonth(2022, Month.JANUARY);
 
 			assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
 			assertThat(result.getBody()).isNull();
-			
+
 		}
 
 	}
@@ -162,12 +160,12 @@ abstract class FinanceControllerTest<T extends FinanceEntity, DTO extends Financ
 			given(getManager().create(any(getDtoCLass()))).willReturn(model);
 
 			ResponseEntity<?> result = getController().createFinance(getInstanceDto());
-			
+
 			assertThat(result.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 			assertThat(result.getHeaders()).containsKey(HttpHeaders.LOCATION);
 			assertThat(result.getBody()).isInstanceOf(EntityModel.class);
 			assertThat(result.getBody()).isEqualTo(model);
-			
+
 		}
 
 		@Test
@@ -246,7 +244,7 @@ abstract class FinanceControllerTest<T extends FinanceEntity, DTO extends Financ
 			assertThrows(EntityNotFoundException.class, () -> {
 				getController().deleteFinance(1l);
 			});
-			
+
 		}
 
 	}

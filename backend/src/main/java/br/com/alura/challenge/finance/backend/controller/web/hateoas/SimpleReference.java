@@ -35,7 +35,8 @@ public interface SimpleReference<T extends FinanceDTO> extends RepresentationMod
 	}
 
 	default CollectionModel<EntityModel<T>> toCollectionModelByYearAndMonth(List<T> entities, int year, Month month) {
-		return CollectionModel.of(toCollections(entities), linkAll(new BooleanBuilder()), linkByYearAndMonth(year, month).withSelfRel());
+		return CollectionModel.of(toCollections(entities), linkAll(new BooleanBuilder()),
+				linkByYearAndMonth(year, month).withSelfRel());
 	}
 
 }

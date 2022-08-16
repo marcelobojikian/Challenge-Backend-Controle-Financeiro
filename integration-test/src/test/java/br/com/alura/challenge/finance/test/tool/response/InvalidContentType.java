@@ -15,15 +15,12 @@ import io.restassured.response.ValidatableResponse;
 import io.restassured.specification.RequestSpecification;
 
 public interface InvalidContentType extends ResourceTest {
-	
+
 	ContentType invlaidContentType();
 
 	@Override
 	default RequestSpecification scene() {
-		return RestAssured.given()
-				.accept(ContentType.JSON)
-                .contentType(invlaidContentType())
-	            .body("");
+		return RestAssured.given().accept(ContentType.JSON).contentType(invlaidContentType()).body("");
 	}
 
 	@Test

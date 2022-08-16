@@ -13,17 +13,14 @@ import io.restassured.response.ValidatableResponse;
 import io.restassured.specification.RequestSpecification;
 
 public interface StandardPutTest extends ResourceTest {
-	
+
 	String body();
 
 	@Override
 	default RequestSpecification scene() {
-		return RestAssured.given()
-				.accept(ContentType.JSON)
-                .contentType(ContentType.JSON)
-	            .body(body());
+		return RestAssured.given().accept(ContentType.JSON).contentType(ContentType.JSON).body(body());
 	}
-	
+
 	@Override
 	default String method() {
 		return ResourceTest.PUT;

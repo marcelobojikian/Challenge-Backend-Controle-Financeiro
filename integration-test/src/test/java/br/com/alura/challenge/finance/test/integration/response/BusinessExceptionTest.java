@@ -15,15 +15,12 @@ import io.restassured.response.ValidatableResponse;
 import io.restassured.specification.RequestSpecification;
 
 public interface BusinessExceptionTest extends ResourceTest {
-	
+
 	String body();
 
 	@Override
 	default RequestSpecification scene() {
-		return RestAssured.given()
-				.accept(ContentType.JSON)
-                .contentType(ContentType.JSON)
-	            .body(body());
+		return RestAssured.given().accept(ContentType.JSON).contentType(ContentType.JSON).body(body());
 	}
 
 	@Test

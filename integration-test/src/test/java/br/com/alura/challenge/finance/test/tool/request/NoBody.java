@@ -15,14 +15,10 @@ import io.restassured.response.ValidatableResponse;
 import io.restassured.specification.RequestSpecification;
 
 public interface NoBody extends ResourceTest {
-	
+
 	@Override
 	default RequestSpecification scene() {
-		return RestAssured
-                .given()
-                    .accept(ContentType.JSON)
-                    .contentType(ContentType.JSON)
-                    .body("");
+		return RestAssured.given().accept(ContentType.JSON).contentType(ContentType.JSON).body("");
 	}
 
 	@Test
@@ -34,15 +30,10 @@ public interface NoBody extends ResourceTest {
 
 	@Override
 	default void asserts(ValidatableResponse response) {
-		String body = response
-				.statusCode(HttpStatus.SC_BAD_REQUEST)
-                .contentType(ContentType.JSON)
-                .body("message", is("Required request body"))
-                .body("details.size()", equalTo(1))
-                .body("details[0]", is("body is missing"))
-            .extract()
-            	.asPrettyString();
-		
+		String body = response.statusCode(HttpStatus.SC_BAD_REQUEST).contentType(ContentType.JSON)
+				.body("message", is("Required request body")).body("details.size()", equalTo(1))
+				.body("details[0]", is("body is missing")).extract().asPrettyString();
+
 		assertThat(body).isNotEmpty();
 	}
 

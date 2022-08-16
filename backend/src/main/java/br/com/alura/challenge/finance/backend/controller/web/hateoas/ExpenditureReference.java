@@ -30,7 +30,8 @@ public class ExpenditureReference implements SimpleReference<ExpenditureDTO> {
 
 	@Override
 	public Link linkByYearAndMonth(int year, Month month) {
-		return linkTo(methodOn(ExpenditureController.class).byYearAndMonth(year, month)).withRel(NAME_COLLECTION_RELATION);
+		return linkTo(methodOn(ExpenditureController.class).byYearAndMonth(year, month))
+				.withRel(NAME_COLLECTION_RELATION);
 	}
 
 }

@@ -121,7 +121,7 @@ abstract class SimpleReferenceTest<T extends FinanceDTO> {
 
 		CollectionModel<EntityModel<T>> collectionModel = getReference().toCollectionModel(entities);
 
-		assertThat(collectionModel.getContent()).isNotNull();		
+		assertThat(collectionModel.getContent()).isNotNull();
 		assertThat(collectionModel.hasLink(getCollectionRelationName())).isFalse();
 
 		Optional<Link> selfLink = collectionModel.getLink(IanaLinkRelations.SELF);
@@ -146,7 +146,8 @@ abstract class SimpleReferenceTest<T extends FinanceDTO> {
 
 		List<T> entities = Arrays.asList(firstEntity, secondEntity);
 
-		CollectionModel<EntityModel<T>> collectionModel = getReference().toCollectionModelByYearAndMonth(entities, year, month);
+		CollectionModel<EntityModel<T>> collectionModel = getReference().toCollectionModelByYearAndMonth(entities, year,
+				month);
 		System.out.println("collectionModel: " + collectionModel);
 
 		assertThat(collectionModel.getContent()).isNotNull();

@@ -10,9 +10,9 @@ import br.com.alura.challenge.finance.backend.controller.dto.ExpenditureDTO;
 @Tag("controller")
 @ExtendWith(MockitoExtension.class)
 class ExpenditureReferenceTest extends SimpleReferenceTest<ExpenditureDTO> {
-	
+
 	final String resource = "/api/expenditures";
-	
+
 	@InjectMocks
 	ExpenditureReference reference;
 

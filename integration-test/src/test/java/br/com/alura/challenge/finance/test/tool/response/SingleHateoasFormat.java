@@ -15,9 +15,9 @@ import io.restassured.response.ValidatableResponse;
 import io.restassured.specification.RequestSpecification;
 
 public interface SingleHateoasFormat extends ResourceTest {
-	
+
 	String getResource();
-	
+
 	String collectionRelationName();
 
 	@Override
@@ -51,6 +51,6 @@ public interface SingleHateoasFormat extends ResourceTest {
 	}
 
 	default String linkListHref() {
-		return "_links."+collectionRelationName()+".href";
+		return "_links." + collectionRelationName() + ".href";
 	}
 }

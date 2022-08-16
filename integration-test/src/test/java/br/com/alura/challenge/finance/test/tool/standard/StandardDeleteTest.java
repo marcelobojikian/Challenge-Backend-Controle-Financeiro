@@ -18,7 +18,7 @@ public interface StandardDeleteTest extends ResourceTest {
 	default RequestSpecification scene() {
 		return RestAssured.given().accept(ContentType.JSON);
 	}
-	
+
 	@Override
 	default String method() {
 		return ResourceTest.DELETE;

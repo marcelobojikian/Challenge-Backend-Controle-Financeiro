@@ -15,12 +15,10 @@ import io.restassured.response.ValidatableResponse;
 import io.restassured.specification.RequestSpecification;
 
 public interface MethodNotSupported extends ResourceTest {
-	
+
 	@Override
 	default RequestSpecification scene() {
-		return RestAssured
-                .given()
-                    .body("");
+		return RestAssured.given().body("");
 	}
 
 	@Test
@@ -42,7 +40,7 @@ public interface MethodNotSupported extends ResourceTest {
 	        .extract()
 	        	.asPrettyString();
 		// @formatter:on
-		
+
 		assertThat(body).isNotEmpty();
 	}
 

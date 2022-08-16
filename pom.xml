@@ -22,16 +22,18 @@
 
 	<properties>
 
-		<skip.unit.tests>false</skip.unit.tests>
-		<skip.integration.tests>true</skip.integration.tests>
-
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>1.8</java.version>
-
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		
+		<compiler.version>3.10.1</compiler.version>
 		<jacoco.version>0.8.8</jacoco.version>
+		<surefire.version>3.0.0-M7</surefire.version>
+		<failsafe.version>3.0.0-M7</failsafe.version>
+
 		<sonar.organization>marcelobojikian</sonar.organization>
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
 		<sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/reports/target/site/jacoco-aggregate/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+		
 	</properties>
 
 	<modules>
@@ -72,7 +74,6 @@
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>${jacoco.version}</version>
 				<executions>
 					<execution>
 						<id>jacoco-initialize</id>
@@ -91,27 +92,34 @@
 			</plugin>
 		</plugins>
 
-	</build>
+		<pluginManagement>
+			<plugins>
 
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>org.jacoco</groupId>
-				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>${jacoco.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<version>3.0.0-M7</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-failsafe-plugin</artifactId>
-				<version>3.0.0-M7</version>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>${compiler.version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.jacoco</groupId>
+					<artifactId>jacoco-maven-plugin</artifactId>
+					<version>${jacoco.version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<version>${surefire.version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-failsafe-plugin</artifactId>
+					<version>${failsafe.version}</version>
+				</plugin>
+
+			</plugins>
+		</pluginManagement>
+
+	</build>
 
 	<repositories>
 

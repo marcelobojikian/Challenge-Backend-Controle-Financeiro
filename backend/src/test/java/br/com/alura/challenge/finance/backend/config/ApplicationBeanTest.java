@@ -23,8 +23,8 @@ import br.com.alura.challenge.finance.backend.model.Income;
 public class ApplicationBeanTest {
 
 	@Autowired
-	ObjectMapper objectMapper; 
-	
+	ObjectMapper objectMapper;
+
 	@Autowired
 	IncomeMapperConverter incomeConverter;
 
@@ -45,7 +45,7 @@ public class ApplicationBeanTest {
 		assertThat(expenditureConverter).isNotNull();
 		assertThat(incomeControllerManager).isNotNull();
 		assertThat(expenditureControllerManager).isNotNull();
-		
+
 	}
 
 }

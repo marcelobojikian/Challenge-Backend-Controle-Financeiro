@@ -31,11 +31,11 @@ abstract class FinanceServiceTest<T extends FinanceEntity> {
 	abstract FinanceService<T> getService();
 
 	abstract FinanceRepository<T> getRepository();
-	
+
 	abstract T one();
-	
+
 	abstract T[] list();
-	
+
 	abstract Class<T> instanceClass();
 
 	@Nested
@@ -45,7 +45,7 @@ abstract class FinanceServiceTest<T extends FinanceEntity> {
 		@Test
 		@DisplayName("Should find all")
 		public void shouldFind() {
-			
+
 			T[] expected = list();
 
 			given(getRepository().findAll()).willReturn(Arrays.asList(expected));
@@ -61,7 +61,7 @@ abstract class FinanceServiceTest<T extends FinanceEntity> {
 		@Test
 		@DisplayName("Should find all with Predicate")
 		public void shouldFindWithPredicate() {
-			
+
 			T[] expected = list();
 
 			given(getRepository().findAll(any(Predicate.class))).willReturn(Arrays.asList(expected));
@@ -95,7 +95,7 @@ abstract class FinanceServiceTest<T extends FinanceEntity> {
 		@Test
 		@DisplayName("Should find by id")
 		public void shouldFind() {
-			
+
 			T expected = one();
 
 			given(getRepository().findById(anyLong())).willReturn(Optional.of(expected));
@@ -128,10 +128,11 @@ abstract class FinanceServiceTest<T extends FinanceEntity> {
 		@Test
 		@DisplayName("Should find all")
 		public void shouldFind() {
-			
+
 			T[] expected = list();
 
-			given(getRepository().findAllByDataBetween(any(LocalDate.class), any(LocalDate.class))).willReturn(Arrays.asList(expected));
+			given(getRepository().findAllByDataBetween(any(LocalDate.class), any(LocalDate.class)))
+					.willReturn(Arrays.asList(expected));
 
 			Iterable<T> result = getService().findBetweenDate(LocalDate.now(), LocalDate.now());
 
@@ -145,7 +146,8 @@ abstract class FinanceServiceTest<T extends FinanceEntity> {
 		@DisplayName("Should find empty list")
 		public void shouldNotFind() {
 
-			given(getRepository().findAllByDataBetween(any(LocalDate.class), any(LocalDate.class))).willReturn(Arrays.asList());
+			given(getRepository().findAllByDataBetween(any(LocalDate.class), any(LocalDate.class)))
+					.willReturn(Arrays.asList());
 			Iterable<T> result = getService().findBetweenDate(LocalDate.now(), LocalDate.now());
 
 			assertThat(result).isNotNull();
@@ -162,7 +164,7 @@ abstract class FinanceServiceTest<T extends FinanceEntity> {
 		@Test
 		@DisplayName("Should create")
 		public void shouldCreate() {
-			
+
 			T expected = one();
 
 			given(getRepository().findAllByDescricaoContainingIgnoreCaseAndDataBetween(any(String.class),
@@ -181,7 +183,7 @@ abstract class FinanceServiceTest<T extends FinanceEntity> {
 		@Test
 		@DisplayName("Should create when same name and different month")
 		public void shouldCreateWhenSameNameButDifferentMonth() {
-			
+
 			T expected = one();
 
 			given(getRepository().findAllByDescricaoContainingIgnoreCaseAndDataBetween(any(String.class),
@@ -200,7 +202,7 @@ abstract class FinanceServiceTest<T extends FinanceEntity> {
 		@Test
 		@DisplayName("Should throw exception when same name and month")
 		public void shouldReturnExceptionWhenAlreadyExistWithSameMonth() {
-			
+
 			T expected = one();
 
 			given(getRepository().findAllByDescricaoContainingIgnoreCaseAndDataBetween(any(String.class),
@@ -221,7 +223,7 @@ abstract class FinanceServiceTest<T extends FinanceEntity> {
 		@Test
 		@DisplayName("Should delete")
 		public void shouldDelete() {
-			
+
 			T expected = one();
 
 			given(getRepository().findById(anyLong())).willReturn(Optional.of(expected));

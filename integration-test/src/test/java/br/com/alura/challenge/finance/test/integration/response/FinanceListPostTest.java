@@ -16,16 +16,14 @@ import io.restassured.response.ValidatableResponse;
 import io.restassured.specification.RequestSpecification;
 
 public interface FinanceListPostTest<T extends FinanceEntity> extends ResourceTest {
-	
+
 	void each(T entity) throws JsonProcessingException;
 
 	@Override
 	default RequestSpecification scene() {
-		return RestAssured.given()
-				.accept(ContentType.JSON)
-                .contentType(ContentType.JSON);
+		return RestAssured.given().accept(ContentType.JSON).contentType(ContentType.JSON);
 	}
-	
+
 	@Override
 	default String method() {
 		return ResourceTest.POST;
@@ -35,13 +33,13 @@ public interface FinanceListPostTest<T extends FinanceEntity> extends ResourceTe
 	}
 
 	default void run(String body) {
-		
-		RequestSpecification scene =scene().body(body).when();
+
+		RequestSpecification scene = scene().body(body).when();
 
 		ValidatableResponse reponse = method(scene).then();
 
-    	asserts(reponse); 
-    	
+		asserts(reponse);
+
 	}
 
 	@Override

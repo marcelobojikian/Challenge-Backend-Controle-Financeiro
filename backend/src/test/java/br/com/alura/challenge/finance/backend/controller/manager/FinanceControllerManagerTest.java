@@ -27,9 +27,8 @@ import br.com.alura.challenge.finance.backend.controller.web.hateoas.SimpleRefer
 import br.com.alura.challenge.finance.backend.model.FinanceEntity;
 import br.com.alura.challenge.finance.backend.service.FinanceService;
 
-
 abstract class FinanceControllerManagerTest<T extends FinanceEntity, DTO extends FinanceDTO> {
-	
+
 	abstract FinanceControllerManager<T, DTO> getController();
 
 	abstract T getInstanceEntity();
@@ -56,8 +55,8 @@ abstract class FinanceControllerManagerTest<T extends FinanceEntity, DTO extends
 
 			T entity = getInstanceEntity();
 			DTO entityDTO = getInstanceDto();
-			EntityModel<DTO> model = EntityModel.of(entityDTO); 
-			
+			EntityModel<DTO> model = EntityModel.of(entityDTO);
+
 			given(service.findById(anyLong())).willReturn(entity);
 			given(converter.toDto(any(getEntityCLass()))).willReturn(entityDTO);
 			given(ref.toModel(entityDTO)).willReturn(model);
@@ -65,7 +64,7 @@ abstract class FinanceControllerManagerTest<T extends FinanceEntity, DTO extends
 			EntityModel<DTO> result = getController().findById(1l);
 
 			assertThat(result).isEqualTo(model);
-			
+
 		}
 
 	}
@@ -79,13 +78,14 @@ abstract class FinanceControllerManagerTest<T extends FinanceEntity, DTO extends
 
 			List<T> entities = Arrays.asList(getInstanceEntity());
 			List<DTO> entityListDTO = Arrays.asList(getInstanceDto());
-			List<EntityModel<DTO>> listModel = entityListDTO.stream().map((dto) -> EntityModel.of(dto)).collect(Collectors.toList());
+			List<EntityModel<DTO>> listModel = entityListDTO.stream().map((dto) -> EntityModel.of(dto))
+					.collect(Collectors.toList());
 			CollectionModel<EntityModel<DTO>> collectiomModel = CollectionModel.of(listModel);
-			
+
 			given(service.findAll(any(Predicate.class))).willReturn(entities);
 			given(converter.toDtoList(entities)).willReturn(entityListDTO);
 			given(ref.toCollectionModel(entityListDTO)).willReturn(collectiomModel);
-			
+
 			CollectionModel<EntityModel<DTO>> result = getController().findAll(new BooleanBuilder());
 
 			assertThat(result).isEqualTo(collectiomModel);
@@ -98,11 +98,11 @@ abstract class FinanceControllerManagerTest<T extends FinanceEntity, DTO extends
 			List<T> entities = Arrays.asList();
 			List<DTO> entityListDTO = Arrays.asList();
 			CollectionModel<EntityModel<DTO>> collectiomModel = CollectionModel.empty();
-			
+
 			given(service.findAll(any(Predicate.class))).willReturn(Arrays.asList());
 			given(converter.toDtoList(entities)).willReturn(Arrays.asList());
 			given(ref.toCollectionModel(entityListDTO)).willReturn(collectiomModel);
-			
+
 			CollectionModel<EntityModel<DTO>> result = getController().findAll(new BooleanBuilder());
 
 			assertThat(result).isEqualTo(collectiomModel);
@@ -120,12 +120,14 @@ abstract class FinanceControllerManagerTest<T extends FinanceEntity, DTO extends
 
 			List<T> entities = Arrays.asList(getInstanceEntity());
 			List<DTO> entityListDTO = Arrays.asList(getInstanceDto());
-			List<EntityModel<DTO>> listModel = entityListDTO.stream().map((dto) -> EntityModel.of(dto)).collect(Collectors.toList());
+			List<EntityModel<DTO>> listModel = entityListDTO.stream().map((dto) -> EntityModel.of(dto))
+					.collect(Collectors.toList());
 			CollectionModel<EntityModel<DTO>> collectiomModel = CollectionModel.of(listModel);
-			
+
 			given(service.findBetweenDate(any(LocalDate.class), any(LocalDate.class))).willReturn(entities);
 			given(converter.toDtoList(entities)).willReturn(entityListDTO);
-			given(ref.toCollectionModelByYearAndMonth(any(List.class), any(Integer.class), any(Month.class))).willReturn(collectiomModel);
+			given(ref.toCollectionModelByYearAndMonth(any(List.class), any(Integer.class), any(Month.class)))
+					.willReturn(collectiomModel);
 
 			CollectionModel<EntityModel<DTO>> result = getController().allWithYearAndMonth(2022, Month.AUGUST);
 
@@ -138,17 +140,18 @@ abstract class FinanceControllerManagerTest<T extends FinanceEntity, DTO extends
 
 			List<T> entities = Arrays.asList();
 			List<DTO> entityListDTO = Arrays.asList();
-			List<EntityModel<DTO>> listModel = entityListDTO.stream().map((dto) -> EntityModel.of(dto)).collect(Collectors.toList());
+			List<EntityModel<DTO>> listModel = entityListDTO.stream().map((dto) -> EntityModel.of(dto))
+					.collect(Collectors.toList());
 			CollectionModel<EntityModel<DTO>> collectiomModel = CollectionModel.of(listModel);
 
 			given(service.findBetweenDate(any(LocalDate.class), any(LocalDate.class))).willReturn(entities);
 			given(converter.toDtoList(entities)).willReturn(entityListDTO);
 			given(ref.toCollectionModel(entityListDTO)).willReturn(collectiomModel);
-			
+
 			CollectionModel<EntityModel<DTO>> result = getController().allWithYearAndMonth(2022, Month.AUGUST);
 
 			assertThat(result).isEqualTo(collectiomModel);
-			
+
 		}
 
 	}
@@ -162,17 +165,17 @@ abstract class FinanceControllerManagerTest<T extends FinanceEntity, DTO extends
 
 			T entity = getInstanceEntity();
 			DTO entityDTO = getInstanceDto();
-			EntityModel<DTO> model = EntityModel.of(entityDTO); 
+			EntityModel<DTO> model = EntityModel.of(entityDTO);
 
 			given(converter.toEntity(any(getDtoCLass()))).willReturn(entity);
 			given(service.save(any(getEntityCLass()))).willReturn(entity);
 			given(converter.toDto(any(getEntityCLass()))).willReturn(entityDTO);
 			given(ref.toModel(any(getDtoCLass()))).willReturn(model);
-			
+
 			EntityModel<DTO> result = getController().create(entityDTO);
 
 			assertThat(result).isEqualTo(model);
-			
+
 		}
 
 	}
@@ -187,13 +190,13 @@ abstract class FinanceControllerManagerTest<T extends FinanceEntity, DTO extends
 			Long id = 1l;
 			T entity = getInstanceEntity();
 			DTO entityDTO = getInstanceDto();
-			EntityModel<DTO> model = EntityModel.of(entityDTO); 
+			EntityModel<DTO> model = EntityModel.of(entityDTO);
 
 			given(service.findById(any(Long.class))).willReturn(entity);
 			given(service.save(any(getEntityCLass()))).willReturn(entity);
 			given(converter.toDto(any(getEntityCLass()))).willReturn(entityDTO);
 			given(ref.toModel(any(getDtoCLass()))).willReturn(model);
-			
+
 			EntityModel<DTO> result = getController().update(id, entityDTO);
 
 			assertThat(result).isEqualTo(model);
@@ -208,7 +211,7 @@ abstract class FinanceControllerManagerTest<T extends FinanceEntity, DTO extends
 
 		@Test
 		void shouldDelete() {
-			
+
 			Long id = 1l;
 			getController().remove(id);
 

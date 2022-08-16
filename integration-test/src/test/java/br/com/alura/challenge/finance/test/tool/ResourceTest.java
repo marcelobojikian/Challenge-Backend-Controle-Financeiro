@@ -12,21 +12,21 @@ public interface ResourceTest {
 	public static final String DELETE = "DELETE";
 
 	String getResource();
-	
+
 	RequestSpecification scene();
-	
+
 	default void run() {
-		
-		RequestSpecification scene =scene().when();
+
+		RequestSpecification scene = scene().when();
 
 		ValidatableResponse reponse = method(scene).then();
 
-    	asserts(reponse); 
-		
+		asserts(reponse);
+
 	}
-	
+
 	void asserts(ValidatableResponse reponse);
-	
+
 	default String method() {
 		return GET;
 	}

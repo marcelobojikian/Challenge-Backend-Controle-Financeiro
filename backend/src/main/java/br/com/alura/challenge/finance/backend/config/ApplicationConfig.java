@@ -52,7 +52,8 @@ public class ApplicationConfig {
 	}
 
 	@Bean
-	public FinanceControllerManager<Expenditure, ExpenditureDTO> expenditureControllerManager(ExpenditureService service, ExpenditureMapperConverter converter, ExpenditureReference ref){
+	public FinanceControllerManager<Expenditure, ExpenditureDTO> expenditureControllerManager(
+			ExpenditureService service, ExpenditureMapperConverter converter, ExpenditureReference ref) {
 		return new FinanceControllerManager<>(service, converter, ref);
 	}
 

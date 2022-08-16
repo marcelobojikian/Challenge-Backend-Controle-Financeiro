@@ -10,9 +10,9 @@ import br.com.alura.challenge.finance.backend.controller.dto.IncomeDTO;
 @Tag("controller")
 @ExtendWith(MockitoExtension.class)
 class IncomeReferenceTest extends SimpleReferenceTest<IncomeDTO> {
-	
+
 	final String resource = "/api/incomes";
-	
+
 	@InjectMocks
 	IncomeReference reference;
 

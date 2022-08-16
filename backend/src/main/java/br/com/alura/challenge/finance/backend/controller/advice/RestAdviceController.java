@@ -38,7 +38,7 @@ public class RestAdviceController {
 		ApiErrorDTO error = new ApiErrorDTO(messageTittle, details);
 		return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
 	}
-	
+
 	@ExceptionHandler(HttpMediaTypeNotSupportedException.class)
 	public ResponseEntity<Object> handleHttpMediaTypeNotSupportedException(HttpMediaTypeNotSupportedException ex,
 			WebRequest request) {
@@ -47,10 +47,10 @@ public class RestAdviceController {
 		ApiErrorDTO error = new ApiErrorDTO("Media type Error", details);
 		return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
 	}
-	
+
 	@ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-	public ResponseEntity<Object> handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException ex,
-			WebRequest request) {
+	public ResponseEntity<Object> handleHttpRequestMethodNotSupportedException(
+			HttpRequestMethodNotSupportedException ex, WebRequest request) {
 		List<String> details = new ArrayList<>();
 		details.add(ex.getLocalizedMessage());
 		ApiErrorDTO error = new ApiErrorDTO("Request method", details);
