@@ -6,16 +6,21 @@ import java.util.List;
 import org.junit.jupiter.api.extension.ParameterContext;
 import org.junit.jupiter.params.converter.ArgumentConversionException;
 import org.junit.jupiter.params.converter.ArgumentConverter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import br.com.alura.challenge.finance.backend.model.FinanceEntity;
 
 public class ListFinanceConverter implements ArgumentConverter {
+
+	Logger log = LoggerFactory.getLogger(FinanceConverter.class);
 
 	private FinanceConverter financeConverter = new FinanceConverter();
 
 	@Override
 	public Object convert(Object source, ParameterContext context) throws ArgumentConversionException {
 
+		log.debug("Converte List to finances: {}", source);
 		String[] parts = checkSource(source);
 
 		try {

@@ -7,6 +7,8 @@ import static org.hamcrest.Matchers.is;
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import br.com.alura.challenge.finance.test.tool.ResourceTest;
 import io.restassured.RestAssured;
@@ -15,6 +17,8 @@ import io.restassured.response.ValidatableResponse;
 import io.restassured.specification.RequestSpecification;
 
 public interface InvalidContentType extends ResourceTest {
+
+	Logger log = LoggerFactory.getLogger(InvalidContentType.class);
 
 	ContentType invlaidContentType();
 
@@ -40,8 +44,11 @@ public interface InvalidContentType extends ResourceTest {
 		        .body("details.size()", equalTo(1))
 		        .body("details[0]", is("Content type 'text/plain;charset=ISO-8859-1' not supported"))
 	        .extract()
-	        	.asPrettyString();
+        		.asString();
 		// @formatter:on
+
+		log.debug(body);
+
 		assertThat(body).isNotEmpty();
 	}
 

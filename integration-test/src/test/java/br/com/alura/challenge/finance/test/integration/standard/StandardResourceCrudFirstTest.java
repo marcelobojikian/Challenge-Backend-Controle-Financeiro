@@ -2,8 +2,12 @@ package br.com.alura.challenge.finance.test.integration.standard;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class StandardResourceCrudFirstTest {
+
+	Logger log = LoggerFactory.getLogger(StandardResourceCrudFirstTest.class);
 
 	private final String resource;
 	private final ExtraValidationAllMethod[] extraValidationMethod;
@@ -11,6 +15,7 @@ public class StandardResourceCrudFirstTest {
 	public StandardResourceCrudFirstTest(String resource, ExtraValidationAllMethod... extraValidationMethod) {
 		this.resource = resource;
 		this.extraValidationMethod = extraValidationMethod;
+		log.info("Validacao de CRUD para resource {}", resource);
 	}
 
 	@Nested

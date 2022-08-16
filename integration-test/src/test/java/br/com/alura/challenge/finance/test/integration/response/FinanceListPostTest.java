@@ -5,6 +5,8 @@ import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.not;
 
 import org.apache.http.HttpStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
@@ -16,6 +18,8 @@ import io.restassured.response.ValidatableResponse;
 import io.restassured.specification.RequestSpecification;
 
 public interface FinanceListPostTest<T extends FinanceEntity> extends ResourceTest {
+
+	Logger log = LoggerFactory.getLogger(FinanceListPostTest.class);
 
 	void each(T entity) throws JsonProcessingException;
 
@@ -51,8 +55,11 @@ public interface FinanceListPostTest<T extends FinanceEntity> extends ResourceTe
                 .body("_links.self.href", not(empty()))
                 .body("_links.incomes.href", not(empty()))
             .extract()
-            	.asPrettyString();
+            	.asString();
 		// @formatter:on
+
+		log.debug(body);
+
 		assertThat(body).isNotEmpty();
 	}
 

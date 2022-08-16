@@ -5,6 +5,8 @@ import java.time.Month;
 import java.util.Arrays;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,6 +21,8 @@ import br.com.alura.challenge.finance.backend.service.FinanceService;
 
 public class FinanceControllerManager<T extends FinanceEntity, DTO extends FinanceDTO> {
 
+	Logger log = LoggerFactory.getLogger(FinanceControllerManager.class);
+
 	private FinanceService<T> service;
 	private FinanceMapperConverter<T, DTO> converter;
 	private SimpleReference<DTO> ref;
@@ -32,6 +36,7 @@ public class FinanceControllerManager<T extends FinanceEntity, DTO extends Finan
 
 	public CollectionModel<EntityModel<DTO>> findAll(Predicate predicate) {
 
+		log.debug("Busca por filtro: {}", predicate);
 		Iterable<T> entities = service.findAll(predicate);
 		List<DTO> finances = converter.toDtoList(entities);
 
@@ -44,6 +49,7 @@ public class FinanceControllerManager<T extends FinanceEntity, DTO extends Finan
 	}
 
 	public EntityModel<DTO> findById(Long id) {
+		log.debug("Busca por id: {}", id);
 		T entity = service.findById(id);
 		DTO entityDTO = converter.toDto(entity);
 		return ref.toModel(entityDTO);
@@ -51,6 +57,7 @@ public class FinanceControllerManager<T extends FinanceEntity, DTO extends Finan
 
 	public CollectionModel<EntityModel<DTO>> allWithYearAndMonth(int year, Month month) {
 
+		log.debug("Busca por month: {}/{}", year, month);
 		LocalDate firstDayOfMonth = LocalDate.of(year, month, 1);
 		LocalDate lastDayOfMonth = LocalDate.of(year, month, month.maxLength());
 
@@ -66,6 +73,7 @@ public class FinanceControllerManager<T extends FinanceEntity, DTO extends Finan
 	}
 
 	public EntityModel<DTO> create(DTO dto) {
+		log.debug("Criando finance: {}", dto);
 		T entity = converter.toEntity(dto);
 		entity = service.save(entity);
 
@@ -74,6 +82,7 @@ public class FinanceControllerManager<T extends FinanceEntity, DTO extends Finan
 	}
 
 	public EntityModel<DTO> update(Long id, DTO dto) {
+		log.debug("Atualizando finance[{}]: {}", id, dto);
 		T entity = service.findById(id);
 		converter.copy(dto, entity);
 
@@ -84,6 +93,7 @@ public class FinanceControllerManager<T extends FinanceEntity, DTO extends Finan
 	}
 
 	public void remove(@PathVariable Long id) {
+		log.debug("Removendo finance: {}", id);
 		service.delete(id);
 	}
 

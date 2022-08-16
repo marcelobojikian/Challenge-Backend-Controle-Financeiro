@@ -7,6 +7,8 @@ import java.time.format.DateTimeFormatter;
 import org.junit.jupiter.api.extension.ParameterContext;
 import org.junit.jupiter.params.converter.ArgumentConversionException;
 import org.junit.jupiter.params.converter.ArgumentConverter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import br.com.alura.challenge.finance.backend.model.Expenditure;
 import br.com.alura.challenge.finance.backend.model.Expenditure.Categoria;
@@ -14,9 +16,12 @@ import br.com.alura.challenge.finance.backend.model.Income;
 
 public class FinanceConverter implements ArgumentConverter {
 
+	Logger log = LoggerFactory.getLogger(FinanceConverter.class);
+
 	@Override
 	public Object convert(Object source, ParameterContext context) throws ArgumentConversionException {
 
+		log.debug("Converte to finance: {}", source);
 		String[] parts = checkSource(source);
 
 		try {

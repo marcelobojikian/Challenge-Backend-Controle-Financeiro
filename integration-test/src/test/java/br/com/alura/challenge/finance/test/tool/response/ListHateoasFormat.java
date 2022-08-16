@@ -8,6 +8,8 @@ import static org.hamcrest.Matchers.hasSize;
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import br.com.alura.challenge.finance.test.tool.ResourceTest;
 import io.restassured.RestAssured;
@@ -16,6 +18,8 @@ import io.restassured.response.ValidatableResponse;
 import io.restassured.specification.RequestSpecification;
 
 public interface ListHateoasFormat extends ResourceTest {
+
+	Logger log = LoggerFactory.getLogger(ListHateoasFormat.class);
 
 	String getResource();
 
@@ -42,8 +46,11 @@ public interface ListHateoasFormat extends ResourceTest {
                 .body(listPath(), hasSize(greaterThan(0)))
                 .body(linkSelfHref(), endsWithIgnoringCase(getResource()))
             .extract()
-            	.asPrettyString();
+            	.asString();
 		// @formatter:on
+
+		log.debug(body);
+
 		assertThat(body).isNotEmpty();
 	}
 

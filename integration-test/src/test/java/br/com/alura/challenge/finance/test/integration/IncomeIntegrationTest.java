@@ -89,7 +89,7 @@ public class IncomeIntegrationTest {
 				"income::Outros     :420   :01/08/2022", "income::TO UPDATE  :0     :01/01/2022" })
 		public void each(@ConvertWith(FinanceConverter.class) Income entity) throws JsonProcessingException {
 			String json = mapper.writeValueAsString(entity);
-			System.out.println(json);
+			log.info("Create: {}", json);
 			run(json);
 		}
 
@@ -150,9 +150,9 @@ public class IncomeIntegrationTest {
                 .body(itemProperty(2,"valor"), equalTo(420.0f))
                 .body(itemProperty(2,"data"), is("01/08/2022"))
             .extract()
-        		.asPrettyString();
+        		.asString();
 			// @formatter:on
-			System.out.println("all: " + body);
+			log.info("Reade all: {}", body);
 		}
 
 	}
@@ -191,9 +191,9 @@ public class IncomeIntegrationTest {
 	                .body("valor", equalTo(2600f))
 	                .body("data", is("01/08/2022"))
                 .extract()
-            		.asPrettyString();
+            		.asString();
 				// @formatter:on
-				System.out.println("find id: " + body);
+				log.info("Reade id: {}", body);
 			}
 
 		}
@@ -234,9 +234,9 @@ public class IncomeIntegrationTest {
                     .body("valor", equalTo(1))
                     .body("data", is("03/07/2022"))
                 .extract()
-            		.asPrettyString();
+            		.asString();
 				// @formatter:on
-				System.out.println("update: " + body);
+				log.info("Update: {}", body);
 			}
 		}
 
@@ -325,9 +325,9 @@ public class IncomeIntegrationTest {
 		            	.body(linkSelfHref(), endsWithIgnoringCase(RESOURCE+"/2022/AUGUST"))
 	                    .body(listPath(), hasSize(3))
 		            .extract()
-		        		.asPrettyString();
+		        		.asString();
 				// @formatter:on
-				System.out.println("month: " + body);
+				log.info("Find by month[number]: {}", body);
 			}
 
 		}
@@ -353,9 +353,9 @@ public class IncomeIntegrationTest {
 				String body = reponse
                     .body(listPath(), hasSize(3))
 	            .extract()
-	        		.asPrettyString();
+	        		.asString();
 				// @formatter:on
-				System.out.println("month: " + body);
+				log.info("Find by month[text]: {}", body);
 			}
 
 		}

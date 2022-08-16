@@ -4,6 +4,9 @@ import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.querydsl.core.types.Predicate;
 
 import br.com.alura.challenge.finance.backend.exception.BusinessException;
@@ -13,6 +16,8 @@ import br.com.alura.challenge.finance.backend.repository.FinanceRepository;
 import br.com.alura.challenge.finance.backend.service.FinanceService;
 
 public abstract class FinanceDefaultService<T extends FinanceEntity> implements FinanceService<T> {
+
+	Logger log = LoggerFactory.getLogger(FinanceDefaultService.class);
 
 	private FinanceRepository<T> repository;
 
@@ -46,6 +51,7 @@ public abstract class FinanceDefaultService<T extends FinanceEntity> implements 
 				lastDayOfMonth);
 
 		if (!entities.isEmpty()) {
+			log.info("Falha ao registrar finance '{}' repete no mes '{}'", descricao, entity.getData().getMonth());
 			throw new BusinessException("There is this finance for this month");
 		}
 

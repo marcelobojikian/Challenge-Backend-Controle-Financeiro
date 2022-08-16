@@ -7,6 +7,8 @@ import static org.hamcrest.Matchers.not;
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import br.com.alura.challenge.finance.test.tool.ResourceTest;
 import io.restassured.RestAssured;
@@ -15,6 +17,8 @@ import io.restassured.response.ValidatableResponse;
 import io.restassured.specification.RequestSpecification;
 
 public interface SingleHateoasFormat extends ResourceTest {
+
+	Logger log = LoggerFactory.getLogger(SingleHateoasFormat.class);
 
 	String getResource();
 
@@ -41,8 +45,11 @@ public interface SingleHateoasFormat extends ResourceTest {
                 .body(linkSelfHref(), not(empty()))
                 .body(linkListHref(), not(empty()))
             .extract()
-            	.asPrettyString();
+            	.asString();
 		// @formatter:on
+
+		log.debug(body);
+
 		assertThat(body).isNotEmpty();
 	}
 
