@@ -11,10 +11,15 @@ spring:
     removeAbandoned: true
     
   jpa:
+    hibernate: 
+      ddl-auto: update
+    generate-ddl: true
+    show-sql: true
+    defer-datasource-initialization: true
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     
     
 logging:
   level:
-    root: ERROR
+    root: INFO
     '[br.com.alura.challenge.finance.backend]': ERROR 
