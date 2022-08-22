@@ -38,11 +38,11 @@ public interface InvalidContentType extends ResourceTest {
 	default void asserts(ValidatableResponse reponse) {
 		// @formatter:off
 		String body = reponse
-				.statusCode(HttpStatus.SC_BAD_REQUEST)
+				.statusCode(HttpStatus.SC_UNSUPPORTED_MEDIA_TYPE)
 	            .contentType(ContentType.JSON)
-				.body("message", is("Media type Error"))
+				.body("message", is("Content type '"+invlaidContentType()+";charset=ISO-8859-1' not supported"))
 		        .body("details.size()", equalTo(1))
-		        .body("details[0]", is("Content type 'text/plain;charset=ISO-8859-1' not supported"))
+		        .body("details[0]", is(invlaidContentType()+";charset=ISO-8859-1 media type is not supported. Supported media types are application/json application/*+json"))
 	        .extract()
         		.asString();
 		// @formatter:on

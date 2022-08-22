@@ -11,7 +11,7 @@ import br.com.alura.challenge.finance.backend.rest.dto.summary.GroupCategory;
 
 public interface ExpenditureRepository extends FinanceRepository<Expenditure> {
 
-	@Query("SELECT new br.com.alura.challenge.finance.backend.controller.dto.summary.GroupCategory(e.categoria, sum(e.valor)) "
+	@Query("SELECT new br.com.alura.challenge.finance.backend.rest.dto.summary.GroupCategory(e.categoria, sum(e.valor)) "
 			+ "FROM Expenditure e WHERE e.data BETWEEN :start AND :end GROUP BY e.categoria ORDER BY e.categoria")
 	public List<GroupCategory> findGroupCategoryBetweenDate(@Param("start") LocalDate start,
 			@Param("end") LocalDate end);

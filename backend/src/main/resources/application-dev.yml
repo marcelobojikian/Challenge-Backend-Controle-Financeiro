@@ -1,4 +1,13 @@
 
+    
+server:
+  error:
+    include-message: always
+    include-binding-errors: always
+    include-stacktrace: on-param
+    include-exception: false
+
+
 spring:
 
   h2:
