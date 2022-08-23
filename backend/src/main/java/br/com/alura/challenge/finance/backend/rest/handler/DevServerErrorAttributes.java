@@ -24,6 +24,11 @@ public class DevServerErrorAttributes extends DefaultErrorAttributes {
 		Map<String, Object> errorAttributes = super.getErrorAttributes(webRequest, options);
 		
 		Throwable throwable = getError(webRequest);
+		
+		if(throwable == null) {
+			return errorAttributes;
+		}
+		
         Throwable cause = throwable.getCause();
 		log.info(throwable.getClass().getName());
 		log.error("error", throwable);

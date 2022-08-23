@@ -1,5 +1,6 @@
 package br.com.alura.challenge.finance.test.tool;
 
+import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import io.restassured.response.ValidatableResponse;
 import io.restassured.specification.RequestSpecification;
@@ -12,6 +13,10 @@ public interface ResourceTest {
 	public static final String DELETE = "DELETE";
 
 	String getResource();
+	
+	default RequestSpecification given() {
+		 return RestAssured.given();
+	}
 
 	RequestSpecification scene();
 

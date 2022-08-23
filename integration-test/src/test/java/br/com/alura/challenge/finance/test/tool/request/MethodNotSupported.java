@@ -12,7 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import br.com.alura.challenge.finance.test.tool.ResourceTest;
-import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.ValidatableResponse;
 import io.restassured.specification.RequestSpecification;
@@ -23,7 +22,7 @@ public interface MethodNotSupported extends ResourceTest {
 
 	@Override
 	default RequestSpecification scene() {
-		return RestAssured.given().body("");
+		return given().body("");
 	}
 
 	@Test

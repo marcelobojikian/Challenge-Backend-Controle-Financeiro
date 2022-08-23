@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import br.com.alura.challenge.finance.test.tool.ResourceTest;
-import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.ValidatableResponse;
 import io.restassured.specification.RequestSpecification;
@@ -20,7 +19,7 @@ public interface NoContent extends ResourceTest {
 
 	@Override
 	default RequestSpecification scene() {
-		return RestAssured.given().accept(ContentType.JSON);
+		return given().accept(ContentType.JSON);
 	}
 
 	@Test
