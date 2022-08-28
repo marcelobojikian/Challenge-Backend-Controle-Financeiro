@@ -20,7 +20,7 @@ public class SecurityConfig {
 		.httpBasic(Customizer.withDefaults())
 		.authorizeRequests()
         .anyRequest().authenticated()
-        .and().csrf().disable()
+        .and() //.csrf().disable() Cross-Site Request Forgery (CSRF)
         .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         return http.build();
     }
