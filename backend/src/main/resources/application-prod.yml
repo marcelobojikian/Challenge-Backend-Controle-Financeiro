@@ -1,0 +1,25 @@
+
+spring:
+
+  datasource:
+    url: ${DATABASE_URL}
+    driverClassName: org.postgresql.Driver
+    maxActive: 10
+    maxIdle: 5
+    minIdle: 2
+    initialSize: 5
+    removeAbandoned: true
+    
+  jpa:
+    hibernate: 
+      ddl-auto: update
+    generate-ddl: true
+    show-sql: true
+    defer-datasource-initialization: true
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    
+    
+logging:
+  level:
+    root: INFO
+    '[br.com.alura.challenge.finance.backend]': ERROR 

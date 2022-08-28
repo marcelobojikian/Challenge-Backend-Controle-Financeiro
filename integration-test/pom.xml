@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>br.com.alura.challenge</groupId>
+		<artifactId>finance</artifactId>
+		<version>0.2.0-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>integration-test</artifactId>
+	<name>Testes de integracao</name>
+
+	<properties>
+	</properties>
+
+	<dependencies>
+
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>io.rest-assured</groupId>
+			<artifactId>rest-assured</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>io.rest-assured</groupId>
+			<artifactId>spring-mock-mvc</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>backend</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+	</dependencies>
+
+	<build>
+		<plugins>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<excludes>
+						<exclude>**/*Standard*.*</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-failsafe-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>integration-test</goal>
+							<goal>verify</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+		</plugins>
+	</build>
+
+</project>
